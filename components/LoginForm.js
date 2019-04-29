@@ -33,6 +33,8 @@ class LoginForm extends Component {
         .then(({ payload }) => {
           if (payload.data.ErrorText !== "") {
             alert(payload.data.ErrorText);
+          } else {
+            this.props.navigation.navigate("Home");
           }
         });
     };

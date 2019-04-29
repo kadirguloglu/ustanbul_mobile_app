@@ -73,6 +73,6 @@ export let IsFullData = false;
 
 export let IsExpoActive = false;
 
-export let ChatConnectionUrl = "http://demo.kadirguloglu.com";
+export let ChatConnectionUrl = "http://demo.ustanbul.net";
 
-export const isAutoLogin = false;
+export const isAutoLogin = true;

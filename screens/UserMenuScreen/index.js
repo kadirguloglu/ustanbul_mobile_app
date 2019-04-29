@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Container, Content } from "native-base";
 import { TouchableHighlight, Text } from "react-native";
-import { logoutUser } from "../reducer-functions";
-import MyFooter from "../../components/MyFooter";
 
 class UserMenuScreen extends Component {
   constructor(props) {
@@ -36,9 +34,7 @@ const mapStateToProps = ({ generalServiceGetResponse }) => ({
   generalServiceGetResponse
 });
 
-const mapDispatchToProps = {
-  logoutUser
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,

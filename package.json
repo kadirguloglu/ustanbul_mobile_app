@@ -25,7 +25,6 @@
     "react-native-device-info": "^1.4.3",
     "react-native-dialog": "^5.6.0",
     "react-native-drawer": "^2.5.1",
-    "react-native-image-picker": "^0.28.1",
     "react-native-maps": "^0.24.2",
     "react-native-modal": "^9.0.0",
     "react-native-onesignal": "^3.2.12",

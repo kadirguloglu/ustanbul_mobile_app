@@ -16,7 +16,7 @@ import logger from "redux-logger";
 import AppNavigator from "./navigation/AppNavigator";
 
 const client = axios.create({
-  baseURL: "http://api.kadirguloglu.com",
+  baseURL: "http://api.ustanbul.net",
   responseType: "json"
 });
 

@@ -10,6 +10,7 @@ import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
 import UserMenuScreen from "../screens/UserMenuScreen";
 import LoginScreen from "../screens/AuthScreen";
+import ServicesScreen from "../screens/ServicesScreen";
 // import LinksScreen from "../screens/LinksScreen";
 // import SettingsScreen from "../screens/SettingsScreen";
 // import DepartmentScreen from "../screens/DepartmentScreen";
@@ -88,7 +89,8 @@ const tabNavigator = createBottomTabNavigator({
 const drawer = createDrawerNavigator(
   {
     Home: { screen: tabNavigator },
-    Login: { screen: LoginScreen }
+    Login: { screen: LoginScreen },
+    Service: { screen: ServicesScreen }
   },
   {
     contentComponent: SideMenu

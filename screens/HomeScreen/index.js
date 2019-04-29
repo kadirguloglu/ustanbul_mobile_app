@@ -1,24 +1,13 @@
 import React, { Component } from "react";
 import {
   View,
-  StyleSheet,
   Text,
   ImageBackground,
-  TouchableWithoutFeedback,
-  Dimensions,
-  Platform,
   Image,
   TouchableOpacity,
-  ScrollView
+  Alert
 } from "react-native";
-import {
-  Spinner,
-  Container,
-  Content,
-  Footer,
-  FooterTab,
-  Button
-} from "native-base";
+import { Spinner, Container, Content } from "native-base";
 import { connect } from "react-redux";
 import { serviceCategoriesAndSubCategories } from "../../src/actions/categoryService";
 import {
@@ -26,10 +15,11 @@ import {
   searchCategories
 } from "../../src/actions/homeService";
 import { loginUser } from "../../src/actions/generalServiceGet";
-import { MidPath, ThemeColor, IsFullData, storage } from "../../src/functions";
+import { ThemeColor, IsFullData, storage } from "../../src/functions";
 import { FontAwesome } from "@expo/vector-icons";
-import Carousel, { ParallaxImage } from "react-native-snap-carousel";
-import MyFooter from "../../components/MyFooter";
+import Carousel from "react-native-snap-carousel";
+import Component1 from "../../components/HomeScreen/component1";
+import Component2 from "../../components/HomeScreen/component2";
 import styles, {
   sliderWidth,
   itemWidth,
@@ -37,11 +27,13 @@ import styles, {
   slideHeightOpportunity,
   itemHorizontalMargin,
   colors,
-  entryBorderRadius,
-  slideHeight
+  entryBorderRadius
 } from "./styles";
 
 class HomeScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -56,34 +48,6 @@ class HomeScreen extends Component {
     if (IsFullData) {
       this.props.serviceCategoriesAndSubCategories("1", "1");
     }
-    this.handlePressCategory = function(ID) {
-      const { activeUser } = this.props.generalServiceGetResponse;
-      this.setState({ loadingPressCategory: true });
-      if (activeUser) {
-        if (activeUser.ID) {
-          if (activeUser.ID == 0) {
-            alert("Hizmet oluşturmak için lütfen giriş yapınız");
-            this.setState({ loadingPressCategory: false });
-            return;
-          } else {
-            if (activeUser.IsCompany == true) {
-              alert(
-                "Şimdilik usta üyeliği ile hizmet talebi alamıyoruz. Lütfen kişisel hesabınız ile kayıt olunuz."
-              );
-              this.setState({ loadingPressCategory: false });
-              return;
-            }
-          }
-        }
-      } else {
-        alert("Hizmet oluşturmak için lütfen giriş yapınız");
-        this.setState({ loadingPressCategory: false });
-        return;
-      }
-      this.props.navigation.navigate("Service", {
-        CategoryID: ID
-      });
-    };
     this._renderItemOpportunity = function({ item, index }) {
       return (
         <TouchableOpacity
@@ -121,6 +85,49 @@ class HomeScreen extends Component {
       );
     };
   }
+  handlePressCategory = ID => {
+    const { activeUser } = this.props.generalServiceGetResponse;
+
+    if (activeUser.Id == 0) {
+      Alert.alert(
+        "",
+        "Hizmet almak için lütfen giriş yapın veya kayıt olun.",
+        [
+          {
+            text: "İptal",
+            //onPress: () => console.log("Ask me later pressed"),
+            style: "cancel"
+          },
+          {
+            text: "Giriş yap",
+            onPress: () => {
+              this.props.navigation.navigate("Login");
+            }
+          },
+          {
+            text: "Kayıt ol",
+            onPress: () => {
+              this.props.navigation.navigate("Login", {
+                pageState: "register"
+              });
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+      return;
+    } else {
+      if (activeUser.IsCompany == true) {
+        alert(
+          "Şimdilik usta üyeliği ile hizmet talebi alamıyoruz. Lütfen kişisel hesabınız ile kayıt olunuz."
+        );
+        return;
+      }
+    }
+    this.props.navigation.navigate("Service", {
+      CategoryID: ID
+    });
+  };
   componentDidMount() {
     storage
       .load({
@@ -143,9 +150,7 @@ class HomeScreen extends Component {
       .popularCategoriesResult;
     const serviceCategoriesResult = this.props.categoryServiceResponse
       .serviceCategoriesResult;
-    if (this.state.loadingPressCategory) {
-      return <Spinner />;
-    }
+    const { activeUser } = this.props.generalServiceGetResponse;
     return (
       <Container>
         <Content>
@@ -205,15 +210,30 @@ class HomeScreen extends Component {
                   >
                     Hoşgeldin
                   </Text>
-                  <Text
-                    style={{
-                      fontFamily: "Raleway_Bold",
-                      fontSize: 12,
-                      color: "#fff"
-                    }}
-                  >
-                    Kadir Güloğlu
-                  </Text>
+                  {activeUser.Id != 0 ? (
+                    activeUser.IsCompany ? (
+                      <Text
+                        style={{
+                          fontFamily: "Raleway_Bold",
+                          fontSize: 12,
+                          color: "#fff"
+                        }}
+                      >
+                        Kadirz2z23z23z23z2 Güloğlu
+                      </Text>
+                    ) : (
+                      <Text
+                        style={{
+                          fontFamily: "Raleway_Bold",
+                          fontSize: 12,
+                          color: "#fff"
+                        }}
+                      >
+                        {activeUser.Customers.Name}{" "}
+                        {activeUser.Customers.Surname}
+                      </Text>
+                    )
+                  ) : null}
                 </View>
               </ImageBackground>
             </View>
@@ -229,57 +249,9 @@ class HomeScreen extends Component {
                 </Text>
                 {popularCategoriesResult &&
                 popularCategoriesResult.length > 1 ? (
-                  <Carousel
-                    data={popularCategoriesResult}
-                    renderItem={({ item, index }) => {
-                      return (
-                        <TouchableOpacity
-                          activeOpacity={1}
-                          style={{
-                            width: itemWidth,
-                            height: slideHeight,
-                            paddingHorizontal: itemHorizontalMargin,
-                            paddingBottom: 18
-                          }}
-                          onPress={() => this.handlePressCategory(item.ID)}
-                        >
-                          <View
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: itemHorizontalMargin,
-                              right: itemHorizontalMargin,
-                              bottom: 18,
-                              shadowColor: colors.black,
-                              shadowOpacity: 0.25,
-                              shadowOffset: { width: 0, height: 10 },
-                              shadowRadius: 10,
-                              borderRadius: entryBorderRadius,
-                              borderWidth: 1,
-                              borderColor: ThemeColor
-                            }}
-                          />
-                          <View style={[styles.imageContainer]}>
-                            <Image
-                              source={require("../../assets/image-place-holder.png")}
-                              style={styles.image}
-                              // onError={(s) => }
-                            />
-                          </View>
-                          <View style={[styles.textContainer]}>
-                            <Text style={[styles.title]} numberOfLines={1}>
-                              {item.Name}
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      );
-                    }}
-                    sliderWidth={sliderWidth}
-                    itemWidth={itemWidth}
-                    containerCustomStyle={styles.slider}
-                    contentContainerCustomStyle={styles.sliderContentContainer}
-                    layout={"default"}
-                    loop={true}
+                  <Component1
+                    popularCategoriesResult={popularCategoriesResult}
+                    handlePressCategory={this.handlePressCategory}
                   />
                 ) : (
                   <Spinner />
@@ -308,75 +280,11 @@ class HomeScreen extends Component {
               {serviceCategoriesResult && serviceCategoriesResult.length > 0
                 ? serviceCategoriesResult.map(result => {
                     return (
-                      <View key={"serviceCategories" + result.ID}>
-                        <Text style={styles.title_text}>
-                          {result.Name}
-                          {"   "}
-                          <FontAwesome
-                            style={{ color: "#4c8497", paddingLeft: 10 }}
-                            name="arrow-circle-right"
-                            size={12}
-                          />
-                        </Text>
-                        <Carousel
-                          data={result.SubCategories}
-                          renderItem={({ item, index }) => {
-                            return (
-                              <TouchableOpacity
-                                activeOpacity={1}
-                                style={{
-                                  width: itemWidth,
-                                  height: slideHeight,
-                                  paddingHorizontal: itemHorizontalMargin,
-                                  paddingBottom: 18
-                                }}
-                                onPress={() =>
-                                  this.handlePressCategory(item.ID)
-                                }
-                              >
-                                <View
-                                  style={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: itemHorizontalMargin,
-                                    right: itemHorizontalMargin,
-                                    bottom: 18,
-                                    shadowColor: colors.black,
-                                    shadowOpacity: 0.25,
-                                    shadowOffset: { width: 0, height: 10 },
-                                    shadowRadius: 10,
-                                    borderRadius: entryBorderRadius,
-                                    borderWidth: 1,
-                                    borderColor: ThemeColor
-                                  }}
-                                />
-                                <View style={[styles.imageContainer]}>
-                                  <Image
-                                    source={require("../../assets/image-place-holder.png")}
-                                    style={styles.image}
-                                  />
-                                </View>
-                                <View style={[styles.textContainer]}>
-                                  <Text
-                                    style={[styles.title]}
-                                    numberOfLines={1}
-                                  >
-                                    {item.Name}
-                                  </Text>
-                                </View>
-                              </TouchableOpacity>
-                            );
-                          }}
-                          sliderWidth={sliderWidth}
-                          itemWidth={itemWidthOpportunity}
-                          containerCustomStyle={styles.slider}
-                          contentContainerCustomStyle={
-                            styles.sliderContentContainer
-                          }
-                          layout={"default"}
-                          loop={true}
-                        />
-                      </View>
+                      <Component2
+                        key={"serviceCategories" + result.ID}
+                        result={result}
+                        handlePressCategory={this.handlePressCategory}
+                      />
                     );
                   })
                 : null}
