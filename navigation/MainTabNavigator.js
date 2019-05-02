@@ -11,6 +11,8 @@ import HomeScreen from "../screens/HomeScreen";
 import UserMenuScreen from "../screens/UserMenuScreen";
 import LoginScreen from "../screens/AuthScreen";
 import ServicesScreen from "../screens/ServicesScreen";
+import CustomerDetailScreen from "../screens/CustomerPageScreen/CustomerDetailScreen";
+import CustomerServiceScreen from "../screens/CustomerPageScreen/CustomerServiceScreen";
 // import LinksScreen from "../screens/LinksScreen";
 // import SettingsScreen from "../screens/SettingsScreen";
 // import DepartmentScreen from "../screens/DepartmentScreen";
@@ -90,7 +92,9 @@ const drawer = createDrawerNavigator(
   {
     Home: { screen: tabNavigator },
     Login: { screen: LoginScreen },
-    Service: { screen: ServicesScreen }
+    Service: { screen: ServicesScreen },
+    CustomerDetail: { screen: CustomerDetailScreen },
+    CustomerService: { screen: CustomerServiceScreen }
   },
   {
     contentComponent: SideMenu

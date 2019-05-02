@@ -7,7 +7,13 @@ import {
   SET_USER_UPDATE_FAIL,
   SET_CUSTOMER_UPDATE,
   SET_CUSTOMER_UPDATE_SUCCESS,
-  SET_CUSTOMER_UPDATE_FAIL
+  SET_CUSTOMER_UPDATE_FAIL,
+  GET_CUSTOMER_SERVICE_PREVIVEW,
+  GET_CUSTOMER_SERVICE_PREVIVEW_SUCCESS,
+  GET_CUSTOMER_SERVICE_PREVIVEW_FAIL,
+  GET_SERVICE_PREVIEW_DETAIL_QUESTION,
+  GET_SERVICE_PREVIEW_DETAIL_QUESTION_SUCCESS,
+  GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL
 } from "../../types/customerDetailService";
 
 const INITIAL_STATE = {
@@ -15,7 +21,11 @@ const INITIAL_STATE = {
   customerServiceCountResult: {},
   userUpdateLoading: null,
   userUpdateResult: null,
-  error: ""
+  error: "",
+  customerServicePreviewLoading: true,
+  servicePreviewListResult: [],
+  servicePreviewDetailQuestionLoading: true,
+  servicePreviewDetailQuestionResult: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -30,6 +40,17 @@ export default (state = INITIAL_STATE, action) => {
       };
     case GET_CUSTOMER_SERVICE_COUNT_FAIL:
       return { ...state, customerServiceCountLoading: false, error: "hata" };
+
+    case GET_CUSTOMER_SERVICE_PREVIVEW:
+      return { ...state, customerServicePreviewLoading: true };
+    case GET_CUSTOMER_SERVICE_PREVIVEW_SUCCESS:
+      return {
+        ...state,
+        customerServicePreviewLoading: false,
+        servicePreviewListResult: action.payload.data
+      };
+    case GET_CUSTOMER_SERVICE_PREVIVEW_FAIL:
+      return { ...state, customerServicePreviewLoading: false };
 
     case SET_USER_UPDATE:
       return { ...state, userUpdateLoading: true, userUpdateResult: undefined };
@@ -68,6 +89,17 @@ export default (state = INITIAL_STATE, action) => {
         userUpdateResult: false,
         error: "hata"
       };
+
+    case GET_SERVICE_PREVIEW_DETAIL_QUESTION:
+      return { ...state, servicePreviewDetailQuestionLoading: true };
+    case GET_SERVICE_PREVIEW_DETAIL_QUESTION_SUCCESS:
+      return {
+        ...state,
+        servicePreviewDetailQuestionLoading: false,
+        servicePreviewDetailQuestionResult: action.payload.data
+      };
+    case GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL:
+      return { ...state, servicePreviewDetailQuestionLoading: false };
     default:
       return { ...state };
   }

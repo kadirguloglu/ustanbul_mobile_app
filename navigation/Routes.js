@@ -19,6 +19,13 @@ const routesCustomer = [
   },
 
   {
+    to: "CustomerService",
+    name: "Hizmetlerim",
+    permission: [],
+    IOSonly: false
+  },
+
+  {
     to: "ContactPage",
     name: "Bize Ulaş",
     permission: [],

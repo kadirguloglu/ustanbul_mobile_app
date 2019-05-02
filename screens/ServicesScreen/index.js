@@ -1,14 +1,13 @@
 import React, { Component } from "react";
 import {
-  StyleSheet,
   TouchableOpacity,
   View,
   Image,
   FlatList,
   TouchableWithoutFeedback,
-  PermissionsAndroid,
   TouchableHighlight,
-  WebView
+  WebView,
+  Dimensions
 } from "react-native";
 import {
   Icon,
@@ -37,37 +36,18 @@ import {
 } from "../../src/actions/serviceService";
 import { IsValidDate, ThemeColor } from "../../src/functions";
 import moment from "moment";
-import metrics from "../../config/metrics";
 import { ViewPager } from "rn-viewpager";
 import Modal from "react-native-modal";
 import MyButton from "../../components/MyButton";
-import { Permissions, ImagePicker, MapView, Marker } from "expo";
+import { Permissions, ImagePicker, MapView } from "expo";
+import Geocoder from "react-native-geocoding";
+import styles from "./index-css";
+
+Geocoder.init("AIzaSyArGwRN6xy2dTu7Nv2eapfvN2ghQgH_E7o"); // use a valid API key
+
+const { width, height } = Dimensions.get("window");
 
 let PAGES = [];
-const customStyles = {
-  stepIndicatorSize: 25,
-  currentStepIndicatorSize: 30,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: "#fe7013",
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: "#fe7013",
-  stepStrokeUnFinishedColor: "#aaaaaa",
-  separatorFinishedColor: "#fe7013",
-  separatorUnFinishedColor: "#aaaaaa",
-  stepIndicatorFinishedColor: "#fe7013",
-  stepIndicatorUnFinishedColor: "#ffffff",
-  stepIndicatorCurrentColor: "#ffffff",
-  stepIndicatorLabelFontSize: 13,
-  currentStepIndicatorLabelFontSize: 13,
-  stepIndicatorLabelCurrentColor: "#fe7013",
-  stepIndicatorLabelFinishedColor: "#ffffff",
-  stepIndicatorLabelUnFinishedColor: "#aaaaaa",
-  labelColor: "#999999",
-  labelSize: 13,
-  currentStepLabelColor: "#fe7013"
-};
-const SERVICE_IMAGE_WIDTH = metrics.DEVICE_WIDTH / 3;
 requestCameraPermission = async () => {
   let camera = await Permissions.askAsync(Permissions.CAMERA);
   let camera_roll = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -78,21 +58,15 @@ requestCameraPermission = async () => {
   }
   return true;
 };
-const options = {
-  title: "Resim Seçiniz",
-  customButtons: [
-    // { name: 'fb', title: 'Choose Photo from Facebook' },
-  ],
-  storageOptions: {
-    skipBackup: true,
-    path: "images"
-  }
-};
 let contractIndex = -1;
 class ServicesScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      view1: 10,
+      view2: 10,
+      view3: 10,
+      view4: 10,
       currentPosition: 0,
       serviceCreateDataResult: [],
       serviceCreateDataLoading: true,
@@ -555,48 +529,58 @@ class ServicesScreen extends Component {
       this.viewPager.setPage(3);
       return;
     }
-    this.state.serviceParameter.Questions.map(item => {
+
+    let errorServiceParameter = false;
+    let errorToastMessage;
+    let setPageNumber = 0;
+
+    for (let ix = 0; ix < this.state.serviceParameter.Questions.length; ix++) {
+      const item = this.state.serviceParameter.Questions[ix];
       if (item.Question.QuestionType == 1) {
         if (item.Question.IsRequired) {
           if (item.Question.QuestionMinValue > item.Answer.length) {
-            Toast.show({
+            errorToastMessage = {
               text: "Cevabınız çok kısa lütfen cevabınızı control ediniz",
               buttonText: "Tamam",
               duration: 2500
-            });
-            this.viewPager.setPage(7);
-            return;
+            };
+            setPageNumber = 7;
+            errorServiceParameter = true;
+            break;
           }
           if (item.Question.QuestionMaxValue < item.Answer.length) {
-            Toast.show({
+            errorToastMessage = {
               text: "Cevabınız çok uzun lütfen cevabınızı control ediniz",
               buttonText: "Tamam",
               duration: 2500
-            });
-            this.viewPager.setPage(7);
-            return;
+            };
+            setPageNumber = 7;
+            errorServiceParameter = true;
+            break;
           }
         }
       }
       if (item.Question.QuestionType == 2) {
         if (item.Question.IsRequired) {
           if (item.Question.QuestionMinValue > parseInt(item.Answer)) {
-            Toast.show({
+            errorToastMessage = {
               text: "Cevabınızı istenilen aralıkta giriniz",
               buttonText: "Tamam",
               duration: 2500
-            });
-            this.viewPager.setPage(7);
-            return;
+            };
+            setPageNumber = 7;
+            errorServiceParameter = true;
+            break;
           }
           if (item.Question.QuestionMaxValue < parseInt(item.Answer)) {
-            Toast.show({
+            errorToastMessage = {
               text: "Cevabınızı istenilen aralıkta giriniz",
               buttonText: "Tamam",
               duration: 2500
-            });
-            this.viewPager.setPage(7);
-            return;
+            };
+            setPageNumber = 7;
+            errorServiceParameter = true;
+            break;
           }
         }
       }
@@ -608,26 +592,28 @@ class ServicesScreen extends Component {
             item.Answer
           );
           if (!dateResult) {
-            Toast.show({
+            errorToastMessage = {
               text: "Tarih seçimi hatalı. Lütfen kontrol ediniz",
               buttonText: "Tamam",
               duration: 2500
-            });
-            this.viewPager.setPage(7);
-            return;
+            };
+            setPageNumber = 7;
+            errorServiceParameter = true;
+            break;
           }
         }
       }
       if (item.Question.QuestionType == 4) {
         if (item.Question.IsRequired) {
           if (item.AnswerID == -1) {
-            Toast.show({
+            errorToastMessage = {
               text: "Zorunlu seçmeli soru cevaplanmamış",
               buttonText: "Tamam",
               duration: 2500
-            });
-            this.viewPager.setPage(7);
-            return;
+            };
+            setPageNumber = 7;
+            errorServiceParameter = true;
+            break;
           }
         }
       }
@@ -643,7 +629,12 @@ class ServicesScreen extends Component {
         ]
       };
       postedData.Questions.push(quest);
-    });
+    }
+    if (errorServiceParameter) {
+      Toast.show(errorToastMessage);
+      this.viewPager.setPage(setPageNumber);
+      return;
+    }
     if (
       postedData.AddressDescription.length > 450 ||
       postedData.AddressDescription.length < 20
@@ -656,7 +647,10 @@ class ServicesScreen extends Component {
       this.viewPager.setPage(6);
       return;
     }
-    this.props.createService(this.state.serviceParameter, postedData);
+    this.props
+      .createService(this.state.serviceParameter, postedData, 1)
+      .then(({ payload }) => {})
+      .catch(e => {});
   };
   renderViewPagerPage = page => {
     const { serviceCreateDataResult } = this.props.serviceServiceResponse;
@@ -902,15 +896,18 @@ class ServicesScreen extends Component {
         );
       case 6:
         return (
-          <View key={"renderPage" + 6} style={styles.pageTopView}>
-            <View>
+          <View key={"renderPage" + 6}>
+            <View
+              onLayout={event => this._handleViewHeightSetState(event, "view1")}
+            >
               <Text style={styles.QuestionTitle}>Adresiniz</Text>
             </View>
-            <View>
+            <View
+              onLayout={event => this._handleViewHeightSetState(event, "view2")}
+            >
               <Item rounded>
-                <Textarea
+                <Input
                   placeholder="Adresiniz"
-                  rows={3}
                   onChangeText={value =>
                     this.setState({
                       serviceParameter: {
@@ -922,39 +919,66 @@ class ServicesScreen extends Component {
                   value={this.state.serviceParameter.AddressDescription}
                 />
               </Item>
-              <MapView
-                style={{ width: 300, height: 300 }}
-                initialRegion={{
-                  latitude: this.state.currentLocation.latitude,
-                  longitude: this.state.currentLocation.longitude,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421
-                }}
-                onPress={this._handleMapPress}
-              >
-                {/* {this.state.currentLocation ? (
-                  <Marker
-                    coordinate={{
-                      latitude: this.state.currentLocation.latitude,
-                      longitude: this.state.currentLocation.longitude
-                    }}
-                  />
-                ) : null} */}
-              </MapView>
             </View>
-            <View>
+            <View
+              onLayout={event => this._handleViewHeightSetState(event, "view3")}
+            >
               <Text
                 style={
-                  this.state.serviceParameter.AddressDescription.length > 450 &&
-                  this.state.serviceParameter.AddressDescription.length < 20
+                  this.state.serviceParameter.AddressDescription.length > 20 &&
+                  this.state.serviceParameter.AddressDescription.length < 451
                     ? styles.help_block_success
                     : styles.help_block_error
                 }
               >
-                {this.state.serviceParameter.AddressDescription.length} / 450
+                ** {this.state.serviceParameter.AddressDescription.length} / 450{" "}
               </Text>
             </View>
-            <View style={styles.buttonContainer}>
+            {this._handleCheckLocationPermission() ? (
+              <View
+                style={{
+                  flex: 1,
+                  height:
+                    height -
+                    (this.state.view1 +
+                      this.state.view2 +
+                      this.state.view3 +
+                      this.state.view4)
+                }}
+              >
+                <MapView
+                  style={{ flex: 1 }}
+                  initialRegion={{
+                    latitude: this.state.currentLocation.latitude,
+                    longitude: this.state.currentLocation.longitude,
+                    latitudeDelta: 0.005,
+                    longitudeDelta:
+                      0.005 *
+                      (width /
+                        (height -
+                          (this.state.view1 +
+                            this.state.view2 +
+                            this.state.view3 +
+                            this.state.view4)))
+                  }}
+                  onPress={this._handleMapPress}
+                >
+                  {this.state.currentLocation !== null &&
+                  this.state.currentLocation !== undefined ? (
+                    <MapView.Marker
+                      coordinate={{
+                        latitude: this.state.currentLocation.latitude,
+                        longitude: this.state.currentLocation.longitude
+                      }}
+                    />
+                  ) : null}
+                </MapView>
+              </View>
+            ) : null}
+
+            <View
+              onLayout={event => this._handleViewHeightSetState(event, "view4")}
+            >
               <TouchableHighlight
                 onPress={() => this.viewPager.setPage(7)}
                 style={styles.button}
@@ -985,10 +1009,57 @@ class ServicesScreen extends Component {
     }
   };
 
-  _handleMapPress = e => {
+  _handleViewHeightSetState = (event, view) => {
+    this.setState({
+      [view]:
+        event.nativeEvent.layout.height > 0
+          ? event.nativeEvent.layout.height
+          : 50
+    });
+  };
+
+  _handleCheckLocationPermission = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status === "granted") {
+      return true;
+    }
+    return false;
+  };
+
+  _handleGetAddressWithGeocode = async (lat, long) => {
+    Geocoder.from(lat, long)
+      .then(json => {
+        if (json.status === "OK") {
+          this.setState({
+            currentAddress: json
+          });
+          this.setState({
+            serviceParameter: {
+              ...this.state.serviceParameter,
+              AddressDescription: this.state.currentAddress.results[0]
+                .formatted_address
+            }
+          });
+        } else {
+          Toast.show({
+            text:
+              "Adres için konumunuza ulaşılamadı. İnternet bağlantınızı kontrol edin veya tekrar deneyiniz.",
+            buttonText: "Tamam",
+            duration: 2500
+          });
+        }
+      })
+      .catch(error => console.warn(error));
+  };
+
+  _handleMapPress = async e => {
     this.setState({
       currentLocation: e.nativeEvent.coordinate
     });
+    this._handleGetAddressWithGeocode(
+      e.nativeEvent.coordinate.latitude,
+      e.nativeEvent.coordinate.longitude
+    );
   };
 
   handleCameraRool = async index => {
@@ -1039,16 +1110,20 @@ class ServicesScreen extends Component {
       </TouchableWithoutFeedback>
     );
   };
+
   async componentDidMount() {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status === "granted") {
       this.watchID = navigator.geolocation.watchPosition(
-        position => {
+        async position => {
           this.setState({
-            currentLocation: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            }
+            currentLocation: position.coords
+          });
+          this.setState({
+            currentAddress: await this._handleGetAddressWithGeocode(
+              position.coords.latitude,
+              position.coords.longitude
+            )
           });
           navigator.geolocation.clearWatch(this.watchID);
         },
@@ -1176,61 +1251,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(ServicesScreen);
-
-const styles = StyleSheet.create({
-  textCenter: {
-    textAlign: "center"
-  },
-  help_block_success: {
-    fontSize: 12,
-    textAlign: "right",
-    color: "green"
-  },
-  help_block_error: {
-    fontSize: 12,
-    textAlign: "right",
-    color: "red"
-  },
-  serviceImage: {
-    width: SERVICE_IMAGE_WIDTH,
-    height: SERVICE_IMAGE_WIDTH
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff"
-  },
-  stepIndicator: {
-    marginVertical: 50
-  },
-  page: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  QuestionTitle: {
-    fontSize: 18,
-    textAlign: "center",
-    padding: 20
-  },
-  pageTopView: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-start"
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-end"
-  },
-  button: {
-    backgroundColor: "#59aae1",
-    height: 40,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  buttonText: {
-    fontSize: 21,
-    color: "white"
-  }
-});

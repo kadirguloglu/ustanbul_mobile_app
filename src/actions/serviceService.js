@@ -4,7 +4,11 @@ import {
   SET_SERVICE_CREATE,
   SET_SERVICE_CREATE_URL,
   SET_USER_CHAT_MESSAGE_OLD,
-  SET_USER_CHAT_MESSAGE_OLD_URL
+  SET_USER_CHAT_MESSAGE_OLD_URL,
+  GET_PROPOSAL_DETAIL,
+  GET_PROPOSAL_DETAIL_URL,
+  UPDATE_PROPOSAL_PRICE,
+  UPDATE_PROPOSAL_PRICE_URL
 } from "../types/serviceService";
 
 export function serviceCreateData(categoryid, siteid, langid) {
@@ -18,7 +22,8 @@ export function serviceCreateData(categoryid, siteid, langid) {
   };
 }
 
-export function createService(serviceData, postedData) {
+export function createService(serviceData, postedData, langid) {
+  postedData.LangID = langid;
   let bodyFormData = new FormData();
   bodyFormData.append("service", JSON.stringify(postedData));
   serviceData.serviceImages.map((item, index) => {
@@ -53,6 +58,30 @@ export function userChatMessageOld(openingUserID) {
         url:
           SET_USER_CHAT_MESSAGE_OLD_URL +
           `/${states.activeUser.ID}/${openingUserID}`
+      }
+    }
+  };
+}
+
+export function proposalDetailData(proposalID) {
+  return {
+    type: GET_PROPOSAL_DETAIL,
+    payload: {
+      request: {
+        url: GET_PROPOSAL_DETAIL_URL + `/${proposalID}`
+      }
+    }
+  };
+}
+
+export function updateServiceProposal(price, proposalId) {
+  return {
+    type: UPDATE_PROPOSAL_PRICE,
+    payload: {
+      request: {
+        url: UPDATE_PROPOSAL_PRICE_URL,
+        data: { newPrice: price, Id: proposalId },
+        method: "POST"
       }
     }
   };

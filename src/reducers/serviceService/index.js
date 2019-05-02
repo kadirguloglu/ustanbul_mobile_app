@@ -7,7 +7,13 @@ import {
   SET_SERVICE_CREATE_FAIL,
   SET_USER_CHAT_MESSAGE_OLD,
   SET_USER_CHAT_MESSAGE_OLD_SUCCESS,
-  SET_USER_CHAT_MESSAGE_OLD_FAIL
+  SET_USER_CHAT_MESSAGE_OLD_FAIL,
+  UPDATE_PROPOSAL_PRICE,
+  UPDATE_PROPOSAL_PRICE_SUCCESS,
+  UPDATE_PROPOSAL_PRICE_FAIL,
+  GET_PROPOSAL_DETAIL,
+  GET_PROPOSAL_DETAIL_SUCCESS,
+  GET_PROPOSAL_DETAIL_FAIL
 } from "../../types/serviceService";
 
 const INITIAL_STATE = {
@@ -59,6 +65,28 @@ export default (state = INITIAL_STATE, action) => {
         oldChatMessageLoading: false,
         oldChatMessageDataState: false
       };
+
+    case GET_PROPOSAL_DETAIL:
+      return { ...state, proposalDetailLoading: true };
+    case GET_PROPOSAL_DETAIL_SUCCESS:
+      return {
+        ...state,
+        proposalDetailLoading: false,
+        proposalDetailResult: action.payload.data
+      };
+    case GET_PROPOSAL_DETAIL_FAIL:
+      return { ...state, proposalDetailLoading: false };
+
+    case UPDATE_PROPOSAL_PRICE:
+      return { ...state, updateServiceProposalLoading: true };
+    case UPDATE_PROPOSAL_PRICE_SUCCESS:
+      return {
+        ...state,
+        updateServiceProposalLoading: false,
+        updateServiceProposalResult: action.payload.data
+      };
+    case UPDATE_PROPOSAL_PRICE_FAIL:
+      return { ...state, updateServiceProposalLoading: false };
     default:
       return { ...state };
   }
