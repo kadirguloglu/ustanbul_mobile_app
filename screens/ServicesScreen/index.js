@@ -1,33 +1,22 @@
 import React, { Component } from "react";
 import {
-  TouchableOpacity,
   View,
   Image,
   FlatList,
   TouchableWithoutFeedback,
-  TouchableHighlight,
-  WebView,
-  Dimensions
+  WebView
 } from "react-native";
 import {
   Icon,
   Button,
   Toast,
   Root,
-  Text,
-  Input,
-  Item,
   Header,
   Left,
   Right,
   Body,
   Title,
-  CheckBox,
-  ListItem,
-  Spinner,
-  Textarea,
-  DatePicker,
-  Picker
+  Spinner
 } from "native-base";
 import { connect } from "react-redux";
 import {
@@ -39,15 +28,15 @@ import moment from "moment";
 import { ViewPager } from "rn-viewpager";
 import Modal from "react-native-modal";
 import MyButton from "../../components/MyButton";
-import { Permissions, ImagePicker, MapView } from "expo";
+import { Permissions, ImagePicker } from "expo";
 import Geocoder from "react-native-geocoding";
 import styles from "./index-css";
+import ViewPagerContent from "./Forms/ViewPagerContent";
 
 Geocoder.init("AIzaSyArGwRN6xy2dTu7Nv2eapfvN2ghQgH_E7o"); // use a valid API key
 
-const { width, height } = Dimensions.get("window");
-
 let PAGES = [];
+
 requestCameraPermission = async () => {
   let camera = await Permissions.askAsync(Permissions.CAMERA);
   let camera_roll = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -58,7 +47,9 @@ requestCameraPermission = async () => {
   }
   return true;
 };
+
 let contractIndex = -1;
+
 class ServicesScreen extends Component {
   constructor(props) {
     super(props);
@@ -112,6 +103,7 @@ class ServicesScreen extends Component {
       }
     };
   }
+
   async componentWillMount() {
     PAGES = [];
     const { navigation } = this.props;
@@ -174,43 +166,18 @@ class ServicesScreen extends Component {
       this.setState({ dataLoading: false });
     });
   }
+
   handlerContactCheckAndCloseModal = () => {
     this.setState({ modalIsVisible: false });
     this.handleSetStateContract(contractIndex, true);
   };
+
   handleContractOpen = (contract, index) => {
     contractIndex = index;
     this.setState({ modalContent: contract.Description });
     this.setState({ modalIsVisible: true });
   };
-  handleRenderContracts = contracts => {
-    return contracts.map((item, index) => {
-      if (this.state.serviceParameter.Contracts[index]) {
-        return (
-          <ListItem key={"contract" + item.ID}>
-            <CheckBox
-              checked={this.state.serviceParameter.Contracts[index].Choose}
-              onPress={() =>
-                this.handleSetStateContract(
-                  index,
-                  !this.state.serviceParameter.Contracts[index].Choose
-                )
-              }
-            />
-            <Body>
-              <TouchableOpacity
-                onPress={() => this.handleContractOpen(item, index)}
-              >
-                <Text>{item.PageName}</Text>
-              </TouchableOpacity>
-            </Body>
-          </ListItem>
-        );
-      } else {
-        return null;
-      }
-    });
-  };
+
   handleSetStateContract = (i, value) => {
     let cont = this.state.serviceParameter.Contracts;
     cont[i].Choose = value;
@@ -218,14 +185,48 @@ class ServicesScreen extends Component {
       serviceParameter: { ...this.state.serviceParameter, Contacts: cont }
     });
   };
-  handleSetStateQuestion = (i, value, valueid) => {
+
+  handleSetStateQuestion = (
+    i,
+    value,
+    valueId,
+    checked,
+    questionType,
+    answerIndex
+  ) => {
     let quest = this.state.serviceParameter.Questions;
+    if (questionType) {
+      if (questionType === 5) {
+        let isAdded = true;
+        if (!quest[i].Answers) {
+          quest[i].Answers = [];
+        }
+        if (quest[i].Answers) {
+          for (let p = 0; p < quest[i].Answers.length; p++) {
+            const item = quest[i].Answers[p];
+            if (item.AnswerIndex === answerIndex) {
+              quest[i].Answers[p].Checked = checked;
+              isAdded = false;
+            }
+          }
+        }
+        if (isAdded) {
+          quest[i].Answers.push({
+            AnswerIndex: answerIndex,
+            Checked: checked,
+            Answer: value,
+            AnswerID: valueId
+          });
+        }
+      }
+    }
     quest[i].Answer = value;
-    quest[i].AnswerID = valueid;
+    quest[i].AnswerID = valueId;
     this.setState({
       serviceParameter: { ...this.state.serviceParameter, Questions: quest }
     });
   };
+
   handleNumericMaxMinRegex = (max, min, value) => {
     value = parseInt(value);
     var rgx = /[0-9]/g;
@@ -235,6 +236,7 @@ class ServicesScreen extends Component {
     }
     return false;
   };
+
   handleDatePickerMaxMinValue = (max, min, value) => {
     if (max) {
       if (IsValidDate(max)) {
@@ -252,205 +254,7 @@ class ServicesScreen extends Component {
     }
     return true;
   };
-  handleServiceQuestion = questIndex => {
-    const item = this.props.serviceServiceResponse.serviceCreateDataResult
-      .Questions[questIndex - 7];
-    const i = questIndex - 7;
-    if (item.QuestionType == 1) {
-      return (
-        <View key={"renderPage" + questIndex} style={styles.pageTopView}>
-          <View>
-            <Text style={styles.QuestionTitle}>{item.Question}</Text>
-          </View>
-          <Item rounded>
-            <Input
-              onChangeText={value =>
-                this.handleSetStateQuestion(i, value, item.Answers[0].ID)
-              }
-              value={this.state.serviceParameter.Questions[i].Answer}
-            />
-          </Item>
-          <View>
-            <Text
-              style={
-                this.state.serviceParameter.Questions[i].Answer.length >
-                  item.QuestionMinValue &&
-                this.state.serviceParameter.Questions[i].Answer.length <
-                  item.QuestionMaxValue
-                  ? styles.help_block_success
-                  : styles.help_block_error
-              }
-            >
-              {item.IsRequired ? "** " : ""}
-              {this.state.serviceParameter.Questions[i].Answer.length} /{" "}
-              {item.QuestionMaxValue}{" "}
-            </Text>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableHighlight
-              onPress={() => this.viewPager.setPage(questIndex + 1)}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>İleri</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      );
-    }
-    if (item.QuestionType == 2) {
-      return (
-        <View key={"renderPage" + questIndex} style={styles.pageTopView}>
-          <View>
-            <Text style={styles.QuestionTitle}>{item.Question}</Text>
-          </View>
-          <View>
-            <Item rounded>
-              <Input
-                onChangeText={value =>
-                  this.handleSetStateQuestion(i, value, item.Answers[0].ID)
-                }
-                value={this.state.serviceParameter.Questions[i].Answer}
-              />
-            </Item>
-          </View>
-          <View>
-            {this.handleNumericMaxMinRegex(
-              item.QuestionMaxValue,
-              item.QuestionMinValue,
-              this.state.serviceParameter.Questions[i].Answer
-            ) ? (
-              <Text />
-            ) : (
-              <Text style={styles.help_block_error}>
-                {item.IsRequired ? "** " : ""}Lütfen geçerli bir değer giriniz.
-                En fazla : {item.QuestionMaxValue}, En az :{" "}
-                {item.QuestionMinValue}
-              </Text>
-            )}
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableHighlight
-              onPress={() => this.viewPager.setPage(questIndex + 1)}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>İleri</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      );
-    }
-    if (item.QuestionType == 3) {
-      return (
-        <View key={"renderPage" + questIndex} style={styles.pageTopView}>
-          <View>
-            <Text style={styles.QuestionTitle}>{item.Question}</Text>
-          </View>
-          <View>
-            <Item rounded>
-              <DatePicker
-                defaultDate={new Date()}
-                locale={"tr"}
-                timeZoneOffsetInMinutes={undefined}
-                modalTransparent={false}
-                animationType={"fade"}
-                androidMode={"default"}
-                textStyle={{ color: "green" }}
-                placeHolderTextStyle={{ color: "#d3d3d3" }}
-                onDateChange={value =>
-                  this.handleSetStateQuestion(i, value, item.Answers[0].ID)
-                }
-                value={this.state.serviceParameter.Questions[i].Answer}
-              />
-            </Item>
-          </View>
-          <View>
-            {this.handleDatePickerMaxMinValue(
-              item.QuestionMaxValue,
-              item.QuestionMinValue,
-              this.state.serviceParameter.Questions[i].Answer
-            ) ? (
-              <Text />
-            ) : (
-              <Text style={styles.help_block_error}>
-                {item.IsRequired ? "** " : ""}Lütfen geçerli bir değer giriniz.
-                En fazla : {item.QuestionMaxValue}, En az :{" "}
-                {item.QuestionMinValue}
-              </Text>
-            )}
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableHighlight
-              onPress={() => this.viewPager.setPage(questIndex + 1)}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>İleri</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      );
-    }
-    if (item.QuestionType == 4) {
-      return (
-        <View key={"renderPage" + questIndex} style={styles.pageTopView}>
-          <View>
-            <Text style={styles.QuestionTitle}>{item.Question}</Text>
-          </View>
-          <View>
-            <Item rounded>
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="ios-arrow-down-outline" />}
-                placeholder={item.Question}
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                style={{ width: undefined }}
-                selectedValue={
-                  this.state.serviceParameter.Questions[i].Answer +
-                  "~" +
-                  this.state.serviceParameter.Questions[i].AnswerID
-                }
-                onValueChange={value =>
-                  this.handleSetStateQuestion(
-                    i,
-                    value.split("~")[0],
-                    value.split("~")[1]
-                  )
-                }
-              >
-                {item.Answers.map(ans => {
-                  return (
-                    <Picker.Item
-                      key={"dropdown" + ans.ID}
-                      label={ans.AnswerTextOrPlaceHolder}
-                      value={ans.AnswerTextOrPlaceHolder + "~" + ans.ID}
-                    />
-                  );
-                })}
-              </Picker>
-            </Item>
-          </View>
-          <View>
-            {this.state.serviceParameter.Questions[i].Answer ? (
-              <Text />
-            ) : (
-              <Text style={styles.help_block_error}>
-                {item.IsRequired ? "** " : ""}Lütfen bir seçim yapınız
-              </Text>
-            )}
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableHighlight
-              onPress={() => this.viewPager.setPage(questIndex + 1)}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>İleri</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      );
-    }
-    return null;
-  };
+
   handleServiceImageList = () => {
     return (
       <FlatList
@@ -464,6 +268,7 @@ class ServicesScreen extends Component {
       />
     );
   };
+
   onRegionChange = (region, lastLat, lastLong) => {
     //alert(JSON.stringify(arguments));
   };
@@ -536,6 +341,7 @@ class ServicesScreen extends Component {
 
     for (let ix = 0; ix < this.state.serviceParameter.Questions.length; ix++) {
       const item = this.state.serviceParameter.Questions[ix];
+      let answers = [];
       if (item.Question.QuestionType == 1) {
         if (item.Question.IsRequired) {
           if (item.Question.QuestionMinValue > item.Answer.length) {
@@ -559,6 +365,11 @@ class ServicesScreen extends Component {
             break;
           }
         }
+        answers.push({
+          ID: item.AnswerID,
+          Answer: item.Answer,
+          AnswerTextOrPlaceHolder: item.Answer
+        });
       }
       if (item.Question.QuestionType == 2) {
         if (item.Question.IsRequired) {
@@ -583,6 +394,11 @@ class ServicesScreen extends Component {
             break;
           }
         }
+        answers.push({
+          ID: item.AnswerID,
+          Answer: item.Answer,
+          AnswerTextOrPlaceHolder: item.Answer
+        });
       }
       if (item.Question.QuestionType == 3) {
         if (item.Question.IsRequired) {
@@ -602,6 +418,11 @@ class ServicesScreen extends Component {
             break;
           }
         }
+        answers.push({
+          ID: item.AnswerID,
+          Answer: item.Answer,
+          AnswerTextOrPlaceHolder: item.Answer
+        });
       }
       if (item.Question.QuestionType == 4) {
         if (item.Question.IsRequired) {
@@ -616,17 +437,66 @@ class ServicesScreen extends Component {
             break;
           }
         }
+        answers.push({
+          ID: item.AnswerID,
+          Answer: item.Answer,
+          AnswerTextOrPlaceHolder: item.Answer
+        });
+      }
+      if (item.Question.QuestionType == 5) {
+        let checkedCount = 0;
+        if (item.Answers) {
+          for (let mn = 0; mn < item.Answers.length; mn++) {
+            const checkQuestion = item.Answers[mn];
+            if (checkQuestion.Checked) {
+              checkedCount++;
+            }
+          }
+        }
+        if (item.Question.IsRequired) {
+          if (checkedCount === 0) {
+            errorToastMessage = {
+              text: `${item.Question.Question} sorusu boş geçilemez`,
+              buttonText: "Tamam",
+              duration: 2500
+            };
+            setPageNumber = 7;
+            errorServiceParameter = true;
+            break;
+          }
+        }
+        if (
+          checkedCount < item.Question.QuestionMinValue ||
+          checkedCount > item.Question.QuestionMaxValue
+        ) {
+          errorToastMessage = {
+            text: `${item.Question.Question} sorusu için en fazla ${
+              item.Question.QuestionMaxValue
+            } en az ${item.Question.QuestionMinValue} seçim yapmalısınız`,
+            buttonText: "Tamam",
+            duration: 2500
+          };
+          setPageNumber = 7;
+          errorServiceParameter = true;
+          break;
+        }
+      }
+      if (item.Answers) {
+        for (let mn = 0; mn < item.Answers.length; mn++) {
+          const checkQuestion = item.Answers[mn];
+          if (checkQuestion.Checked) { 
+            answers.push({
+              ID: checkQuestion.AnswerID,
+              Answer: checkQuestion.Answer,
+              AnswerTextOrPlaceHolder: checkQuestion.Answer
+            });
+          }
+        }
       }
       let quest = {
         ID: item.Question.ID,
         Question: item.Question.Question,
-        Answers: [
-          {
-            ID: item.AnswerID,
-            Answer: item.Answer,
-            AnswerTextOrPlaceHolder: item.Answer
-          }
-        ]
+        Answers: answers
       };
       postedData.Questions.push(quest);
     }
@@ -647,366 +517,62 @@ class ServicesScreen extends Component {
       this.viewPager.setPage(6);
       return;
     }
-    this.props
-      .createService(this.state.serviceParameter, postedData, 1)
-      .then(({ payload }) => {})
-      .catch(e => {});
+    // this.props
+    //   .createService(this.state.serviceParameter, postedData, 1)
+    //   .then(({ payload }) => {})
+    //   .catch(e => {});
   };
-  renderViewPagerPage = page => {
-    const { serviceCreateDataResult } = this.props.serviceServiceResponse;
-    switch (page) {
-      case 0:
-        return (
-          <View key={"renderPage" + 0} style={styles.pageTopView}>
-            <Text style={styles.QuestionTitle}>
-              Sizlere daha iyi ve guvenilir hizmet verebilmek adina sözleşmeleri
-              okuyunuz.
-            </Text>
-            {this.handleRenderContracts(serviceCreateDataResult.CustomPages)}
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() => this.viewPager.setPage(1)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        );
-      case 1:
-        return (
-          <View key={"renderPage" + 1} style={styles.pageTopView}>
-            <View>
-              <Text style={styles.QuestionTitle}>Hizmet Başlığı</Text>
-            </View>
-            <View>
-              <Item rounded>
-                <Input
-                  placeholder="Hizmet Başlığı"
-                  onChangeText={value =>
-                    this.setState({
-                      serviceParameter: {
-                        ...this.state.serviceParameter,
-                        Title: value
-                      }
-                    })
-                  }
-                  value={this.state.serviceParameter.Title}
-                />
-              </Item>
-            </View>
-            <View>
-              <Text
-                style={
-                  this.state.serviceParameter.Title.length > 10 &&
-                  this.state.serviceParameter.Title.length < 31
-                    ? styles.help_block_success
-                    : styles.help_block_error
-                }
-              >
-                ** {this.state.serviceParameter.Title.length} / 30{" "}
-              </Text>
-            </View>
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() => this.viewPager.setPage(2)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        );
-      case 2:
-        return (
-          <View key={"renderPage" + 2} style={styles.pageTopView}>
-            <View>
-              <Text style={styles.QuestionTitle}>Hizmet Notu</Text>
-            </View>
-            <View>
-              <Item rounded>
-                <Textarea
-                  placeholder="Hizmet Notu"
-                  rows={5}
-                  onChangeText={value =>
-                    this.setState({
-                      serviceParameter: {
-                        ...this.state.serviceParameter,
-                        Description: value
-                      }
-                    })
-                  }
-                  value={this.state.serviceParameter.Description}
-                />
-              </Item>
-            </View>
-            <View>
-              <Text
-                style={
-                  this.state.serviceParameter.Description.length > 50 &&
-                  this.state.serviceParameter.Description.length < 451
-                    ? styles.help_block_success
-                    : styles.help_block_error
-                }
-              >
-                ** {this.state.serviceParameter.Description.length} / 450{" "}
-              </Text>
-            </View>
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() => this.viewPager.setPage(3)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        );
-      case 3:
-        return (
-          <View key={"renderPage" + 3} style={styles.pageTopView}>
-            <View>
-              <Text style={styles.QuestionTitle}>
-                Hizmetiniz ile ilgili gelismelerden nasil haberdar olmak
-                istersiniz?
-              </Text>
-            </View>
-            <View>
-              <ListItem
-                onPress={() =>
-                  this.setState({
-                    serviceParameter: {
-                      ...this.state.serviceParameter,
-                      SmsNotification: !this.state.serviceParameter
-                        .SmsNotification
-                    }
-                  })
-                }
-              >
-                <CheckBox
-                  checked={this.state.serviceParameter.SmsNotification}
-                />
-                <Body>
-                  <Text>SMS</Text>
-                </Body>
-              </ListItem>
-              <ListItem
-                onPress={() =>
-                  this.setState({
-                    serviceParameter: {
-                      ...this.state.serviceParameter,
-                      EmailNotification: !this.state.serviceParameter
-                        .EmailNotification
-                    }
-                  })
-                }
-              >
-                <CheckBox
-                  checked={this.state.serviceParameter.EmailNotification}
-                />
-                <Body>
-                  <Text>Email</Text>
-                </Body>
-              </ListItem>
-            </View>
-            {this.state.serviceParameter.EmailNotification ||
-            this.state.serviceParameter.SmsNotification ? null : (
-              <View>
-                <Text style={styles.help_block_error}>
-                  ** En az bir seçim yapiniz
-                </Text>
-              </View>
-            )}
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() => this.viewPager.setPage(4)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        );
-      case 4:
-        return (
-          <View key={"renderPage" + 4} style={styles.pageTopView}>
-            <View>
-              <Text style={styles.QuestionTitle}>
-                Hizmetiniz Ile Ilgili Fotograf Ekleyin
-              </Text>
-            </View>
-            <View>{this.handleServiceImageList()}</View>
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() => this.viewPager.setPage(5)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        );
-      case 5:
-        return (
-          <View key={"renderPage" + 5} style={styles.pageTopView}>
-            <View>
-              <Text style={styles.QuestionTitle}>Hizmetinizi Filtreleyin</Text>
-            </View>
-            <View>
-              <ListItem
-                onPress={() =>
-                  this.setState({
-                    serviceParameter: {
-                      ...this.state.serviceParameter,
-                      IsDiscovery: !this.state.serviceParameter.IsDiscovery
-                    }
-                  })
-                }
-              >
-                <CheckBox checked={this.state.serviceParameter.IsDiscovery} />
-                <Body>
-                  <Text>Kesif Istiyorum</Text>
-                </Body>
-              </ListItem>
-              <ListItem
-                onPress={() =>
-                  this.setState({
-                    serviceParameter: {
-                      ...this.state.serviceParameter,
-                      IsGuarantor: !this.state.serviceParameter.IsGuarantor
-                    }
-                  })
-                }
-              >
-                <CheckBox checked={this.state.serviceParameter.IsGuarantor} />
-                <Body>
-                  <Text>Hizmeti ustalazim garantörlügünde almak istiyorum</Text>
-                </Body>
-              </ListItem>
-            </View>
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() => this.viewPager.setPage(6)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        );
-      case 6:
-        return (
-          <View key={"renderPage" + 6}>
-            <View
-              onLayout={event => this._handleViewHeightSetState(event, "view1")}
-            >
-              <Text style={styles.QuestionTitle}>Adresiniz</Text>
-            </View>
-            <View
-              onLayout={event => this._handleViewHeightSetState(event, "view2")}
-            >
-              <Item rounded>
-                <Input
-                  placeholder="Adresiniz"
-                  onChangeText={value =>
-                    this.setState({
-                      serviceParameter: {
-                        ...this.state.serviceParameter,
-                        AddressDescription: value
-                      }
-                    })
-                  }
-                  value={this.state.serviceParameter.AddressDescription}
-                />
-              </Item>
-            </View>
-            <View
-              onLayout={event => this._handleViewHeightSetState(event, "view3")}
-            >
-              <Text
-                style={
-                  this.state.serviceParameter.AddressDescription.length > 20 &&
-                  this.state.serviceParameter.AddressDescription.length < 451
-                    ? styles.help_block_success
-                    : styles.help_block_error
-                }
-              >
-                ** {this.state.serviceParameter.AddressDescription.length} / 450{" "}
-              </Text>
-            </View>
-            {this._handleCheckLocationPermission() ? (
-              <View
-                style={{
-                  flex: 1,
-                  height:
-                    height -
-                    (this.state.view1 +
-                      this.state.view2 +
-                      this.state.view3 +
-                      this.state.view4)
-                }}
-              >
-                <MapView
-                  style={{ flex: 1 }}
-                  initialRegion={{
-                    latitude: this.state.currentLocation.latitude,
-                    longitude: this.state.currentLocation.longitude,
-                    latitudeDelta: 0.005,
-                    longitudeDelta:
-                      0.005 *
-                      (width /
-                        (height -
-                          (this.state.view1 +
-                            this.state.view2 +
-                            this.state.view3 +
-                            this.state.view4)))
-                  }}
-                  onPress={this._handleMapPress}
-                >
-                  {this.state.currentLocation !== null &&
-                  this.state.currentLocation !== undefined ? (
-                    <MapView.Marker
-                      coordinate={{
-                        latitude: this.state.currentLocation.latitude,
-                        longitude: this.state.currentLocation.longitude
-                      }}
-                    />
-                  ) : null}
-                </MapView>
-              </View>
-            ) : null}
 
-            <View
-              onLayout={event => this._handleViewHeightSetState(event, "view4")}
-            >
-              <TouchableHighlight
-                onPress={() => this.viewPager.setPage(7)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        );
-      default:
-        if (page == PAGES.length - 1) {
-          return (
-            <View
-              key={"renderPage" + (PAGES.length - 1)}
-              style={styles.pageTopView}
-            >
-              {this.props.serviceServiceResponse.serviceCreateLoading ? (
-                <Spinner color="blue" />
-              ) : (
-                <Button onPress={() => this.handleCreateService()}>
-                  <Text>Tamamla</Text>
-                </Button>
-              )}
-            </View>
-          );
-        }
-        return this.handleServiceQuestion(page);
-    }
+  _handleSetState = (property, value) => {
+    this.setState({
+      serviceParameter: {
+        ...this.state.serviceParameter,
+        [property]: value
+      }
+    });
+  };
+
+  renderViewPagerPage = page => {
+    const { serviceServiceResponse } = this.props;
+    const { serviceCreateDataResult } = serviceServiceResponse;
+    const {
+      serviceParameter,
+      view1,
+      view2,
+      view3,
+      view4,
+      currentLocation,
+      locationPermission
+    } = this.state;
+    return (
+      <View key={"ViewPagerContent-" + page}>
+        <ViewPagerContent
+          serviceServiceResponse={serviceServiceResponse}
+          serviceParameter={serviceParameter}
+          viewPager={this.viewPager}
+          styles={styles}
+          _handleSetState={this._handleSetState}
+          handleServiceImageList={this.handleServiceImageList}
+          _handleViewHeightSetState={this._handleViewHeightSetState}
+          locationPermission={locationPermission}
+          view1={view1}
+          view2={view2}
+          view3={view3}
+          view4={view4}
+          currentLocation={currentLocation}
+          _handleMapPress={this._handleMapPress}
+          handleCreateService={this.handleCreateService}
+          handleSetStateQuestion={this.handleSetStateQuestion}
+          handleNumericMaxMinRegex={this.handleNumericMaxMinRegex}
+          handleDatePickerMaxMinValue={this.handleDatePickerMaxMinValue}
+          page={page}
+          PAGES={PAGES}
+          handleSetStateContract={this.handleSetStateContract}
+          handleContractOpen={this.handleContractOpen}
+          serviceCreateDataResult={serviceCreateDataResult}
+        />
+      </View>
+    );
   };
 
   _handleViewHeightSetState = (event, view) => {
@@ -1021,8 +587,10 @@ class ServicesScreen extends Component {
   _handleCheckLocationPermission = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status === "granted") {
+      this.setState({ locationPermission: true });
       return true;
     }
+    this.setState({ locationPermission: false });
     return false;
   };
 
@@ -1100,6 +668,7 @@ class ServicesScreen extends Component {
       });
     }
   };
+
   renderServiceImageState = (item, index) => {
     return (
       <TouchableWithoutFeedback
@@ -1127,8 +696,13 @@ class ServicesScreen extends Component {
           });
           navigator.geolocation.clearWatch(this.watchID);
         },
-        error => {
-          console.log("componentDidMount -> error watchPosition", error);
+        error => { 
+          Toast.show({
+            text:
+              "Adres için konumunuza ulaşılamadı. İnternet bağlantınızı kontrol edin veya tekrar deneyiniz.",
+            buttonText: "Tamam",
+            duration: 2500
+          });
         },
         {
           enableHighAccuracy: true,
@@ -1139,6 +713,7 @@ class ServicesScreen extends Component {
       );
     }
   }
+
   async componentWillUnmount() {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status === "granted") {
@@ -1153,6 +728,7 @@ class ServicesScreen extends Component {
       }
     }
   }
+
   render() {
     const {
       serviceCreateDataResult,
