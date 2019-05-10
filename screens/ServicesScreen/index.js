@@ -16,26 +16,22 @@ import {
   Right,
   Body,
   Title,
-  Spinner
+  Spinner,
+  Text
 } from "native-base";
 import { connect } from "react-redux";
-import {
-  serviceCreateData,
-  createService
-} from "../../src/actions/serviceService";
+import { serviceCreateData } from "../../src/actions/serviceService";
+import { createService } from "../../src/actions/servicePost";
 import { IsValidDate, ThemeColor } from "../../src/functions";
 import moment from "moment";
-import { ViewPager } from "rn-viewpager";
 import Modal from "react-native-modal";
 import MyButton from "../../components/MyButton";
 import { Permissions, ImagePicker } from "expo";
 import Geocoder from "react-native-geocoding";
 import styles from "./index-css";
-import ViewPagerContent from "./Forms/ViewPagerContent";
+import ViewPager from "./Forms/ViewPager";
 
 Geocoder.init("AIzaSyArGwRN6xy2dTu7Nv2eapfvN2ghQgH_E7o"); // use a valid API key
-
-let PAGES = [];
 
 requestCameraPermission = async () => {
   let camera = await Permissions.askAsync(Permissions.CAMERA);
@@ -54,6 +50,8 @@ class ServicesScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      activeViewPagerPage: 0,
+      PAGES: [],
       view1: 10,
       view2: 10,
       view3: 10,
@@ -66,7 +64,7 @@ class ServicesScreen extends Component {
       mapRegion: null,
       lastLat: null,
       lastLong: null,
-      dataLoading: true,
+      dataLoading: false,
       headerPageSwapIcon: null,
       modalIsVisible: false,
       modalContent: "",
@@ -104,12 +102,21 @@ class ServicesScreen extends Component {
     };
   }
 
+  _handleSetInitialState = (property, value) => {
+    this.setState({ [property]: value });
+  };
+
   async componentWillMount() {
-    PAGES = [];
+    let PAGES = [];
     const { navigation } = this.props;
     const itemId = navigation.getParam("CategoryID", -1);
-    this.setState({ CategoryID: itemId });
     let cameraResult = await requestCameraPermission();
+    this.setState({
+      serviceParameter: {
+        ...this.state.serviceParameter,
+        LangID: 1
+      }
+    });
     if (!cameraResult) {
       this.props.navigation.navigate("Home");
     }
@@ -119,7 +126,8 @@ class ServicesScreen extends Component {
       this.setState({
         serviceParameter: {
           ...this.state.serviceParameter,
-          CategoryName: name
+          CategoryName: name,
+          CategoryID: itemId
         }
       });
 
@@ -143,7 +151,8 @@ class ServicesScreen extends Component {
         quest.push({
           Answer: "",
           AnswerID: -1,
-          Question: item
+          Question: item,
+          pageIndex: 7 + i
         });
       });
       this.setState({
@@ -163,6 +172,7 @@ class ServicesScreen extends Component {
           Contracts: contract
         }
       });
+      this.setState({ PAGES });
       this.setState({ dataLoading: false });
     });
   }
@@ -272,256 +282,6 @@ class ServicesScreen extends Component {
   onRegionChange = (region, lastLat, lastLong) => {
     //alert(JSON.stringify(arguments));
   };
-  handleCreateService = () => {
-    let postedData = {
-      CategoryID: this.state.serviceParameter.CategoryID,
-      CategoryName: this.state.serviceParameter.CategoryName,
-      LanguageCode: this.state.serviceParameter.LanguageCode,
-      Title: this.state.serviceParameter.Title,
-      Description: this.state.serviceParameter.Description,
-      EmailNotification: this.state.serviceParameter.EmailNotification,
-      SmsNotification: this.state.serviceParameter.SmsNotification,
-      IsPayDoor: this.state.serviceParameter.IsPayDoor,
-      IsDiscovery: this.state.serviceParameter.IsDiscovery,
-      IsGuarantor: this.state.serviceParameter.IsGuarantor,
-      Income: this.state.serviceParameter.Income,
-      Latitude: this.state.serviceParameter.Latitude,
-      Longitude: this.state.serviceParameter.Longitude,
-      Location: this.state.serviceParameter.Location,
-      AddressDescription: this.state.serviceParameter.AddressDescription,
-      UserID: this.state.serviceParameter.UserID,
-      SiteID: this.state.serviceParameter.SiteID,
-      Questions: []
-    };
-    for (i = 0; i < this.state.serviceParameter.Contracts.length; i++) {
-      if (this.state.serviceParameter.Contracts[i].Choose == false) {
-        Toast.show({
-          text: "Devam edebilmek için sözleşmeleri onaylamalısınız",
-          buttonText: "Tamam",
-          duration: 2500
-        });
-        this.viewPager.setPage(0);
-        return;
-      }
-    }
-    if (postedData.Title.length < 11) {
-      Toast.show({
-        text: "Hizmet başlığını daha açıklayıcı yazınız",
-        buttonText: "Tamam",
-        duration: 2500
-      });
-      this.viewPager.setPage(1);
-      return;
-    }
-    if (postedData.Description.length < 50) {
-      Toast.show({
-        text: "Hizmet notunuzu daha açıklayıcı yazınız",
-        buttonText: "Tamam",
-        duration: 2500
-      });
-      this.viewPager.setPage(2);
-      return;
-    }
-    if (
-      postedData.SmsNotification == false &&
-      postedData.EmailNotification == false
-    ) {
-      Toast.show({
-        text: "En az bir haberleşme yöntemi seçiniz",
-        buttonText: "Tamam",
-        duration: 2500
-      });
-      this.viewPager.setPage(3);
-      return;
-    }
-
-    let errorServiceParameter = false;
-    let errorToastMessage;
-    let setPageNumber = 0;
-
-    for (let ix = 0; ix < this.state.serviceParameter.Questions.length; ix++) {
-      const item = this.state.serviceParameter.Questions[ix];
-      let answers = [];
-      if (item.Question.QuestionType == 1) {
-        if (item.Question.IsRequired) {
-          if (item.Question.QuestionMinValue > item.Answer.length) {
-            errorToastMessage = {
-              text: "Cevabınız çok kısa lütfen cevabınızı control ediniz",
-              buttonText: "Tamam",
-              duration: 2500
-            };
-            setPageNumber = 7;
-            errorServiceParameter = true;
-            break;
-          }
-          if (item.Question.QuestionMaxValue < item.Answer.length) {
-            errorToastMessage = {
-              text: "Cevabınız çok uzun lütfen cevabınızı control ediniz",
-              buttonText: "Tamam",
-              duration: 2500
-            };
-            setPageNumber = 7;
-            errorServiceParameter = true;
-            break;
-          }
-        }
-        answers.push({
-          ID: item.AnswerID,
-          Answer: item.Answer,
-          AnswerTextOrPlaceHolder: item.Answer
-        });
-      }
-      if (item.Question.QuestionType == 2) {
-        if (item.Question.IsRequired) {
-          if (item.Question.QuestionMinValue > parseInt(item.Answer)) {
-            errorToastMessage = {
-              text: "Cevabınızı istenilen aralıkta giriniz",
-              buttonText: "Tamam",
-              duration: 2500
-            };
-            setPageNumber = 7;
-            errorServiceParameter = true;
-            break;
-          }
-          if (item.Question.QuestionMaxValue < parseInt(item.Answer)) {
-            errorToastMessage = {
-              text: "Cevabınızı istenilen aralıkta giriniz",
-              buttonText: "Tamam",
-              duration: 2500
-            };
-            setPageNumber = 7;
-            errorServiceParameter = true;
-            break;
-          }
-        }
-        answers.push({
-          ID: item.AnswerID,
-          Answer: item.Answer,
-          AnswerTextOrPlaceHolder: item.Answer
-        });
-      }
-      if (item.Question.QuestionType == 3) {
-        if (item.Question.IsRequired) {
-          var dateResult = this.handleDatePickerMaxMinValue(
-            item.Question.QuestionMaxValue,
-            item.Question.QuestionMinValue,
-            item.Answer
-          );
-          if (!dateResult) {
-            errorToastMessage = {
-              text: "Tarih seçimi hatalı. Lütfen kontrol ediniz",
-              buttonText: "Tamam",
-              duration: 2500
-            };
-            setPageNumber = 7;
-            errorServiceParameter = true;
-            break;
-          }
-        }
-        answers.push({
-          ID: item.AnswerID,
-          Answer: item.Answer,
-          AnswerTextOrPlaceHolder: item.Answer
-        });
-      }
-      if (item.Question.QuestionType == 4) {
-        if (item.Question.IsRequired) {
-          if (item.AnswerID == -1) {
-            errorToastMessage = {
-              text: "Zorunlu seçmeli soru cevaplanmamış",
-              buttonText: "Tamam",
-              duration: 2500
-            };
-            setPageNumber = 7;
-            errorServiceParameter = true;
-            break;
-          }
-        }
-        answers.push({
-          ID: item.AnswerID,
-          Answer: item.Answer,
-          AnswerTextOrPlaceHolder: item.Answer
-        });
-      }
-      if (item.Question.QuestionType == 5) {
-        let checkedCount = 0;
-        if (item.Answers) {
-          for (let mn = 0; mn < item.Answers.length; mn++) {
-            const checkQuestion = item.Answers[mn];
-            if (checkQuestion.Checked) {
-              checkedCount++;
-            }
-          }
-        }
-        if (item.Question.IsRequired) {
-          if (checkedCount === 0) {
-            errorToastMessage = {
-              text: `${item.Question.Question} sorusu boş geçilemez`,
-              buttonText: "Tamam",
-              duration: 2500
-            };
-            setPageNumber = 7;
-            errorServiceParameter = true;
-            break;
-          }
-        }
-        if (
-          checkedCount < item.Question.QuestionMinValue ||
-          checkedCount > item.Question.QuestionMaxValue
-        ) {
-          errorToastMessage = {
-            text: `${item.Question.Question} sorusu için en fazla ${
-              item.Question.QuestionMaxValue
-            } en az ${item.Question.QuestionMinValue} seçim yapmalısınız`,
-            buttonText: "Tamam",
-            duration: 2500
-          };
-          setPageNumber = 7;
-          errorServiceParameter = true;
-          break;
-        }
-      }
-      if (item.Answers) {
-        for (let mn = 0; mn < item.Answers.length; mn++) {
-          const checkQuestion = item.Answers[mn];
-          if (checkQuestion.Checked) { 
-            answers.push({
-              ID: checkQuestion.AnswerID,
-              Answer: checkQuestion.Answer,
-              AnswerTextOrPlaceHolder: checkQuestion.Answer
-            });
-          }
-        }
-      }
-      let quest = {
-        ID: item.Question.ID,
-        Question: item.Question.Question,
-        Answers: answers
-      };
-      postedData.Questions.push(quest);
-    }
-    if (errorServiceParameter) {
-      Toast.show(errorToastMessage);
-      this.viewPager.setPage(setPageNumber);
-      return;
-    }
-    if (
-      postedData.AddressDescription.length > 450 ||
-      postedData.AddressDescription.length < 20
-    ) {
-      Toast.show({
-        text: "Adresiniz çok uzun kontrol ediniz",
-        buttonText: "Tamam",
-        duration: 2500
-      });
-      this.viewPager.setPage(6);
-      return;
-    }
-    // this.props
-    //   .createService(this.state.serviceParameter, postedData, 1)
-    //   .then(({ payload }) => {})
-    //   .catch(e => {});
-  };
 
   _handleSetState = (property, value) => {
     this.setState({
@@ -530,49 +290,6 @@ class ServicesScreen extends Component {
         [property]: value
       }
     });
-  };
-
-  renderViewPagerPage = page => {
-    const { serviceServiceResponse } = this.props;
-    const { serviceCreateDataResult } = serviceServiceResponse;
-    const {
-      serviceParameter,
-      view1,
-      view2,
-      view3,
-      view4,
-      currentLocation,
-      locationPermission
-    } = this.state;
-    return (
-      <View key={"ViewPagerContent-" + page}>
-        <ViewPagerContent
-          serviceServiceResponse={serviceServiceResponse}
-          serviceParameter={serviceParameter}
-          viewPager={this.viewPager}
-          styles={styles}
-          _handleSetState={this._handleSetState}
-          handleServiceImageList={this.handleServiceImageList}
-          _handleViewHeightSetState={this._handleViewHeightSetState}
-          locationPermission={locationPermission}
-          view1={view1}
-          view2={view2}
-          view3={view3}
-          view4={view4}
-          currentLocation={currentLocation}
-          _handleMapPress={this._handleMapPress}
-          handleCreateService={this.handleCreateService}
-          handleSetStateQuestion={this.handleSetStateQuestion}
-          handleNumericMaxMinRegex={this.handleNumericMaxMinRegex}
-          handleDatePickerMaxMinValue={this.handleDatePickerMaxMinValue}
-          page={page}
-          PAGES={PAGES}
-          handleSetStateContract={this.handleSetStateContract}
-          handleContractOpen={this.handleContractOpen}
-          serviceCreateDataResult={serviceCreateDataResult}
-        />
-      </View>
-    );
   };
 
   _handleViewHeightSetState = (event, view) => {
@@ -604,8 +321,13 @@ class ServicesScreen extends Component {
           this.setState({
             serviceParameter: {
               ...this.state.serviceParameter,
-              AddressDescription: this.state.currentAddress.results[0]
-                .formatted_address
+              AddressDescription: json.results[0].formatted_address
+            }
+          });
+          this.setState({
+            serviceParameter: {
+              ...this.state.serviceParameter,
+              Location: this.state.currentAddress.results[0].formatted_address
             }
           });
         } else {
@@ -628,6 +350,14 @@ class ServicesScreen extends Component {
       e.nativeEvent.coordinate.latitude,
       e.nativeEvent.coordinate.longitude
     );
+
+    this.setState({
+      serviceParameter: {
+        ...this.state.serviceParameter,
+        Latitude: e.nativeEvent.coordinate.latitude,
+        Longitude: e.nativeEvent.coordinate.longitude
+      }
+    });
   };
 
   handleCameraRool = async index => {
@@ -694,9 +424,16 @@ class ServicesScreen extends Component {
               position.coords.longitude
             )
           });
+          this.setState({
+            serviceParameter: {
+              ...this.state.serviceParameter,
+              Latitude: position.coords.latitude,
+              Longitude: position.coords.longitude
+            }
+          });
           navigator.geolocation.clearWatch(this.watchID);
         },
-        error => { 
+        error => {
           Toast.show({
             text:
               "Adres için konumunuza ulaşılamadı. İnternet bağlantınızı kontrol edin veya tekrar deneyiniz.",
@@ -720,91 +457,362 @@ class ServicesScreen extends Component {
       navigator.geolocation.clearWatch(this.watchID);
     }
   }
-  componentWillReceiveProps(nextProps, nextState) {
-    if (nextState.currentPosition != this.state.currentPosition) {
-      if (this.viewPager) {
-        this.setState({ currentPosition: nextState.currentPosition });
-        this.viewPager.setPage(nextState.currentPosition);
+
+  // componentWillReceiveProps(nextProps, nextState) {
+  //   if (nextState.currentPosition != this.state.currentPosition) {
+  //     if (this.viewPager) {
+  //       this.setState({ currentPosition: nextState.currentPosition });
+  //       this.viewPager.setPage(nextState.currentPosition);
+  //     }
+  //   }
+  // }
+
+  handleCreateService = () => {
+    let postedData = {
+      LangID: this.state.serviceParameter.LangID,
+      UserID: this.state.serviceParameter.UserID,
+      SiteID: this.state.serviceParameter.SiteID,
+      CategoryID: this.state.serviceParameter.CategoryID,
+      CategoryName: this.state.serviceParameter.CategoryName,
+      LanguageCode: this.state.serviceParameter.LanguageCode,
+      Title: this.state.serviceParameter.Title,
+      Description: this.state.serviceParameter.Description,
+      EmailNotification: this.state.serviceParameter.EmailNotification,
+      SmsNotification: this.state.serviceParameter.SmsNotification,
+      IsPayDoor: this.state.serviceParameter.IsPayDoor,
+      IsDiscovery: this.state.serviceParameter.IsDiscovery,
+      IsGuarantor: this.state.serviceParameter.IsGuarantor,
+      Income: this.state.serviceParameter.Income,
+      Location: this.state.serviceParameter.Location,
+      Latitude: this.state.serviceParameter.Latitude,
+      Longitude: this.state.serviceParameter.Longitude,
+      Questions: [],
+      AddressDescription: this.state.serviceParameter.AddressDescription
+    };
+    for (i = 0; i < this.state.serviceParameter.Contracts.length; i++) {
+      if (this.state.serviceParameter.Contracts[i].Choose == false) {
+        Toast.show({
+          text: "Devam edebilmek için sözleşmeleri onaylamalısınız",
+          buttonText: "Tamam",
+          duration: 2500
+        });
+        this.setState({ activeViewPagerPage: 0 });
+        return;
       }
     }
-  }
+    if (postedData.Title.length < 11) {
+      Toast.show({
+        text: "Hizmet başlığını daha açıklayıcı yazınız",
+        buttonText: "Tamam",
+        duration: 2500
+      });
+      this.setState({ activeViewPagerPage: 1 });
+      return;
+    }
+    if (postedData.Description.length < 50) {
+      Toast.show({
+        text: "Hizmet notunuzu daha açıklayıcı yazınız",
+        buttonText: "Tamam",
+        duration: 2500
+      });
+      this.setState({ activeViewPagerPage: 2 });
+      return;
+    }
+    if (
+      postedData.SmsNotification == false &&
+      postedData.EmailNotification == false
+    ) {
+      Toast.show({
+        text: "En az bir haberleşme yöntemi seçiniz",
+        buttonText: "Tamam",
+        duration: 2500
+      });
+      this.setState({ activeViewPagerPage: 3 });
+      return;
+    }
+
+    let errorServiceParameter = false;
+    let errorToastMessage;
+    let setPageNumber = 0;
+
+    for (let ix = 0; ix < this.state.serviceParameter.Questions.length; ix++) {
+      const item = this.state.serviceParameter.Questions[ix];
+      let answers = [];
+      if (item.Question.QuestionType == 1) {
+        if (item.Question.IsRequired) {
+          if (item.Question.QuestionMinValue > item.Answer.length) {
+            errorToastMessage = {
+              text: "Cevabınız çok kısa lütfen cevabınızı control ediniz",
+              buttonText: "Tamam",
+              duration: 2500
+            };
+            setPageNumber = item.pageIndex;
+            errorServiceParameter = true;
+            break;
+          }
+          if (item.Question.QuestionMaxValue < item.Answer.length) {
+            errorToastMessage = {
+              text: "Cevabınız çok uzun lütfen cevabınızı control ediniz",
+              buttonText: "Tamam",
+              duration: 2500
+            };
+            setPageNumber = item.pageIndex;
+            errorServiceParameter = true;
+            break;
+          }
+        }
+        answers.push({
+          ID: item.AnswerID,
+          Answer: item.Answer,
+          AnswerTextOrPlaceHolder: item.Answer
+        });
+      }
+      if (item.Question.QuestionType == 2) {
+        if (item.Question.IsRequired) {
+          if (item.Question.QuestionMinValue > parseInt(item.Answer)) {
+            errorToastMessage = {
+              text: "Cevabınızı istenilen aralıkta giriniz",
+              buttonText: "Tamam",
+              duration: 2500
+            };
+            setPageNumber = item.pageIndex;
+            errorServiceParameter = true;
+            break;
+          }
+          if (item.Question.QuestionMaxValue < parseInt(item.Answer)) {
+            errorToastMessage = {
+              text: "Cevabınızı istenilen aralıkta giriniz",
+              buttonText: "Tamam",
+              duration: 2500
+            };
+            setPageNumber = item.pageIndex;
+            errorServiceParameter = true;
+            break;
+          }
+        }
+        answers.push({
+          ID: item.AnswerID,
+          Answer: item.Answer,
+          AnswerTextOrPlaceHolder: item.Answer
+        });
+      }
+      if (item.Question.QuestionType == 3) {
+        if (item.Question.IsRequired) {
+          var dateResult = this.handleDatePickerMaxMinValue(
+            item.Question.QuestionMaxValue,
+            item.Question.QuestionMinValue,
+            item.Answer
+          );
+          if (!dateResult) {
+            errorToastMessage = {
+              text: "Tarih seçimi hatalı. Lütfen kontrol ediniz",
+              buttonText: "Tamam",
+              duration: 2500
+            };
+            setPageNumber = item.pageIndex;
+            errorServiceParameter = true;
+            break;
+          }
+        }
+        answers.push({
+          ID: item.AnswerID,
+          Answer: item.Answer,
+          AnswerTextOrPlaceHolder: item.Answer
+        });
+      }
+      if (item.Question.QuestionType == 4) {
+        if (item.Question.IsRequired) {
+          if (item.AnswerID == -1) {
+            errorToastMessage = {
+              text: "Zorunlu seçmeli soru cevaplanmamış",
+              buttonText: "Tamam",
+              duration: 2500
+            };
+            setPageNumber = item.pageIndex;
+            errorServiceParameter = true;
+            break;
+          }
+        }
+        answers.push({
+          ID: item.AnswerID,
+          Answer: item.Answer,
+          AnswerTextOrPlaceHolder: item.Answer
+        });
+      }
+      if (item.Question.QuestionType == 5) {
+        let checkedCount = 0;
+        if (item.Answers) {
+          for (let mn = 0; mn < item.Answers.length; mn++) {
+            const checkQuestion = item.Answers[mn];
+            if (checkQuestion.Checked) {
+              checkedCount++;
+            }
+          }
+        }
+        if (item.Question.IsRequired) {
+          if (checkedCount === 0) {
+            errorToastMessage = {
+              text: `${item.Question.Question} sorusu boş geçilemez`,
+              buttonText: "Tamam",
+              duration: 2500
+            };
+            setPageNumber = item.pageIndex;
+            errorServiceParameter = true;
+            break;
+          }
+        }
+        if (
+          checkedCount < item.Question.QuestionMinValue ||
+          checkedCount > item.Question.QuestionMaxValue
+        ) {
+          errorToastMessage = {
+            text: `${item.Question.Question} sorusu için en fazla ${
+              item.Question.QuestionMaxValue
+            } en az ${item.Question.QuestionMinValue} seçim yapmalısınız`,
+            buttonText: "Tamam",
+            duration: 2500
+          };
+          setPageNumber = item.pageIndex;
+          errorServiceParameter = true;
+          break;
+        }
+      }
+      if (item.Answers) {
+        for (let mn = 0; mn < item.Answers.length; mn++) {
+          const checkQuestion = item.Answers[mn];
+          if (checkQuestion.Checked) {
+            answers.push({
+              ID: checkQuestion.AnswerID,
+              Answer: checkQuestion.Answer,
+              AnswerTextOrPlaceHolder: checkQuestion.Answer
+            });
+          }
+        }
+      }
+      let quest = {
+        ID: item.Question.ID,
+        Question: item.Question.Question,
+        Answers: answers
+      };
+      postedData.Questions.push(quest);
+    }
+    if (errorServiceParameter) {
+      Toast.show(errorToastMessage);
+      this.setState({ activeViewPagerPage: setPageNumber });
+      return;
+    }
+    if (
+      postedData.AddressDescription.length > 450 ||
+      postedData.AddressDescription.length < 20
+    ) {
+      Toast.show({
+        text: "Adresiniz çok uzun kontrol ediniz",
+        buttonText: "Tamam",
+        duration: 2500
+      });
+      this.setState({ activeViewPagerPage: 6 });
+      return;
+    }
+
+    this.props.createService("", postedData).then(({ payload }) => {});
+  };
 
   render() {
+    const { serviceServiceResponse, navigation } = this.props;
     const {
-      serviceCreateDataResult,
-      serviceCreateDataLoading
-    } = this.props.serviceServiceResponse;
-    return serviceCreateDataLoading == false &&
-      this.state.dataLoading == false ? (
+      serviceCreateDataLoading,
+      serviceCreateDataResult
+    } = serviceServiceResponse;
+    const {
+      modalIsVisible,
+      modalContent,
+      currentPosition,
+      PAGES,
+      serviceParameter,
+      view1,
+      view2,
+      view3,
+      view4,
+      currentLocation,
+      locationPermission,
+      activeViewPagerPage
+    } = this.state;
+    if (serviceCreateDataLoading) return <Spinner />;
+    return (
       <Root>
-        <Modal isVisible={this.state.modalIsVisible}>
-          <View style={{ flex: 1 }}>
-            <WebView source={{ html: this.state.modalContent }} />
-            <MyButton
-              press={() => this.handlerContactCheckAndCloseModal()}
-              text="Okudum Onaylıyorum"
-            />
-          </View>
-        </Modal>
-        <Header style={{ backgroundColor: ThemeColor }}>
-          <Left>
-            {this.state.currentPosition > 0 &&
-            this.state.currentPosition < PAGES.length - 1 ? (
-              <Button
-                transparent
-                onPress={() =>
-                  this.viewPager.setPage(this.state.currentPosition - 1)
-                }
-              >
+        <React.Fragment>
+          <Modal isVisible={modalIsVisible}>
+            <View style={{ flex: 1 }}>
+              <WebView source={{ html: modalContent }} />
+              <MyButton
+                press={() => this.handlerContactCheckAndCloseModal()}
+                text="Okudum Onaylıyorum"
+              />
+            </View>
+          </Modal>
+          <Header style={{ backgroundColor: ThemeColor }}>
+            <Left>
+              {currentPosition > 0 && currentPosition < PAGES.length - 1 ? (
+                <Button
+                  transparent
+                  onPress={() =>
+                    this.viewPager.setPage(this.state.currentPosition - 1)
+                  }
+                >
+                  <Icon
+                    name="ios-arrow-back"
+                    color="white"
+                    style={{ color: "white" }}
+                  />
+                </Button>
+              ) : null}
+              {currentPosition == 0 ? (
+                <Button transparent onPress={() => navigation.toggleDrawer()}>
+                  <Icon name="ios-menu" />
+                </Button>
+              ) : null}
+            </Left>
+            <Body>
+              <Title>{serviceCreateDataResult.Name}</Title>
+            </Body>
+            <Right>
+              <Button transparent onPress={() => this.handleCreateService()}>
                 <Icon
                   name="ios-arrow-back"
                   color="white"
                   style={{ color: "white" }}
                 />
               </Button>
-            ) : null}
-            {this.state.currentPosition == 0 ? (
-              <Button
-                transparent
-                onPress={() => this.props.navigation.toggleDrawer()}
-              >
-                <Icon name="ios-menu" />
-              </Button>
-            ) : null}
-          </Left>
-          <Body>
-            <Title>{serviceCreateDataResult.Name}</Title>
-          </Body>
-          <Right>
-            {/* <Text>{this.state.currentPosition}</Text> */}
-            {/* <Button onPress={() => alert(JSON.stringify(this.state.serviceParameter.Contracts.length))}><Text>Test</Text></Button> */}
-          </Right>
-        </Header>
-        <View style={styles.container}>
-          {/* <StepIndicator
-                                customStyles={styles.stepIndicator}
-                                currentPosition={this.state.currentPosition}
-                            // labels={labels}
-                            /> */}
-          <ViewPager
-            style={{ flexGrow: 1 }}
-            ref={viewPager => {
-              this.viewPager = viewPager;
-            }}
-            onPageSelected={page => {
-              this.setState({ currentPosition: page.position });
-            }}
-            horizontalScroll={
-              this.state.currentPosition < PAGES.length - 1 ? true : false
-            }
-          >
-            {PAGES.map(page => this.renderViewPagerPage(page))}
-          </ViewPager>
-        </View>
-      </Root>
-    ) : (
-      <Root>
-        <Spinner color="blue" />
+            </Right>
+          </Header>
+          <View style={styles.container}>
+            <ViewPager
+              PAGES={PAGES}
+              serviceServiceResponse={serviceServiceResponse}
+              serviceParameter={serviceParameter}
+              styles={styles}
+              _handleSetState={this._handleSetState}
+              handleServiceImageList={this.handleServiceImageList}
+              _handleViewHeightSetState={this._handleViewHeightSetState}
+              locationPermission={locationPermission}
+              view1={view1}
+              view2={view2}
+              view3={view3}
+              view4={view4}
+              currentLocation={currentLocation}
+              _handleMapPress={this._handleMapPress}
+              handleCreateService={this.handleCreateService}
+              handleSetStateQuestion={this.handleSetStateQuestion}
+              handleNumericMaxMinRegex={this.handleNumericMaxMinRegex}
+              handleDatePickerMaxMinValue={this.handleDatePickerMaxMinValue}
+              handleSetStateContract={this.handleSetStateContract}
+              handleContractOpen={this.handleContractOpen}
+              serviceCreateDataResult={serviceCreateDataResult}
+              activeViewPagerPage={activeViewPagerPage}
+              _handleSetInitialState={this._handleSetInitialState}
+            />
+          </View>
+        </React.Fragment>
       </Root>
     );
   }

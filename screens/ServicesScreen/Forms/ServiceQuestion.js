@@ -21,7 +21,11 @@ const ServiceQuestion = props => {
     handleNumericMaxMinRegex,
     handleDatePickerMaxMinValue,
     styles,
-    questIndex
+    questIndex,
+    PAGES,
+    _handleSetInitialState,
+    page,
+    handleCreateService
   } = props;
   const item =
     serviceServiceResponse.serviceCreateDataResult.Questions[questIndex - 7];
@@ -56,14 +60,31 @@ const ServiceQuestion = props => {
             {item.QuestionMaxValue}{" "}
           </Text>
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableHighlight
-            onPress={() => viewPager.setPage(questIndex + 1)}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>İleri</Text>
-          </TouchableHighlight>
-        </View>
+        {page == PAGES.length - 1 ? (
+          <View style={styles.buttonContainer}>
+            {serviceServiceResponse.serviceCreateLoading ? (
+              <Spinner color="blue" />
+            ) : (
+              <TouchableHighlight
+                onPress={() => handleCreateService()}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Tamamla</Text>
+              </TouchableHighlight>
+            )}
+          </View>
+        ) : (
+          <View style={styles.buttonContainer}>
+            <TouchableHighlight
+              onPress={() =>
+                _handleSetInitialState("activeViewPagerPage", page)
+              }
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>İleri</Text>
+            </TouchableHighlight>
+          </View>
+        )}
       </View>
     );
   }
@@ -97,14 +118,31 @@ const ServiceQuestion = props => {
             </Text>
           )}
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableHighlight
-            onPress={() => viewPager.setPage(questIndex + 1)}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>İleri</Text>
-          </TouchableHighlight>
-        </View>
+        {page == PAGES.length - 1 ? (
+          <View style={styles.buttonContainer}>
+            {serviceServiceResponse.serviceCreateLoading ? (
+              <Spinner color="blue" />
+            ) : (
+              <TouchableHighlight
+                onPress={() => handleCreateService()}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Tamamla</Text>
+              </TouchableHighlight>
+            )}
+          </View>
+        ) : (
+          <View style={styles.buttonContainer}>
+            <TouchableHighlight
+              onPress={() =>
+                _handleSetInitialState("activeViewPagerPage", page)
+              }
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>İleri</Text>
+            </TouchableHighlight>
+          </View>
+        )}
       </View>
     );
   }
@@ -146,14 +184,31 @@ const ServiceQuestion = props => {
             </Text>
           )}
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableHighlight
-            onPress={() => viewPager.setPage(questIndex + 1)}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>İleri</Text>
-          </TouchableHighlight>
-        </View>
+        {page == PAGES.length - 1 ? (
+          <View style={styles.buttonContainer}>
+            {serviceServiceResponse.serviceCreateLoading ? (
+              <Spinner color="blue" />
+            ) : (
+              <TouchableHighlight
+                onPress={() => handleCreateService()}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Tamamla</Text>
+              </TouchableHighlight>
+            )}
+          </View>
+        ) : (
+          <View style={styles.buttonContainer}>
+            <TouchableHighlight
+              onPress={() =>
+                _handleSetInitialState("activeViewPagerPage", page)
+              }
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>İleri</Text>
+            </TouchableHighlight>
+          </View>
+        )}
       </View>
     );
   }
@@ -206,14 +261,31 @@ const ServiceQuestion = props => {
             </Text>
           )}
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableHighlight
-            onPress={() => viewPager.setPage(questIndex + 1)}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>İleri</Text>
-          </TouchableHighlight>
-        </View>
+        {page == PAGES.length - 1 ? (
+          <View style={styles.buttonContainer}>
+            {serviceServiceResponse.serviceCreateLoading ? (
+              <Spinner color="blue" />
+            ) : (
+              <TouchableHighlight
+                onPress={() => handleCreateService()}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Tamamla</Text>
+              </TouchableHighlight>
+            )}
+          </View>
+        ) : (
+          <View style={styles.buttonContainer}>
+            <TouchableHighlight
+              onPress={() =>
+                _handleSetInitialState("activeViewPagerPage", page)
+              }
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>İleri</Text>
+            </TouchableHighlight>
+          </View>
+        )}
       </View>
     );
   }
@@ -272,23 +344,38 @@ const ServiceQuestion = props => {
             );
           })}
         </View>
-        {/* <View>
-          {serviceParameter.Questions[i].Answers ? (
-            <Text />
-          ) : (
+        {item.IsRequired ? (
+          <View>
             <Text style={styles.help_block_error}>
-              {item.IsRequired ? "** " : ""}Lütfen bir seçim yapınız
+              Lütfen bir seçim yapınız
             </Text>
-          )}
-        </View> */}
-        <View style={styles.buttonContainer}>
-          <TouchableHighlight
-            onPress={() => viewPager.setPage(questIndex + 1)}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>İleri</Text>
-          </TouchableHighlight>
-        </View>
+          </View>
+        ) : null}
+        {page == PAGES.length - 1 ? (
+          <View style={styles.buttonContainer}>
+            {serviceServiceResponse.serviceCreateLoading ? (
+              <Spinner color="blue" />
+            ) : (
+              <TouchableHighlight
+                onPress={() => handleCreateService()}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Tamamla</Text>
+              </TouchableHighlight>
+            )}
+          </View>
+        ) : (
+          <View style={styles.buttonContainer}>
+            <TouchableHighlight
+              onPress={() =>
+                _handleSetInitialState("activeViewPagerPage", page)
+              }
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>İleri</Text>
+            </TouchableHighlight>
+          </View>
+        )}
       </View>
     );
   }

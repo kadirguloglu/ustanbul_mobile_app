@@ -1,8 +1,6 @@
 import {
   GET_SERVICE_CREATE_DATA,
-  GET_SERVICE_CREATE_DATA_URL,
-  SET_SERVICE_CREATE,
-  SET_SERVICE_CREATE_URL,
+  GET_SERVICE_CREATE_DATA_URL, 
   SET_USER_CHAT_MESSAGE_OLD,
   SET_USER_CHAT_MESSAGE_OLD_URL,
   GET_PROPOSAL_DETAIL,
@@ -20,35 +18,7 @@ export function serviceCreateData(categoryid, siteid, langid) {
       }
     }
   };
-}
-
-export function createService(serviceData, postedData, langid) {
-  postedData.LangID = langid;
-  let bodyFormData = new FormData();
-  bodyFormData.append("service", JSON.stringify(postedData));
-  serviceData.serviceImages.map((item, index) => {
-    if (item.uri.uri) {
-      bodyFormData.append("file" + index, {
-        uri: item.uri.uri,
-        type: item.image.type,
-        name: item.image.fileName
-      });
-    }
-  });
-  return {
-    type: SET_SERVICE_CREATE,
-    payload: {
-      request: {
-        url: SET_SERVICE_CREATE_URL,
-        method: "POST",
-        data: bodyFormData,
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      }
-    }
-  };
-}
+} 
 
 export function userChatMessageOld(openingUserID) {
   return {

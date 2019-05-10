@@ -7,6 +7,7 @@ import homeService from "./homeService";
 import messageServiceGet from "./messageServiceGet";
 import messageServicePost from "./messageServicePost";
 import serviceService from "./serviceService";
+import servicePost from "./servicePost";
 
 export default combineReducers({
   categoryServiceResponse: categoryService,
@@ -16,5 +17,6 @@ export default combineReducers({
   homeServiceResponse: homeService,
   messageServiceGetResponse: messageServiceGet,
   messageServicePostResponse: messageServicePost,
-  serviceServiceResponse: serviceService
+  serviceServiceResponse: serviceService,
+  servicePostResponse: servicePost
 });
