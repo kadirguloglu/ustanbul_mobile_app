@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Tabs, Tab, ScrollableTab } from "native-base";
+import { View, Tabs, Tab } from "native-base";
 //import { ViewPager as Pager } from "rn-viewpager";
 import ViewPagerContent from "./ViewPagerContent";
 
@@ -41,7 +41,8 @@ const ViewPager = props => {
     serviceCreateDataResult,
     handleDatePickerMaxMinValue,
     activeViewPagerPage,
-    _handleSetInitialState
+    _handleSetInitialState,
+    _validate
   } = props;
   return (
     <View style={styles.container}>
@@ -72,6 +73,7 @@ const ViewPager = props => {
               handleContractOpen={handleContractOpen}
               serviceCreateDataResult={serviceCreateDataResult}
               _handleSetInitialState={_handleSetInitialState}
+              _validate={_validate}
             />
           </Tab>
         ))}

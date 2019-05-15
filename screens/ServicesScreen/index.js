@@ -4,7 +4,8 @@ import {
   Image,
   FlatList,
   TouchableWithoutFeedback,
-  WebView
+  WebView,
+  Keyboard
 } from "react-native";
 import {
   Icon,
@@ -45,6 +46,8 @@ requestCameraPermission = async () => {
 };
 
 let contractIndex = -1;
+
+let postedData = {};
 
 class ServicesScreen extends Component {
   constructor(props) {
@@ -467,8 +470,10 @@ class ServicesScreen extends Component {
   //   }
   // }
 
-  handleCreateService = () => {
-    let postedData = {
+  _validate = () => {
+    Keyboard.dismiss();
+    postedData = {};
+    postedData = {
       LangID: this.state.serviceParameter.LangID,
       UserID: this.state.serviceParameter.UserID,
       SiteID: this.state.serviceParameter.SiteID,
@@ -497,7 +502,7 @@ class ServicesScreen extends Component {
           duration: 2500
         });
         this.setState({ activeViewPagerPage: 0 });
-        return;
+        return false;
       }
     }
     if (postedData.Title.length < 11) {
@@ -507,7 +512,7 @@ class ServicesScreen extends Component {
         duration: 2500
       });
       this.setState({ activeViewPagerPage: 1 });
-      return;
+      return false;
     }
     if (postedData.Description.length < 50) {
       Toast.show({
@@ -516,7 +521,7 @@ class ServicesScreen extends Component {
         duration: 2500
       });
       this.setState({ activeViewPagerPage: 2 });
-      return;
+      return false;
     }
     if (
       postedData.SmsNotification == false &&
@@ -528,7 +533,20 @@ class ServicesScreen extends Component {
         duration: 2500
       });
       this.setState({ activeViewPagerPage: 3 });
-      return;
+      return false;
+    }
+
+    if (
+      postedData.AddressDescription.length > 450 ||
+      postedData.AddressDescription.length < 20
+    ) {
+      Toast.show({
+        text: "Adresiniz çok uzun kontrol ediniz",
+        buttonText: "Tamam",
+        duration: 2500
+      });
+      this.setState({ activeViewPagerPage: 6 });
+      return false;
     }
 
     let errorServiceParameter = false;
@@ -699,22 +717,74 @@ class ServicesScreen extends Component {
     if (errorServiceParameter) {
       Toast.show(errorToastMessage);
       this.setState({ activeViewPagerPage: setPageNumber });
-      return;
+      return false;
     }
-    if (
-      postedData.AddressDescription.length > 450 ||
-      postedData.AddressDescription.length < 20
-    ) {
-      Toast.show({
-        text: "Adresiniz çok uzun kontrol ediniz",
-        buttonText: "Tamam",
-        duration: 2500
-      });
-      this.setState({ activeViewPagerPage: 6 });
-      return;
-    }
+    return true;
+  };
 
-    this.props.createService("", postedData).then(({ payload }) => {});
+  handleCreateService = () => {
+    const validResult = this._validate();
+    if (validResult) {
+      this.props
+        .createService(this.state.serviceParameter, postedData)
+        .then(({ payload }) => {
+          if (payload) {
+            if (payload.data) {
+              switch (payload.data) {
+                case 0:
+                  Toast.show({
+                    text:
+                      "Hizmet oluşturulamadı. Lütfen tekrar deneyiniz ve internet bağlantınız kontrol ediniz.",
+                    buttonText: "Tamam",
+                    duration: 2500
+                  });
+                  return;
+                case 1:
+                  Toast.show({
+                    text:
+                      "Size ne yakın konumdaki ustalarımıza bildirim gönderildi.",
+                    buttonText: "Tamam",
+                    duration: 2500
+                  });
+                  this.props.navigation.navigate("Home");
+                  return;
+                case 2:
+                  Toast.show({
+                    text:
+                      "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
+                    buttonText: "Tamam",
+                    duration: 5500
+                  });
+                  return;
+                default:
+                  Toast.show({
+                    text:
+                      "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
+                    buttonText: "Tamam",
+                    duration: 2500
+                  });
+                  return;
+              }
+            } else {
+              Toast.show({
+                text:
+                  "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
+                buttonText: "Tamam",
+                duration: 2500
+              });
+              return;
+            }
+          } else {
+            Toast.show({
+              text:
+                "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
+              buttonText: "Tamam",
+              duration: 2500
+            });
+            return;
+          }
+        });
+    }
   };
 
   render() {
@@ -776,13 +846,13 @@ class ServicesScreen extends Component {
               <Title>{serviceCreateDataResult.Name}</Title>
             </Body>
             <Right>
-              <Button transparent onPress={() => this.handleCreateService()}>
+              {/* <Button transparent onPress={() => this.handleCreateService()}>
                 <Icon
                   name="ios-arrow-back"
                   color="white"
                   style={{ color: "white" }}
                 />
-              </Button>
+              </Button> */}
             </Right>
           </Header>
           <View style={styles.container}>
@@ -810,6 +880,7 @@ class ServicesScreen extends Component {
               serviceCreateDataResult={serviceCreateDataResult}
               activeViewPagerPage={activeViewPagerPage}
               _handleSetInitialState={this._handleSetInitialState}
+              _validate={this._validate}
             />
           </View>
         </React.Fragment>

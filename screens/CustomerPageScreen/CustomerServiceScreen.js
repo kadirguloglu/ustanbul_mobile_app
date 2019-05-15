@@ -26,22 +26,27 @@ import {
   Left,
   Right,
   Body,
-  Title
+  Title,
+  Tabs,
+  Tab,
+  TabHeading,
+  ScrollableTab
 } from "native-base";
 import { ThemeColor, MyToast } from "../../src/functions";
-import { ViewPager } from "rn-viewpager";
+//import { ViewPager } from "rn-viewpager";
 import { BlurView } from "react-native-blur";
 import Dialog from "react-native-dialog";
 import moment from "moment";
 import Modal from "react-native-modal";
 import MyButton from "../../components/MyButton";
+import { Icon as ExpoIcon } from "expo";
 
 class CustomerServiceScreen extends Component {
   constructor(props) {
     super(props);
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      currentPosition: 0,
+      activeTab: 0,
       getToast: false,
       fabActive: false,
       iconIsText: false,
@@ -111,7 +116,8 @@ class CustomerServiceScreen extends Component {
           style={{
             flex: 1,
             flexDirection: "column",
-            justifyContent: "flex-start"
+            justifyContent: "flex-start",
+            backgroundColor: "transparent"
           }}
         >
           <View>
@@ -149,12 +155,17 @@ class CustomerServiceScreen extends Component {
             >
               {moment(data.CreateDate).format("DD MMMM YYYY, dddd hh:mm")}
             </Text>
-            {item.indexOf("1#") > -1 ? (
+            {key.indexOf("1#") > -1 ? (
               <View>
                 <Button
                   full
                   style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
+                  onPress={() =>
+                    this.props.navigation.navigate("SeeProposal", {
+                      item: item,
+                      data: data
+                    })
+                  }
                 >
                   <Text style={styles.iconText}>Teklifleri gör</Text>
                 </Button>
@@ -173,7 +184,7 @@ class CustomerServiceScreen extends Component {
                   <Text style={styles.iconText}>İptal et</Text>
                 </Button>
               </View>
-            ) : item.indexOf("2#") > -1 ? (
+            ) : key.indexOf("2#") > -1 ? (
               <View>
                 <Button
                   full
@@ -199,7 +210,7 @@ class CustomerServiceScreen extends Component {
                   <Text style={styles.iconText}>İptal Et</Text>
                 </Button>
               </View>
-            ) : item.indexOf("3#") > -1 ? (
+            ) : key.indexOf("3#") > -1 ? (
               <View>
                 <Button
                   full
@@ -223,7 +234,7 @@ class CustomerServiceScreen extends Component {
                   <Text style={styles.iconText}>Şikayet et</Text>
                 </Button>
               </View>
-            ) : item.indexOf("4#") > -1 ? (
+            ) : key.indexOf("4#") > -1 ? (
               <View>
                 <Button
                   full
@@ -240,7 +251,7 @@ class CustomerServiceScreen extends Component {
                   <Text style={styles.iconText}>İncele</Text>
                 </Button>
               </View>
-            ) : item.indexOf("5#") > -1 ? (
+            ) : key.indexOf("5#") > -1 ? (
               <Button
                 full
                 style={styles.buttonStyle}
@@ -248,7 +259,7 @@ class CustomerServiceScreen extends Component {
               >
                 <Text style={styles.iconText}>İncele</Text>
               </Button>
-            ) : item.indexOf("6#") > -1 ? (
+            ) : key.indexOf("6#") > -1 ? (
               <View>
                 <Button
                   full
@@ -331,19 +342,7 @@ class CustomerServiceScreen extends Component {
       });
     this.setState({ dialogVisible: false });
   };
-  componentWillReceiveProps(nextProps, nextState) {
-    if (nextState.currentPosition != this.state.currentPosition) {
-      if (this.viewPager) {
-        if (nextState.currentPosition === undefined) {
-          this.setState({ currentPosition: 0 });
-          this.viewPager.setPage(0);
-        } else {
-          this.setState({ currentPosition: nextState.currentPosition });
-          this.viewPager.setPage(nextState.currentPosition);
-        }
-      }
-    }
-  }
+
   render() {
     const {
       servicePreviewDetailQuestionLoading,
@@ -521,18 +520,20 @@ class CustomerServiceScreen extends Component {
           source={require("../../assets/splash-screen-demo.png")}
         >
           <View style={{ flex: 1 }}>
-            <ViewPager
-              style={{ flexGrow: 1 }}
-              ref={viewPager => {
-                this.viewPager = viewPager;
-              }}
-              onPageSelected={page => {
-                this.setState({ currentPosition: page.position });
-              }}
-              horizontalScroll={true}
+            <Tabs
+              renderTabBar={() => <View />}
+              style={{ backgroundColor: "transparent" }}
             >
-              {this.state.PAGES.map(page => this.renderViewPagerPage(page))}
-            </ViewPager>
+              {this.state.PAGES.map((page, ix) => (
+                <Tab
+                  key={"ViewPagerContent-" + page}
+                  heading={"heading" + ix}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  {this.renderViewPagerPage(page)}
+                </Tab>
+              ))}
+            </Tabs>
           </View>
         </ImageBackground>
       </Root>

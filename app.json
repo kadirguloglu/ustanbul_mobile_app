@@ -19,7 +19,6 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ustanbul.ustanbul_app",
       "config": {
         "googleMapsApiKey": "AIzaSyAaojSZELr1ms-IsybXMaQpvymfCgfV5u4"
       }
