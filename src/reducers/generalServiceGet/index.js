@@ -9,6 +9,7 @@ import {
   GET_TOKEN_SUCCESS,
   GET_TOKEN_FAIL
 } from "../../types/generalServiceGet";
+import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
   activeUser: {
@@ -25,6 +26,14 @@ export default (state = INITIAL_STATE, action) => {
     case REFRESH_AUTHENTICATION_USER_SUCCESS:
       return { ...state, activeUser: action.payload.data };
     case REFRESH_AUTHENTICATION_USER_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "REFRESH_AUTHENTICATION_USER_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state };
 
     case LOGIN_AUTHENTICATION_USER:
@@ -32,6 +41,14 @@ export default (state = INITIAL_STATE, action) => {
     case LOGIN_AUTHENTICATION_USER_SUCCESS:
       return { ...state, activeUser: action.payload.data };
     case LOGIN_AUTHENTICATION_USER_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "LOGIN_AUTHENTICATION_USER_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state };
 
     case GET_TOKEN:
@@ -39,6 +56,14 @@ export default (state = INITIAL_STATE, action) => {
     case GET_TOKEN_SUCCESS:
       return { ...state, apiToken: action.payload.data.Data };
     case GET_TOKEN_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_TOKEN_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, error: "hata" };
     default:
       return { ...state };

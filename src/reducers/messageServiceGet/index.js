@@ -3,6 +3,7 @@ import {
   GET_USER_MESSAGE_LIST_SUCCESS,
   GET_USER_MESSAGE_LIST_FAIL
 } from "../../types/messageServiceGet";
+import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
   getDepartmentResult: {}
@@ -19,6 +20,14 @@ export default (state = INITIAL_STATE, action) => {
         messageUserListResult: action.payload.data
       };
     case GET_USER_MESSAGE_LIST_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_USER_MESSAGE_LIST_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, messageUserListLoading: false };
     default:
       return { ...state };

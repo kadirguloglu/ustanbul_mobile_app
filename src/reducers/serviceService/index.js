@@ -1,7 +1,7 @@
 import {
   GET_SERVICE_CREATE_DATA,
   GET_SERVICE_CREATE_DATA_SUCCESS,
-  GET_SERVICE_CREATE_DATA_FAIL, 
+  GET_SERVICE_CREATE_DATA_FAIL,
   SET_USER_CHAT_MESSAGE_OLD,
   SET_USER_CHAT_MESSAGE_OLD_SUCCESS,
   SET_USER_CHAT_MESSAGE_OLD_FAIL,
@@ -12,6 +12,7 @@ import {
   GET_PROPOSAL_DETAIL_SUCCESS,
   GET_PROPOSAL_DETAIL_FAIL
 } from "../../types/serviceService";
+import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
   serviceCreateDataLoading: true,
@@ -34,7 +35,15 @@ export default (state = INITIAL_STATE, action) => {
         serviceCreateDataResult: action.payload.data
       };
     case GET_SERVICE_CREATE_DATA_FAIL:
-      return { ...state, serviceCreateDataLoading: false, error: "hata" }; 
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_SERVICE_CREATE_DATA_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, serviceCreateDataLoading: false, error: "hata" };
 
     case SET_USER_CHAT_MESSAGE_OLD:
       return {
@@ -50,6 +59,14 @@ export default (state = INITIAL_STATE, action) => {
         oldChatMessageDataResult: action.payload.data
       };
     case SET_USER_CHAT_MESSAGE_OLD_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "SET_USER_CHAT_MESSAGE_OLD_FAIL",
+            error: action
+          })
+        )
+      );
       return {
         ...state,
         oldChatMessageLoading: false,
@@ -65,6 +82,14 @@ export default (state = INITIAL_STATE, action) => {
         proposalDetailResult: action.payload.data
       };
     case GET_PROPOSAL_DETAIL_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_PROPOSAL_DETAIL_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, proposalDetailLoading: false };
 
     case UPDATE_PROPOSAL_PRICE:
@@ -76,6 +101,14 @@ export default (state = INITIAL_STATE, action) => {
         updateServiceProposalResult: action.payload.data
       };
     case UPDATE_PROPOSAL_PRICE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "UPDATE_PROPOSAL_PRICE_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, updateServiceProposalLoading: false };
     default:
       return { ...state };

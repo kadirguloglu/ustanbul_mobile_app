@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#59aae1"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -34,6 +34,18 @@
       "config": {
         "googleMaps": { "apiKey": "AIzaSyBGiUl-nMWsqNcp0awlOkWAa6kVUYS6tzk" }
       }
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "freelance",
+            "project": "ustanbul",
+            "authToken": "90746b2258ac44c3b7e913c89ec12b8474f393685b4d4fc1881b668d1b95bb86"
+          }
+        }
+      ]
     }
   }
 }

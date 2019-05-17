@@ -1,5 +1,5 @@
 import Carousel, { ParallaxImage } from "react-native-snap-carousel";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import styles, {
   sliderWidth,
@@ -11,7 +11,7 @@ import styles, {
   entryBorderRadius,
   slideHeight
 } from "../../screens/HomeScreen/styles";
-import { ThemeColor } from "../../src/functions";
+import { ThemeColor, SmallPath } from "../../src/functions";
 
 export default function Component1(props) {
   return (
@@ -21,35 +21,14 @@ export default function Component1(props) {
         return (
           <TouchableOpacity
             activeOpacity={1}
-            style={{
-              width: itemWidth,
-              height: slideHeight,
-              paddingHorizontal: itemHorizontalMargin,
-              paddingBottom: 18
-            }}
+            style={style.TouchableOpacity}
             onPress={() => props.handlePressCategory(item.ID)}
           >
-            <View
-              style={{
-                position: "absolute",
-                top: 0,
-                left: itemHorizontalMargin,
-                right: itemHorizontalMargin,
-                bottom: 18,
-                shadowColor: colors.black,
-                shadowOpacity: 0.25,
-                shadowOffset: { width: 0, height: 10 },
-                shadowRadius: 10,
-                borderRadius: entryBorderRadius,
-                borderWidth: 1,
-                borderColor: ThemeColor
-              }}
-            />
+            <View style={style.view} />
             <View style={[styles.imageContainer]}>
               <Image
-                source={require("../../assets/image-place-holder.png")}
+                source={SmallPath(item.PicturePath)}
                 style={styles.image}
-                // onError={(s) => }
               />
             </View>
             <View style={[styles.textContainer]}>
@@ -69,3 +48,26 @@ export default function Component1(props) {
     />
   );
 }
+
+const style = StyleSheet.create({
+  TouchableOpacity: {
+    width: itemWidth,
+    height: slideHeight,
+    paddingHorizontal: itemHorizontalMargin,
+    paddingBottom: 18
+  },
+  view: {
+    position: "absolute",
+    top: 0,
+    left: itemHorizontalMargin,
+    right: itemHorizontalMargin,
+    bottom: 18,
+    shadowColor: colors.black,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 10,
+    borderRadius: entryBorderRadius,
+    borderWidth: 1,
+    borderColor: ThemeColor
+  }
+});

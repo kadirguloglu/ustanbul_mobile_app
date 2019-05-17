@@ -12,6 +12,7 @@ import {
   POST_CONTACT_MESSAGE_SUCCESS,
   POST_CONTACT_MESSAGE_FAIL
 } from "../../types/homeService";
+import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
   loading: null,
@@ -35,6 +36,14 @@ export default (state = INITIAL_STATE, action) => {
         popularCategoriesResult: action.payload.data
       };
     case GET_POPULAR_CATEGORIES_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_POPULAR_CATEGORIES_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, loading: false, error: "hata" };
 
     case GET_SEARCH_CATEGORIES:
@@ -46,6 +55,14 @@ export default (state = INITIAL_STATE, action) => {
         searchCategoriesResult: action.payload.data.Data
       };
     case GET_SEARCH_CATEGORIES_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_SEARCH_CATEGORIES_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, searchLoading: false, error: "hata" };
 
     case GET_CONTACT_MESSAGE_SUBJECT:
@@ -57,6 +74,14 @@ export default (state = INITIAL_STATE, action) => {
         contactSubjectResult: action.payload.data
       };
     case GET_CONTACT_MESSAGE_SUBJECT_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_CONTACT_MESSAGE_SUBJECT_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, contactSubjectLoading: false };
 
     case POST_CONTACT_MESSAGE:
@@ -68,6 +93,14 @@ export default (state = INITIAL_STATE, action) => {
         contactMessagePostResult: action.payload.data
       };
     case POST_CONTACT_MESSAGE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "POST_CONTACT_MESSAGE_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, contactSubjectLoading: false };
     default:
       return { ...state };

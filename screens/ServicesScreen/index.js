@@ -437,6 +437,7 @@ class ServicesScreen extends Component {
           navigator.geolocation.clearWatch(this.watchID);
         },
         error => {
+          this.setState({ locationPermission: false });
           Toast.show({
             text:
               "Adres için konumunuza ulaşılamadı. İnternet bağlantınızı kontrol edin veya tekrar deneyiniz.",
@@ -451,6 +452,8 @@ class ServicesScreen extends Component {
           distanceFilter: 10
         }
       );
+    } else {
+      this.setState({ locationPermission: false });
     }
   }
 

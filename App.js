@@ -13,7 +13,13 @@ import { Provider } from "react-redux";
 import axios from "axios";
 import axiosMiddleware from "redux-axios-middleware";
 import logger from "redux-logger";
-import AppNavigator from "./navigation/AppNavigator";
+import Sentry from "sentry-expo";
+
+Sentry.enableInExpoDevelopment = true;
+
+Sentry.config(
+  "https://49f724a6070f44efb4f9fcc909980b8a@sentry.io/1462198"
+).install();
 
 const client = axios.create({
   baseURL: "http://api.ustanbul.net",

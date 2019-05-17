@@ -6,6 +6,7 @@ import {
   GET_SERVICE_PREVIEW_DETAIL_SUCCESS,
   GET_SERVICE_PREVIEW_DETAIL_FAIL
 } from "../../types/companyDetailService";
+import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
   companyServicePreviewLoading: null,
@@ -25,6 +26,14 @@ export default (state = INITIAL_STATE, action) => {
         servicePreviewListResult: action.payload.data
       };
     case GET_COMPANY_SERVICE_PREVIVEW_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "REFRESH_AUTHENTICATION_USER_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, companyServicePreviewLoading: false };
 
     case GET_SERVICE_PREVIEW_DETAIL:
@@ -36,6 +45,14 @@ export default (state = INITIAL_STATE, action) => {
         servicePreviewDetailResult: action.payload.data
       };
     case GET_SERVICE_PREVIEW_DETAIL_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_SERVICE_PREVIEW_DETAIL_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, servicePreviewDetailLoading: false };
     default:
       return { ...state };

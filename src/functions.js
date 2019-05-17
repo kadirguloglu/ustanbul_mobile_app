@@ -2,6 +2,21 @@ import { Toast } from "native-base";
 import Storage from "react-native-storage";
 import { AsyncStorage } from "react-native";
 
+export function SmallPath(PicturePaths) {
+  try {
+    if (PicturePaths.length) {
+      PicturePaths.map(x => {
+        if (x.Key == "Small") {
+          return { uri: x.Value };
+        }
+      });
+    } else {
+      return { uri: PicturePaths["Small"] };
+    }
+  } catch (error) {}
+  return require("../assets/image-place-holder.png");
+}
+
 export function MidPath(PicturePaths) {
   try {
     if (PicturePaths.length != 0) {
@@ -19,6 +34,7 @@ export function MidPath(PicturePaths) {
 
   return "../assets/image-place-holder.png";
 }
+
 export function IsValidDate(d) {
   return d instanceof Date && !isNaN(d);
 }

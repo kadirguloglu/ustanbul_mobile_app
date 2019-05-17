@@ -15,6 +15,7 @@ import {
   GET_SERVICE_PREVIEW_DETAIL_QUESTION_SUCCESS,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL
 } from "../../types/customerDetailService";
+import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
   customerServiceCountLoading: null,
@@ -39,6 +40,14 @@ export default (state = INITIAL_STATE, action) => {
         customerServiceCountResult: action.payload.data
       };
     case GET_CUSTOMER_SERVICE_COUNT_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_CUSTOMER_SERVICE_COUNT_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, customerServiceCountLoading: false, error: "hata" };
 
     case GET_CUSTOMER_SERVICE_PREVIVEW:
@@ -50,6 +59,14 @@ export default (state = INITIAL_STATE, action) => {
         servicePreviewListResult: action.payload.data
       };
     case GET_CUSTOMER_SERVICE_PREVIVEW_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_CUSTOMER_SERVICE_PREVIVEW_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, customerServicePreviewLoading: false };
 
     case SET_USER_UPDATE:
@@ -64,6 +81,14 @@ export default (state = INITIAL_STATE, action) => {
       if (typeof result == "string") result = result == "true";
       return { ...state, userUpdateLoading: false, userUpdateResult: result };
     case SET_USER_UPDATE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "SET_USER_UPDATE_FAIL",
+            error: action
+          })
+        )
+      );
       return {
         ...state,
         userUpdateLoading: false,
@@ -83,6 +108,14 @@ export default (state = INITIAL_STATE, action) => {
       if (typeof result1 == "string") result1 = result1 == "true";
       return { ...state, userUpdateLoading: false, userUpdateResult: result1 };
     case SET_CUSTOMER_UPDATE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "SET_CUSTOMER_UPDATE_FAIL",
+            error: action
+          })
+        )
+      );
       return {
         ...state,
         userUpdateLoading: false,
@@ -99,6 +132,14 @@ export default (state = INITIAL_STATE, action) => {
         servicePreviewDetailQuestionResult: action.payload.data
       };
     case GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL",
+            error: action
+          })
+        )
+      );
       return { ...state, servicePreviewDetailQuestionLoading: false };
     default:
       return { ...state };
