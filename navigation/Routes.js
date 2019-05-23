@@ -26,7 +26,14 @@ const routesCustomer = [
   },
 
   {
-    to: "ContactPage",
+    to: "Chat",
+    name: "Mesajlar",
+    permission: [],
+    IOSonly: false
+  },
+
+  {
+    to: "Contact",
     name: "Bize Ulaş",
     permission: [],
     IOSonly: false
@@ -48,8 +55,15 @@ const routesCompany = [
   },
 
   {
-    to: "Home",
+    to: "SeeService",
     name: "Teklif Ver Para Kazan",
+    permission: [],
+    IOSonly: false
+  },
+
+  {
+    to: "CustomerService",
+    name: "Hizmetlerim",
     permission: [],
     IOSonly: false
   },
@@ -62,14 +76,14 @@ const routesCompany = [
   },
 
   {
-    to: "Chat",
+    to: "Home",
     name: "Kartlarım",
     permission: [],
     IOSonly: false
   },
 
   {
-    to: "ContactPage",
+    to: "Contact",
     name: "Bize Ulaş",
     permission: [],
     IOSonly: false
@@ -119,7 +133,7 @@ class DrawerLinks extends React.Component {
     return (
       <List
         dataArray={
-          this.props.generalServiceGetResponse.IsCompany
+          this.props.generalServiceGetResponse.activeUser.IsCompany
             ? routesCompany
             : routesCustomer
         }

@@ -14,6 +14,10 @@ import ServicesScreen from "../screens/ServicesScreen";
 import CustomerDetailScreen from "../screens/CustomerPageScreen/CustomerDetailScreen";
 import CustomerServiceScreen from "../screens/CustomerPageScreen/CustomerServiceScreen";
 import SeeProposalScreen from "../screens/CustomerPageScreen/SeeProposalScreen";
+import ChatScreen from "../screens/ChatScreen";
+import ContactScreen from "../screens/ContactScreen";
+import CompanyServiceScreen from "../screens/CompanyPageScreen";
+import SeeServiceScreen from "../screens/CompanyPageScreen/SeeServiceScreen";
 // import LinksScreen from "../screens/LinksScreen";
 // import SettingsScreen from "../screens/SettingsScreen";
 // import DepartmentScreen from "../screens/DepartmentScreen";
@@ -92,7 +96,11 @@ const drawer = createDrawerNavigator(
     Service: { screen: ServicesScreen },
     CustomerDetail: { screen: CustomerDetailScreen },
     CustomerService: { screen: CustomerServiceScreen },
-    SeeProposal: { screen: SeeProposalScreen }
+    SeeProposal: { screen: SeeProposalScreen },
+    Contact: { screen: ContactScreen },
+    Chat: { screen: ChatScreen },
+    CustomerService: { screen: CompanyServiceScreen },
+    SeeService: { screen: SeeServiceScreen }
   },
   {
     contentComponent: SideMenu

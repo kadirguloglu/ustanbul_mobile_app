@@ -26,19 +26,19 @@ class LoginForm extends Component {
       logoHeight: height
     };
   }
-  componentWillMount() {
-    this.handlePressLogin = function() {
-      this.props
-        .loginUser(this.state.email, this.state.password)
-        .then(({ payload }) => {
-          if (payload.data.ErrorText !== "") {
-            alert(payload.data.ErrorText);
-          } else {
-            this.props.navigation.navigate("Home");
-          }
-        });
-    };
-  }
+  componentWillMount() {}
+
+  handlePressLogin = () => {
+    this.props
+      .loginUser(this.state.email, this.state.password)
+      .then(({ payload }) => {
+        if (payload.data.ErrorText !== "") {
+          alert(payload.data.ErrorText);
+        } else {
+          this.props.navigation.navigate("Home");
+        }
+      });
+  };
 
   render() {
     return (

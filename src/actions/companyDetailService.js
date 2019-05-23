@@ -5,14 +5,12 @@ import {
   GET_SERVICE_PREVIEW_DETAIL_URL
 } from "../types/companyDetailService";
 
-export function companySerivicePreviewData() {
+export function companyServicePreviewData(activeUserId, langId) {
   return {
     type: GET_COMPANY_SERVICE_PREVIVEW,
     payload: {
       request: {
-        url:
-          GET_COMPANY_SERVICE_PREVIVEW_URL +
-          `/${states.activeUser.ID}/${states.LangID}`
+        url: GET_COMPANY_SERVICE_PREVIVEW_URL + `/${activeUserId}/${langId}`
       }
     }
   };

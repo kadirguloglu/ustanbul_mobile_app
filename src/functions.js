@@ -11,7 +11,7 @@ export function SmallPath(PicturePaths) {
         }
       });
     } else {
-      return { uri: PicturePaths["Small"] };
+      if (PicturePaths["Small"]) return { uri: PicturePaths["Small"] };
     }
   } catch (error) {}
   return require("../assets/image-place-holder.png");
@@ -19,20 +19,17 @@ export function SmallPath(PicturePaths) {
 
 export function MidPath(PicturePaths) {
   try {
-    if (PicturePaths.length != 0) {
+    if (PicturePaths.length) {
       PicturePaths.map(x => {
         if (x.Key == "Mid") {
           return x.Value;
         }
       });
     } else {
-      return "../assets/image-place-holder.png";
+      if (PicturePaths["Mid"]) return { uri: PicturePaths["Mid"] };
     }
-  } catch (error) {
-    return "../assets/image-place-holder.png";
-  }
-
-  return "../assets/image-place-holder.png";
+  } catch (error) {}
+  return require("../assets/image-place-holder.png");
 }
 
 export function IsValidDate(d) {

@@ -6,7 +6,8 @@ import {
 import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
-  getDepartmentResult: {}
+  messageUserListLoading: true,
+  messageUserListResult: []
 };
 
 export default (state = INITIAL_STATE, action) => {

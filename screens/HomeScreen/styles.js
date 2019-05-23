@@ -136,5 +136,51 @@ export default StyleSheet.create({
     fontSize: 14,
     color: "#4c8497",
     paddingLeft: 15
-  }
+  },
+  view1: { flexDirection: "column" },
+  view2: { zIndex: 2 },
+  view3: {
+    position: "absolute",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%"
+  },
+  text1: {
+    fontFamily: "Raleway_Light",
+    fontSize: 12,
+    color: "#fff"
+  },
+  text2: {
+    fontFamily: "Raleway_Bold",
+    fontSize: 12,
+    color: "#fff"
+  },
+  text3: {
+    fontFamily: "Raleway_Bold",
+    fontSize: 12,
+    color: "#fff"
+  },
+  TouchableOpacity: {
+    width: itemWidth,
+    height: slideHeight,
+    paddingHorizontal: itemHorizontalMargin,
+    paddingBottom: 18
+  },
+  view: {
+    position: "absolute",
+    top: 0,
+    left: itemHorizontalMargin,
+    right: itemHorizontalMargin,
+    bottom: 18,
+    shadowColor: colors.black,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 10,
+    borderRadius: entryBorderRadius,
+    borderWidth: 1,
+    borderColor: ThemeColor
+  },
+  fontawesome1: { color: "#4c8497", paddingLeft: 10 }
 });

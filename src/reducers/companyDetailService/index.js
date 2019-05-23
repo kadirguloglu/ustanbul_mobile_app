@@ -9,10 +9,10 @@ import {
 import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
-  companyServicePreviewLoading: null,
-  servicePreviewListResult: {},
-  servicePreviewDetailLoading: null,
-  servicePreviewDetailResult: {}
+  companyServicePreviewLoading: false,
+  servicePreviewListResult: [],
+  servicePreviewDetailLoading: false,
+  servicePreviewDetailResult: []
 };
 
 export default (state = INITIAL_STATE, action) => {

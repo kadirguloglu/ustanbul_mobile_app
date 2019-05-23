@@ -8,6 +8,7 @@ import {
   Alert
 } from "react-native";
 import { Spinner, Container, Content } from "native-base";
+import { FontAwesome } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { serviceCategoriesAndSubCategories } from "../../src/actions/categoryService";
 import {
@@ -15,11 +16,16 @@ import {
   searchCategories
 } from "../../src/actions/homeService";
 import { loginUser } from "../../src/actions/generalServiceGet";
-import { ThemeColor, IsFullData, storage } from "../../src/functions";
-import { FontAwesome } from "@expo/vector-icons";
+import {
+  ThemeColor,
+  IsFullData,
+  storage,
+  SmallPath
+} from "../../src/functions";
 import Carousel from "react-native-snap-carousel";
-import Component1 from "../../components/HomeScreen/component1";
 import Component2 from "../../components/HomeScreen/component2";
+import Header from "./Components/Header";
+import PopularCategories from "./Components/PopularCategories";
 import styles, {
   sliderWidth,
   itemWidth,
@@ -146,117 +152,25 @@ class HomeScreen extends Component {
       });
   }
   render() {
-    const popularCategoriesResult = this.props.homeServiceResponse
-      .popularCategoriesResult;
-    const serviceCategoriesResult = this.props.categoryServiceResponse
-      .serviceCategoriesResult;
-    const { activeUser } = this.props.generalServiceGetResponse;
+    const {
+      homeServiceResponse,
+      categoryServiceResponse,
+      generalServiceGetResponse,
+      navigation
+    } = this.props;
+    const { popularCategoriesResult } = homeServiceResponse;
+    const { serviceCategoriesResult } = categoryServiceResponse;
+    const { activeUser } = generalServiceGetResponse;
     return (
       <Container>
         <Content>
           <View style={styles.container}>
-            <View>
-              <ImageBackground
-                source={require("../../assets/background/homepage_background.png")}
-                style={styles.header_background}
-                resizeMode="cover"
-              >
-                <View style={{ flexDirection: "column" }}>
-                  <View style={styles.header}>
-                    <View style={{ zIndex: 2 }}>
-                      <FontAwesome
-                        style={[
-                          styles.color_white,
-                          {
-                            transform: [{ rotate: "-45deg" }]
-                          }
-                        ]}
-                        name="bell"
-                        size={22}
-                        onPress={() => this.props.navigation.toggleDrawer()}
-                      />
-                    </View>
-                    <View style={styles.logo_block}>
-                      <Text style={[styles.font_raleway_bold, styles.logo]}>
-                        FixMasTR
-                      </Text>
-                    </View>
-                    <View>
-                      <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                        Hizmet
-                      </Text>
-                      <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                        {"      "}Al
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    position: "absolute",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                    height: "100%"
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: "Raleway_Light",
-                      fontSize: 12,
-                      color: "#fff"
-                    }}
-                  >
-                    Hoşgeldin
-                  </Text>
-                  {activeUser.Id != 0 ? (
-                    activeUser.IsCompany ? (
-                      <Text
-                        style={{
-                          fontFamily: "Raleway_Bold",
-                          fontSize: 12,
-                          color: "#fff"
-                        }}
-                      >
-                        Kadirz2z23z23z23z2 Güloğlu
-                      </Text>
-                    ) : (
-                      <Text
-                        style={{
-                          fontFamily: "Raleway_Bold",
-                          fontSize: 12,
-                          color: "#fff"
-                        }}
-                      >
-                        {activeUser.Customers.Name}{" "}
-                        {activeUser.Customers.Surname}
-                      </Text>
-                    )
-                  ) : null}
-                </View>
-              </ImageBackground>
-            </View>
+            <Header activeUser={activeUser} navigation={navigation} />
             <View style={styles.content}>
-              <View>
-                <Text style={styles.title_text}>
-                  POPÜLER KATEGORİLER{"   "}
-                  <FontAwesome
-                    style={{ color: "#4c8497", paddingLeft: 10 }}
-                    name="arrow-circle-right"
-                    size={12}
-                  />
-                </Text>
-                {popularCategoriesResult &&
-                popularCategoriesResult.length > 1 ? (
-                  <Component1
-                    popularCategoriesResult={popularCategoriesResult}
-                    handlePressCategory={this.handlePressCategory}
-                  />
-                ) : (
-                  <Spinner />
-                )}
-              </View>
+              <PopularCategories
+                popularCategoriesResult={popularCategoriesResult}
+                handlePressCategory={this.handlePressCategory}
+              />
               <View>
                 <Text style={styles.title_text}>
                   FIRSATLAR{"   "}
@@ -291,7 +205,6 @@ class HomeScreen extends Component {
             </View>
           </View>
         </Content>
-        {/* <MyFooter active_tab={1} /> */}
       </Container>
     );
   }

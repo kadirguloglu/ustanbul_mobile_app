@@ -20,8 +20,8 @@ const INITIAL_STATE = {
   error: "",
   searchLoading: null,
   searchCategoriesResult: [],
-  contactSubjectLoading: null,
-  contactSubjectResult: {},
+  contactSubjectLoading: true,
+  contactSubjectResult: [],
   contactMessagePostResult: {}
 };
 

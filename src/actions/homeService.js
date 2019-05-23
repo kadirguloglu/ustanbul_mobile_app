@@ -43,13 +43,12 @@ export function searchCategories(
   };
 }
 
-export function contactSubjectData() {
+export function contactSubjectData(siteId, langId) {
   return {
     type: GET_CONTACT_MESSAGE_SUBJECT,
     payload: {
       request: {
-        url:
-          GET_CONTACT_MESSAGE_SUBJECT_URL + `/${states.SiteID}/${states.LangID}`
+        url: GET_CONTACT_MESSAGE_SUBJECT_URL + `/${siteId}/${langId}`
       }
     }
   };
@@ -61,7 +60,7 @@ export function postContactSubject(contactMessage) {
     payload: {
       request: {
         url: POST_CONTACT_MESSAGE_URL,
-        data: { subject: contactMessage },
+        data: contactMessage,
         method: "POST"
       }
     }

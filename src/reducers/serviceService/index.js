@@ -10,7 +10,13 @@ import {
   UPDATE_PROPOSAL_PRICE_FAIL,
   GET_PROPOSAL_DETAIL,
   GET_PROPOSAL_DETAIL_SUCCESS,
-  GET_PROPOSAL_DETAIL_FAIL
+  GET_PROPOSAL_DETAIL_FAIL,
+  GET_SERVICE_CUSTOMER_PAGE,
+  GET_SERVICE_CUSTOMER_PAGE_SUCCESS,
+  GET_SERVICE_CUSTOMER_PAGE_FAIL,
+  GET_SERVICE_COMPANY_PAGE,
+  GET_SERVICE_COMPANY_PAGE_SUCCESS,
+  GET_SERVICE_COMPANY_PAGE_FAIL
 } from "../../types/serviceService";
 import Sentry from "sentry-expo";
 
@@ -21,7 +27,10 @@ const INITIAL_STATE = {
   serviceCreateLoading: null,
   oldChatMessageLoading: null,
   oldChatMessageDataState: null,
-  oldChatMessageDataResult: {}
+  oldChatMessageDataResult: {},
+  serviceCustomerPageLoading: true,
+  serviceCompanyPageLoading: true,
+  serviceCompanyPageData: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -110,6 +119,44 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, updateServiceProposalLoading: false };
+
+    case GET_SERVICE_CUSTOMER_PAGE:
+      return { ...state, serviceCustomerPageLoading: true };
+    case GET_SERVICE_CUSTOMER_PAGE_SUCCESS:
+      return {
+        ...state,
+        serviceCustomerPageLoading: false,
+        serviceCustomerPageData: action.payload.data
+      };
+    case GET_SERVICE_CUSTOMER_PAGE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_SERVICE_CUSTOMER_PAGE_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, serviceCustomerPageLoading: false };
+
+    case GET_SERVICE_COMPANY_PAGE:
+      return { ...state, serviceCompanyPageLoading: true };
+    case GET_SERVICE_COMPANY_PAGE_SUCCESS:
+      return {
+        ...state,
+        serviceCompanyPageLoading: false,
+        serviceCompanyPageData: action.payload.data
+      };
+    case GET_SERVICE_COMPANY_PAGE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_SERVICE_COMPANY_PAGE_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, serviceCompanyPageLoading: false };
     default:
       return { ...state };
   }

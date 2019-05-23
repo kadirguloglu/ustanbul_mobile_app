@@ -28,18 +28,13 @@ import {
   Body,
   Title,
   Tabs,
-  Tab,
-  TabHeading,
-  ScrollableTab
+  Tab
 } from "native-base";
 import { ThemeColor, MyToast } from "../../src/functions";
-//import { ViewPager } from "rn-viewpager";
-import { BlurView } from "react-native-blur";
 import Dialog from "react-native-dialog";
 import moment from "moment";
 import Modal from "react-native-modal";
 import MyButton from "../../components/MyButton";
-import { Icon as ExpoIcon } from "expo";
 
 class CustomerServiceScreen extends Component {
   constructor(props) {
@@ -56,7 +51,8 @@ class CustomerServiceScreen extends Component {
       oldProposalPrice: "0",
       selectedProposalId: 0,
       PAGES: [],
-      PAGES_DATA_CATEGORY_INDEX: []
+      PAGES_DATA_CATEGORY_INDEX: [],
+      blurViewRef: null
     };
   }
   componentWillMount() {
@@ -359,13 +355,6 @@ class CustomerServiceScreen extends Component {
           <Spinner />
         </Root>
       );
-    const blurComponentIOS = (
-      <BlurView
-        style={StyleSheet.absoluteFill}
-        blurType="xlight"
-        blurAmount={50}
-      />
-    );
     return (
       <Root>
         <Modal isVisible={this.state.modalIsVisible}>
@@ -479,10 +468,7 @@ class CustomerServiceScreen extends Component {
             </View>
           </ScrollView>
         </Modal>
-        <Dialog.Container
-          visible={this.state.dialogVisible}
-          blurComponentIOS={blurComponentIOS}
-        >
+        <Dialog.Container visible={this.state.dialogVisible}>
           <Dialog.Title>Teklif Güncelleme</Dialog.Title>
           <Dialog.Description>
             {!this.state.newProposalRegex
