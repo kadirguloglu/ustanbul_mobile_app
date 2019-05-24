@@ -1,15 +1,18 @@
 import React from "react";
-import { Button, Text, View } from "native-base";
+import { View } from "native-base";
+import MyButton from "../../../components/MyButton";
 
 export default (Buttons = props => {
-  const { styles, item } = props;
+  const { styles, item, _handleServiceDetail } = props;
   return (
     <View style={styles.view3}>
-      <Button style={styles.button1}>
-        <Text>
-          {item.MyProposalPrice} TL teklif verildi{"\n"}Detayları incele
-        </Text>
-      </Button>
+      <MyButton
+        text={`${item.MyProposalPrice} TL teklif verildi Detayları incele`}
+        //buttonStyle={styles.button1}
+        press={_handleServiceDetail}
+        parameters={[item, item]}
+        full={true}
+      />
     </View>
   );
 });

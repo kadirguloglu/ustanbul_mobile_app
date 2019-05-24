@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ImageBackground,
-  Image,
-  TouchableOpacity,
-  Alert
-} from "react-native";
-import { Spinner, Container, Content } from "native-base";
+import { ImageBackground, TouchableOpacity } from "react-native";
+import { View, Text } from "native-base";
 import { FontAwesome } from "@expo/vector-icons";
 
 import styles from "../styles";
@@ -45,31 +38,24 @@ const Header = props => {
             <View>
               {activeUser.Id != 0 ? (
                 activeUser.IsCompany ? (
-                  <React.Fragment>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("SeeService")}
+                  >
                     <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                      Teklif ver
+                      Teklif ver{"\n"}Para kazan
                     </Text>
-                    <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                      Para kazan
-                    </Text>
-                  </React.Fragment>
+                  </TouchableOpacity>
                 ) : (
                   <React.Fragment>
                     <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                      Hizmet
-                    </Text>
-                    <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                      {"      "}Al
+                      Hizmet al
                     </Text>
                   </React.Fragment>
                 )
               ) : (
                 <React.Fragment>
                   <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                    Hizmet
-                  </Text>
-                  <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                    {"      "}Al
+                    Hizmet al
                   </Text>
                 </React.Fragment>
               )}

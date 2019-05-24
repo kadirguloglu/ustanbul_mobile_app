@@ -10,7 +10,9 @@ import {
   GET_SERVICE_CUSTOMER_PAGE,
   GET_SERVICE_CUSTOMER_PAGE_URL,
   GET_SERVICE_COMPANY_PAGE,
-  GET_SERVICE_COMPANY_PAGE_URL
+  GET_SERVICE_COMPANY_PAGE_URL,
+  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE,
+  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_URL
 } from "../types/serviceService";
 
 export function serviceCreateData(categoryid, siteid, langid) {
@@ -78,6 +80,21 @@ export function getServiceCompanyPage(activeUserId, page, count) {
     payload: {
       request: {
         url: `${GET_SERVICE_COMPANY_PAGE_URL}/${activeUserId}/${page}/${count}`
+      }
+    }
+  };
+}
+
+export function getMasterServiceProposalQuestionPage(
+  categoryId,
+  siteId,
+  langId
+) {
+  return {
+    type: GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE,
+    payload: {
+      request: {
+        url: `${GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_URL}/${categoryId}/${siteId}/${langId}`
       }
     }
   };

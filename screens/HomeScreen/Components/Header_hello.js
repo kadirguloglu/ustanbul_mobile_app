@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ImageBackground,
-  Image,
-  TouchableOpacity,
-  Alert
-} from "react-native";
-import { Spinner, Container, Content } from "native-base";
-import { FontAwesome } from "@expo/vector-icons";
+import { View, Text } from "native-base";
 
 import styles from "../styles";
 

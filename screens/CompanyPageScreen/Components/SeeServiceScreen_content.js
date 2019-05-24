@@ -6,15 +6,17 @@ import Information from "./SeeServiceScreen_information";
 import Buttons from "./SeeServiceScreen_buttons";
 
 const SeeServiceContent = props => {
-  const { serviceCompanyPageData } = props;
-  return serviceCompanyPageData.map((item, index) => {
-    return (
-      <View style={styles.view1} key={"ServiceCompanyPage-" + index}>
-        <Information styles={styles} item={item} />
-        <Buttons item={item} styles={styles} />
-      </View>
-    );
-  });
+  const { serviceCompanyPageData, _handleServiceDetail } = props;
+  return serviceCompanyPageData.map((item, index) => (
+    <View style={styles.view1} key={"ServiceCompanyPage-" + index}>
+      <Information styles={styles} item={item} />
+      <Buttons
+        item={item}
+        styles={styles}
+        _handleServiceDetail={_handleServiceDetail}
+      />
+    </View>
+  ));
 };
 
 export default SeeServiceContent;
@@ -29,12 +31,12 @@ const styles = StyleSheet.create({
   view2: {
     flexDirection: "row"
   },
-  view3: {
-    flexDirection: "row",
-    justifyContent: "flex-end"
-  },
+  view3: {},
   button1: {
     marginRight: 5
+  },
+  view4: {
+    paddingLeft: 5
   },
   button2: {
     marginLeft: 5

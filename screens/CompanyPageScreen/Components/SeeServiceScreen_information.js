@@ -15,11 +15,11 @@ export default (Information = props => {
           )}
         />
       </View>
-      <View>
-        <Text>{item.Title}</Text>
+      <View style={styles.view4}>
+        <Text numberOfLines={1}>{item.Title}</Text>
         <Text>En yüksek : {item.MaxProposalPrice}</Text>
         <Text>En düşük : {item.MinProposalPrice}</Text>
-        <Text>{item.Note}</Text>
+        <Text numberOfLines={1}>{item.Note}</Text>
       </View>
     </View>
   );

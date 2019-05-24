@@ -16,7 +16,10 @@ import {
   GET_SERVICE_CUSTOMER_PAGE_FAIL,
   GET_SERVICE_COMPANY_PAGE,
   GET_SERVICE_COMPANY_PAGE_SUCCESS,
-  GET_SERVICE_COMPANY_PAGE_FAIL
+  GET_SERVICE_COMPANY_PAGE_FAIL,
+  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE,
+  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_SUCCESS,
+  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_FAIL
 } from "../../types/serviceService";
 import Sentry from "sentry-expo";
 
@@ -30,7 +33,9 @@ const INITIAL_STATE = {
   oldChatMessageDataResult: {},
   serviceCustomerPageLoading: true,
   serviceCompanyPageLoading: true,
-  serviceCompanyPageData: []
+  serviceCompanyPageData: [],
+  masterServiceProposalQuestionPageLoading: true,
+  masterServiceProposalQuestionPageData: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -157,6 +162,25 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, serviceCompanyPageLoading: false };
+
+    case GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE:
+      return { ...state, masterServiceProposalQuestionPageLoading: true };
+    case GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_SUCCESS:
+      return {
+        ...state,
+        masterServiceProposalQuestionPageLoading: false,
+        masterServiceProposalQuestionPageData: action.payload.data
+      };
+    case GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, masterServiceProposalQuestionPageLoading: false };
     default:
       return { ...state };
   }
