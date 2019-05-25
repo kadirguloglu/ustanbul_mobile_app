@@ -12,7 +12,8 @@ import {
   Root,
   Spinner,
   Body,
-  View
+  View,
+  Toast
 } from "native-base";
 import { NavigationEvents } from "react-navigation";
 import { ScrollView } from "react-native";
@@ -59,14 +60,130 @@ class SeeServiceScreen extends Component {
   _handleSendProposal = () => {
     const { getMasterServiceProposalQuestionPage } = this.props;
     const { service } = this.state;
+    this.setState({ proposalModel: {} });
     getMasterServiceProposalQuestionPage(service.CategoryID, 1, 1).then(
-      ({}) => {
-        this.setState({ tabActivePage: 2 });
+      ({ payload }) => {
+        if (payload) {
+          if (payload.data) {
+            let Questions = [];
+            for (let i = 0; i < payload.data.length; i++) {
+              const item = payload.data[i];
+              let quest = { Answers: [] };
+              for (let p = 0; p < item.Answers.length; p++) {
+                const itemAnswer = item.Answers[p];
+                quest.Answers.push({ Answer: "" });
+              }
+              Questions.push(quest);
+            }
+            this.setState({ proposalModel: { Questions: Questions } });
+            this.setState({ tabActivePage: 2 });
+          }
+        }
       }
     );
   };
 
-  _handleSendNewProposal = () => {};
+  _handleSendNewProposal = () => {
+    const { serviceServiceResponse } = this.props;
+    const { masterServiceProposalQuestionPageData } = serviceServiceResponse;
+    const { proposalModel } = this.state;
+
+    let errorMessage = "";
+    let lastIndex = 0;
+
+    for (let i = 0; i < masterServiceProposalQuestionPageData.length; i++) {
+      const item = masterServiceProposalQuestionPageData[i];
+      const quest = proposalModel.Questions[i];
+      lastIndex = i;
+
+      if (item.QuestionType === 1) {
+        if (
+          item.QuestionMaxValue <= quest.Answers[0].Answer.length ||
+          item.QuestionMinValue > quest.Answers[0].Answer.length
+        ) {
+          errorMessage = "Lütfen cevabı istenilen aralıkta giriniz.";
+          break;
+        }
+        if (item.IsRequired) {
+          if (quest.Answers[0].Answer.length < 1) {
+            errorMessage = "Zorunlu alan.";
+            break;
+          }
+        }
+      }
+      if (item.QuestionType === 2) {
+        if (
+          item.QuestionMaxValue <=
+            parseInt(
+              quest.Answers[0].Answer === "" ? 0 : quest.Answers[0].Answer
+            ) ||
+          item.QuestionMinValue >
+            parseInt(
+              quest.Answers[0].Answer === "" ? 0 : quest.Answers[0].Answer
+            )
+        ) {
+          errorMessage = "Lütfen cevabı istenilen aralıkta giriniz.";
+          break;
+        }
+        if (item.IsRequired) {
+          if (quest.Answers[0].Answer === "") {
+            errorMessage = "Zorunlu alan.";
+            break;
+          }
+        }
+      }
+      if (item.QuestionType === 3) {
+        if (item.IsRequired) {
+          if (quest.Answers[0].Answer === "") {
+            errorMessage = "Zorunlu alan.";
+            break;
+          }
+        }
+      }
+      if (item.QuestionType === 4) {
+        if (item.IsRequired) {
+          if (!quest.Answers[0].ID) {
+            errorMessage = "Lütfen bir seçim yapınız.";
+            break;
+          }
+        }
+      }
+      if (item.QuestionType === 5) {
+        const checkedList = quest.Answers.find(ans => ans.Checked === true);
+        if (
+          item.QuestionMaxValue <= checkedList.length ||
+          item.QuestionMinValue > checkedList.length
+        ) {
+          errorMessage = "Lütfen seçimleri kontrol ediniz.";
+          break;
+        }
+        if (item.IsRequired) {
+          if (!checkedList) {
+            errorMessage = "Zorunlu alan.";
+            break;
+          }
+          if (checkedList.length) {
+            if (checkedList.length < 1) {
+              errorMessage = "Zorunlu alan.";
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (errorMessage !== "") {
+      this.setState({ tabProposalSendActivePage: lastIndex + 1 });
+      Toast.show({
+        text: errorMessage,
+        buttonText: "Tamam",
+        duration: 2500
+      });
+      return false;
+    }
+
+    return true;
+  };
 
   render() {
     const { serviceServiceResponse } = this.props;

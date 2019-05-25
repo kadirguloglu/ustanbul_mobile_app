@@ -51,7 +51,7 @@ const SendProposal = props => {
           </Item>
         </View>
         <View>
-          <Text>{"* Zorunlu alan"}</Text>
+          <Text style={styles.helperTextWithInput}>{"* Zorunlu alan"}</Text>
         </View>
         <View style={styles.buttonStyle}>
           <MyButton
@@ -112,13 +112,29 @@ const SendProposal = props => {
                       }}
                       value={
                         proposalModel.Questions &&
-                        proposalModel.Questions[index]
-                          ? proposalModel.Questions[index].Answer[0].Answer
+                        proposalModel.Questions[index] &&
+                        proposalModel.Questions[index].Answers
+                          ? proposalModel.Questions[index].Answers[0].Answer
                           : ""
                       }
                     />
                   </Item>
                 </View>
+                {item.IsRequired ? (
+                  <View>
+                    <Text style={styles.helperTextWithInput}>
+                      * Zorunlu alan. En fazla {item.QuestionMaxValue} karakter.
+                      En az {item.QuestionMinValue} karakter giriniz.
+                    </Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={styles.helperTextWithInput}>
+                      En fazla {item.QuestionMaxValue} karakter. En az{" "}
+                      {item.QuestionMinValue} karakter giriniz.
+                    </Text>
+                  </View>
+                )}
                 <View style={styles.buttonStyle}>
                   <MyButton
                     full={true}
@@ -173,19 +189,34 @@ const SendProposal = props => {
                           Question: item.Question,
                           Answers: answer
                         };
-                        if (!newValue.Questions) newValue.Questions = [];
                         newValue.Questions[index] = questions;
                         _handleSetInitialState("proposalModel", newValue);
                       }}
                       value={
                         proposalModel.Questions &&
-                        proposalModel.Questions[index]
-                          ? proposalModel.Questions[index].Answers.Answer
+                        proposalModel.Questions[index] &&
+                        proposalModel.Questions[index].Answers
+                          ? proposalModel.Questions[index].Answers[0].Answer
                           : ""
                       }
                     />
                   </Item>
                 </View>
+                {item.IsRequired ? (
+                  <View>
+                    <Text style={styles.helperTextWithInput}>
+                      * Zorunlu alan. En fazla {item.QuestionMaxValue}. En az{" "}
+                      {item.QuestionMinValue} giriniz.
+                    </Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={styles.helperTextWithInput}>
+                      En fazla {item.QuestionMaxValue}. En az{" "}
+                      {item.QuestionMinValue} giriniz.
+                    </Text>
+                  </View>
+                )}
                 <View style={styles.buttonStyle}>
                   <MyButton
                     full={true}
@@ -247,19 +278,26 @@ const SendProposal = props => {
                           Question: item.Question,
                           Answers: answer
                         };
-                        if (!newValue.Questions) newValue.Questions = [];
                         newValue.Questions[index] = questions;
                         _handleSetInitialState("proposalModel", newValue);
                       }}
                       value={
                         proposalModel.Questions &&
-                        proposalModel.Questions[index]
+                        proposalModel.Questions[index] &&
+                        proposalModel.Questions[index].Answer
                           ? proposalModel.Questions[index].Answer[0].Answer
                           : ""
                       }
                     />
                   </Item>
                 </View>
+                {item.IsRequired ? (
+                  <View>
+                    <Text style={styles.helperTextWithInput}>
+                      * Zorunlu alan.
+                    </Text>
+                  </View>
+                ) : null}
                 <View style={styles.buttonStyle}>
                   <MyButton
                     full={true}
@@ -306,34 +344,35 @@ const SendProposal = props => {
                       style={{ width: undefined }}
                       selectedValue={
                         proposalModel.Questions &&
-                        proposalModel.Questions[index]
-                          ? proposalModel.Questions[index].Answer[0].Answer
+                        proposalModel.Questions[index] &&
+                        proposalModel.Questions[index].Answers
+                          ? proposalModel.Questions[index].Answers[0].ID
                           : ""
                       }
-                      onValueChange={value => {
+                      onValueChange={selectedId => {
+                        const value = masterServiceProposalQuestionPageData[
+                          index
+                        ].Answers.find(item => item.ID === selectedId);
                         const newValue = { ...proposalModel };
-                        const answer = [
-                          {
-                            ID: item.Answers[0].ID,
-                            Answer: value,
-                            AnswerTextOrPlaceHolder:
-                              item.Answers[0].AnswerTextOrPlaceHolder
-                          }
-                        ];
+                        const answer = [{ ...value }];
                         const questions = {
                           ID: item.ID,
                           Question: item.Question,
                           Answers: answer
                         };
-                        if (!newValue.Questions) newValue.Questions = [];
                         newValue.Questions[index] = questions;
                         _handleSetInitialState("proposalModel", newValue);
                       }}
                     >
+                      <Picker.Item
+                        key={"dropdown--1"}
+                        label={"Seçiniz"}
+                        value={-1}
+                      />
                       {item.Answers.map(ans => {
                         return (
                           <Picker.Item
-                            key={"dropdown" + ans.ID}
+                            key={"dropdown-" + ans.ID}
                             label={ans.AnswerTextOrPlaceHolder}
                             value={ans.ID}
                           />
@@ -342,6 +381,13 @@ const SendProposal = props => {
                     </Picker>
                   </Item>
                 </View>
+                {item.IsRequired ? (
+                  <View>
+                    <Text style={styles.helperTextWithInput}>
+                      * Zorunlu alan.
+                    </Text>
+                  </View>
+                ) : null}
                 <View style={styles.buttonStyle}>
                   <MyButton
                     full={true}
@@ -383,46 +429,24 @@ const SendProposal = props => {
                       <ListItem key={"checkbox-" + ix + "-" + checkbox.ID}>
                         <CheckBox
                           checked={
-                            proposalModel.Questions &&
-                            proposalModel.Questions[index] &&
-                            proposalModel.Questions[index].Answers &&
-                            proposalModel.Questions[index].Answers[ix]
+                            proposalModel.Questions[index].Answers[ix].Checked
                               ? true
                               : false
                           }
                           onPress={value => {
-                            debugger;
                             const newValue = { ...proposalModel };
-                            if (!newValue.Questions) {
-                              newValue.Questions = [];
-                            } else {
-                              if (!newValue.Questions[index]) {
-                                delete newValue.Questions[index].Answers[ix];
-                              }
-                            }
-                            if (
-                              newValue.Questions[index] &&
-                              newValue.Questions[index].Answers
-                            ) {
-                              delete newValue.Questions[index].Answers[ix];
-                            }
-                            const questions = {
-                              ID: item.ID,
-                              Question: item.Question,
-                              Answers: []
+                            const selectedItem =
+                              masterServiceProposalQuestionPageData[index]
+                                .Answers[ix];
+                            newValue.Questions[index].Answers[ix] = {
+                              ID: selectedItem.ID,
+                              Answer: selectedItem.AnswerTextOrPlaceHolder,
+                              AnswerTextOrPlaceHolder:
+                                selectedItem.AnswerTextOrPlaceHolder,
+                              Checked: !proposalModel.Questions[index].Answers[
+                                ix
+                              ].Checked
                             };
-                            if (newValue.Questions[index]) {
-                              questions = newValue.Questions[index].Answers;
-                            }
-                            newValue.Questions[index] = questions;
-                            if (value) {
-                              newValue.Questions[index].Answers[ix] = {
-                                ID: checkbox.ID,
-                                Answer: value,
-                                AnswerTextOrPlaceHolder:
-                                  checkbox.AnswerTextOrPlaceHolder
-                              };
-                            }
                             _handleSetInitialState("proposalModel", newValue);
                           }}
                         />
@@ -430,27 +454,17 @@ const SendProposal = props => {
                           <TouchableOpacity
                             onPress={value => {
                               const newValue = { ...proposalModel };
-                              if (!newValue.Questions) {
-                                newValue.Questions = [];
-                              } else {
-                                if (!newValue.Questions[index].Answers) {
-                                  delete newValue.Questions[index].Answers[ix];
-                                }
-                              }
-                              const questions = {
-                                ID: item.ID,
-                                Question: item.Question,
-                                Answers: [...newValue.Questions[index].Answers]
+                              const selectedItem =
+                                masterServiceProposalQuestionPageData[index]
+                                  .Answers[ix];
+                              newValue.Questions[index].Answers[ix] = {
+                                ID: selectedItem.ID,
+                                Answer: selectedItem.AnswerTextOrPlaceHolder,
+                                AnswerTextOrPlaceHolder:
+                                  selectedItem.AnswerTextOrPlaceHolder,
+                                Checked: !proposalModel.Questions[index]
+                                  .Answers[ix].Checked
                               };
-                              newValue.Questions[index] = questions;
-                              if (value) {
-                                newValue.Questions[index].Answers[ix] = {
-                                  ID: checkbox.ID,
-                                  Answer: value,
-                                  AnswerTextOrPlaceHolder:
-                                    checkbox.AnswerTextOrPlaceHolder
-                                };
-                              }
                               _handleSetInitialState("proposalModel", newValue);
                             }}
                           >
@@ -461,6 +475,22 @@ const SendProposal = props => {
                     );
                   })}
                 </View>
+                {item.IsRequired ? (
+                  <View>
+                    <Text style={styles.helperTextWithInput}>
+                      * Zorunlu alan. En fazla {item.QuestionMaxValue} seçim. En
+                      az {item.QuestionMinValue} seçin yapabilirsiniz.
+                    </Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={styles.helperTextWithInput}>
+                      En fazla {item.QuestionMaxValue}. En fazla{" "}
+                      {item.QuestionMaxValue} seçim. En az{" "}
+                      {item.QuestionMinValue} seçin yapabilirsiniz.
+                    </Text>
+                  </View>
+                )}
                 <View style={styles.buttonStyle}>
                   <MyButton
                     full={true}
@@ -509,5 +539,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-end",
     margin: -20
+  },
+  helperTextWithInput: {
+    color: "#ff0000",
+    textAlign: "right"
   }
 });
