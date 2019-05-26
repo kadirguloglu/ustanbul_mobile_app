@@ -19,7 +19,13 @@ import {
   GET_SERVICE_COMPANY_PAGE_FAIL,
   GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE,
   GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_SUCCESS,
-  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_FAIL
+  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_FAIL,
+  POST_SERVICE_SEND_PROPOSAL,
+  POST_SERVICE_SEND_PROPOSAL_SUCCESS,
+  POST_SERVICE_SEND_PROPOSAL_FAIL,
+  GET_SERVICE_PROPOSAL_PREVIEW,
+  GET_SERVICE_PROPOSAL_PREVIEW_SUCCESS,
+  GET_SERVICE_PROPOSAL_PREVIEW_FAIL
 } from "../../types/serviceService";
 import Sentry from "sentry-expo";
 
@@ -34,8 +40,10 @@ const INITIAL_STATE = {
   serviceCustomerPageLoading: true,
   serviceCompanyPageLoading: true,
   serviceCompanyPageData: [],
-  masterServiceProposalQuestionPageLoading: true,
-  masterServiceProposalQuestionPageData: []
+  masterServiceProposalQuestionPageLoading: false,
+  masterServiceProposalQuestionPageData: [],
+  serviceSendProposalLoading: false,
+  serviceProposalPreviewLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -181,6 +189,44 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, masterServiceProposalQuestionPageLoading: false };
+
+    case POST_SERVICE_SEND_PROPOSAL:
+      return { ...state, serviceSendProposalLoading: true };
+    case POST_SERVICE_SEND_PROPOSAL_SUCCESS:
+      return {
+        ...state,
+        serviceSendProposalLoading: false,
+        serviceSendProposalResult: action.payload.data
+      };
+    case POST_SERVICE_SEND_PROPOSAL_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "POST_SERVICE_SEND_PROPOSAL_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, serviceSendProposalLoading: false };
+
+    case GET_SERVICE_PROPOSAL_PREVIEW:
+      return { ...state, serviceProposalPreviewLoading: true };
+    case GET_SERVICE_PROPOSAL_PREVIEW_SUCCESS:
+      return {
+        ...state,
+        serviceProposalPreviewLoading: false,
+        serviceProposalPreviewData: action.payload.data
+      };
+    case GET_SERVICE_PROPOSAL_PREVIEW_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_SERVICE_PROPOSAL_PREVIEW_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, serviceProposalPreviewLoading: false };
     default:
       return { ...state };
   }

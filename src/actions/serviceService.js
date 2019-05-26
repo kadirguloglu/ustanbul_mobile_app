@@ -12,7 +12,11 @@ import {
   GET_SERVICE_COMPANY_PAGE,
   GET_SERVICE_COMPANY_PAGE_URL,
   GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE,
-  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_URL
+  GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_URL,
+  POST_SERVICE_SEND_PROPOSAL,
+  POST_SERVICE_SEND_PROPOSAL_URL,
+  GET_SERVICE_PROPOSAL_PREVIEW,
+  GET_SERVICE_PROPOSAL_PREVIEW_URL
 } from "../types/serviceService";
 
 export function serviceCreateData(categoryid, siteid, langid) {
@@ -95,6 +99,30 @@ export function getMasterServiceProposalQuestionPage(
     payload: {
       request: {
         url: `${GET_MASTER_SERVICE_PROPOSAL_QUESTION_PAGE_URL}/${categoryId}/${siteId}/${langId}`
+      }
+    }
+  };
+}
+
+export function sendServiceProposal(proposal) {
+  return {
+    type: POST_SERVICE_SEND_PROPOSAL,
+    payload: {
+      request: {
+        url: POST_SERVICE_SEND_PROPOSAL_URL,
+        data: proposal,
+        method: "POST"
+      }
+    }
+  };
+}
+
+export function serviceProposalPreview(proposalId) {
+  return {
+    type: GET_SERVICE_PROPOSAL_PREVIEW,
+    payload: {
+      request: {
+        url: `${GET_SERVICE_PROPOSAL_PREVIEW_URL}/${proposalId}`
       }
     }
   };

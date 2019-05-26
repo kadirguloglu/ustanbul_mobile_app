@@ -119,6 +119,7 @@ export default (ModalDialog = props => {
           <MyButton
             press={() => setInitialState("modalIsVisible", false)}
             text="Kapat"
+            full={true}
           />
         </View>
       </ScrollView>

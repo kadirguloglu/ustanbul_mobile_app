@@ -25,7 +25,7 @@ class Main extends React.Component {
     };
   }
   async componentWillMount() {
-    if (isAutoLogin) this.props.loginUser("teah_kadir@hotmail.com", "123", "");
+    if (isAutoLogin) this.props.loginUser("kadirguloglu1@gmail.com", "123", "");
     // let deviceId = "undefined";
     // try {
     //   deviceId = DeviceInfo.getDeviceId();

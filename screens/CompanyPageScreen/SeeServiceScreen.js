@@ -16,11 +16,12 @@ import {
   Toast
 } from "native-base";
 import { NavigationEvents } from "react-navigation";
-import { ScrollView } from "react-native";
+import { ScrollView, Keyboard } from "react-native";
 
 import {
   getServiceCompanyPage,
-  getMasterServiceProposalQuestionPage
+  getMasterServiceProposalQuestionPage,
+  sendServiceProposal
 } from "../../src/actions/serviceService";
 import SeeServiceContent from "./Components/SeeServiceScreen_content";
 import ServiceDetail from "./Components/ServiceDetail_content";
@@ -58,7 +59,11 @@ class SeeServiceScreen extends Component {
   };
 
   _handleSendProposal = () => {
-    const { getMasterServiceProposalQuestionPage } = this.props;
+    const {
+      getMasterServiceProposalQuestionPage,
+      generalServiceGetResponse
+    } = this.props;
+    const { activeUser } = generalServiceGetResponse;
     const { service } = this.state;
     this.setState({ proposalModel: {} });
     getMasterServiceProposalQuestionPage(service.CategoryID, 1, 1).then(
@@ -75,7 +80,15 @@ class SeeServiceScreen extends Component {
               }
               Questions.push(quest);
             }
-            this.setState({ proposalModel: { Questions: Questions } });
+            this.setState({
+              proposalModel: {
+                Questions: Questions,
+                Price: "",
+                UserID: activeUser.Id,
+                CustomerServiceId: service.ID,
+                CategoryID: service.CategoryID
+              }
+            });
             this.setState({ tabActivePage: 2 });
           }
         }
@@ -83,93 +96,136 @@ class SeeServiceScreen extends Component {
     );
   };
 
-  _handleSendNewProposal = () => {
+  validateProposalForm = () => {
+    Keyboard.dismiss();
     const { serviceServiceResponse } = this.props;
     const { masterServiceProposalQuestionPageData } = serviceServiceResponse;
     const { proposalModel } = this.state;
 
     let errorMessage = "";
     let lastIndex = 0;
+    try {
+      if (proposalModel.Price) {
+        if (proposalModel.Price === "") {
+          this.setState({ tabProposalSendActivePage: 0 });
+          Toast.show({
+            text: "Teklifiniz geçersiz. Lütfen kontrol ediniz.",
+            buttonText: "Tamam",
+            duration: 2500
+          });
+          return false;
+        }
+        if (parseInt(proposalModel.Price) < 1) {
+          this.setState({ tabProposalSendActivePage: 0 });
+          Toast.show({
+            text: "Teklifiniz geçersiz. Lütfen kontrol ediniz.",
+            buttonText: "Tamam",
+            duration: 2500
+          });
+          return false;
+        }
+      } else {
+        this.setState({ tabProposalSendActivePage: 0 });
+        Toast.show({
+          text: "Teklifiniz geçersiz. Lütfen kontrol ediniz.",
+          buttonText: "Tamam",
+          duration: 2500
+        });
+        return false;
+      }
 
-    for (let i = 0; i < masterServiceProposalQuestionPageData.length; i++) {
-      const item = masterServiceProposalQuestionPageData[i];
-      const quest = proposalModel.Questions[i];
-      lastIndex = i;
+      for (let i = 0; i < masterServiceProposalQuestionPageData.length; i++) {
+        const item = masterServiceProposalQuestionPageData[i];
+        const quest = proposalModel.Questions[i];
+        lastIndex = i;
 
-      if (item.QuestionType === 1) {
-        if (
-          item.QuestionMaxValue <= quest.Answers[0].Answer.length ||
-          item.QuestionMinValue > quest.Answers[0].Answer.length
-        ) {
-          errorMessage = "Lütfen cevabı istenilen aralıkta giriniz.";
-          break;
-        }
-        if (item.IsRequired) {
-          if (quest.Answers[0].Answer.length < 1) {
-            errorMessage = "Zorunlu alan.";
+        if (item.QuestionType === 1) {
+          if (
+            item.QuestionMaxValue <= quest.Answers[0].Answer.length ||
+            item.QuestionMinValue > quest.Answers[0].Answer.length
+          ) {
+            errorMessage = "Lütfen cevabı istenilen aralıkta giriniz.";
             break;
           }
-        }
-      }
-      if (item.QuestionType === 2) {
-        if (
-          item.QuestionMaxValue <=
-            parseInt(
-              quest.Answers[0].Answer === "" ? 0 : quest.Answers[0].Answer
-            ) ||
-          item.QuestionMinValue >
-            parseInt(
-              quest.Answers[0].Answer === "" ? 0 : quest.Answers[0].Answer
-            )
-        ) {
-          errorMessage = "Lütfen cevabı istenilen aralıkta giriniz.";
-          break;
-        }
-        if (item.IsRequired) {
-          if (quest.Answers[0].Answer === "") {
-            errorMessage = "Zorunlu alan.";
-            break;
-          }
-        }
-      }
-      if (item.QuestionType === 3) {
-        if (item.IsRequired) {
-          if (quest.Answers[0].Answer === "") {
-            errorMessage = "Zorunlu alan.";
-            break;
-          }
-        }
-      }
-      if (item.QuestionType === 4) {
-        if (item.IsRequired) {
-          if (!quest.Answers[0].ID) {
-            errorMessage = "Lütfen bir seçim yapınız.";
-            break;
-          }
-        }
-      }
-      if (item.QuestionType === 5) {
-        const checkedList = quest.Answers.find(ans => ans.Checked === true);
-        if (
-          item.QuestionMaxValue <= checkedList.length ||
-          item.QuestionMinValue > checkedList.length
-        ) {
-          errorMessage = "Lütfen seçimleri kontrol ediniz.";
-          break;
-        }
-        if (item.IsRequired) {
-          if (!checkedList) {
-            errorMessage = "Zorunlu alan.";
-            break;
-          }
-          if (checkedList.length) {
-            if (checkedList.length < 1) {
+          if (item.IsRequired) {
+            if (quest.Answers[0].Answer.length < 1) {
               errorMessage = "Zorunlu alan.";
               break;
             }
           }
         }
+        if (item.QuestionType === 2) {
+          if (
+            item.QuestionMaxValue <=
+              parseInt(
+                quest.Answers[0].Answer === "" ? 0 : quest.Answers[0].Answer
+              ) ||
+            item.QuestionMinValue >
+              parseInt(
+                quest.Answers[0].Answer === "" ? 0 : quest.Answers[0].Answer
+              )
+          ) {
+            errorMessage = "Lütfen cevabı istenilen aralıkta giriniz.";
+            break;
+          }
+          if (item.IsRequired) {
+            if (quest.Answers[0].Answer === "") {
+              errorMessage = "Zorunlu alan.";
+              break;
+            }
+          }
+        }
+        if (item.QuestionType === 3) {
+          if (item.IsRequired) {
+            if (quest.Answers[0].Answer === "") {
+              errorMessage = "Zorunlu alan.";
+              break;
+            }
+          }
+        }
+        if (item.QuestionType === 4) {
+          if (item.IsRequired) {
+            if (!quest.Answers[0].ID) {
+              errorMessage = "Lütfen bir seçim yapınız.";
+              break;
+            }
+          }
+        }
+        if (item.QuestionType === 5) {
+          const checkedList = quest.Answers.filter(ans => ans.Checked === true);
+          if (item.IsRequired) {
+            if (!checkedList) {
+              errorMessage = "Zorunlu alan.";
+              break;
+            }
+            if (checkedList) {
+              if (checkedList.length) {
+                if (checkedList.length < 1) {
+                  errorMessage = "Zorunlu alan.";
+                  break;
+                }
+              }
+            }
+          }
+          if (checkedList) {
+            if (
+              item.QuestionMaxValue < checkedList.length ||
+              item.QuestionMinValue > checkedList.length
+            ) {
+              errorMessage = "Lütfen seçimleri kontrol ediniz.";
+              break;
+            }
+          }
+        }
       }
+    } catch (error) {
+      this.setState({ tabProposalSendActivePage: 0 });
+      Toast.show({
+        text: "Teklifinizi ve sorulara verdiğiniz cevapları kontrol ediniz.",
+        buttonText: "Tamam",
+        duration: 2500
+      });
+      return false;
     }
 
     if (errorMessage !== "") {
@@ -185,13 +241,46 @@ class SeeServiceScreen extends Component {
     return true;
   };
 
+  _handleSendNewProposal = () => {
+    if (this.validateProposalForm()) {
+      const { proposalModel } = this.state;
+      const { sendServiceProposal, generalServiceGetResponse } = this.props;
+      sendServiceProposal(proposalModel).then(({ payload }) => {
+        switch (payload.data) {
+          case 1:
+            this.setState({ tabActivePage: 0 });
+            Toast.show({
+              text:
+                "Teklifiniz başarıyla kaydedildi ve müşteriye bilgi verildi.",
+              buttonText: "Tamam",
+              duration: 4500
+            });
+            const { activeUser } = generalServiceGetResponse;
+            this.props
+              .getServiceCompanyPage(activeUser.Id, 1, 999)
+              .then(() => {});
+            break;
+          default:
+            Toast.show({
+              text:
+                "Teklifiniz kaydedilemedi. Lütfen internet bağlantınızı kontrol ediniz.",
+              buttonText: "Tamam",
+              duration: 2500
+            });
+            break;
+        }
+      });
+    }
+  };
+
   render() {
-    const { serviceServiceResponse } = this.props;
+    const { serviceServiceResponse, navigation } = this.props;
     const {
       serviceCompanyPageData,
       serviceCompanyPageLoading,
       masterServiceProposalQuestionPageLoading,
-      masterServiceProposalQuestionPageData
+      masterServiceProposalQuestionPageData,
+      serviceSendProposalLoading
     } = serviceServiceResponse;
     const {
       tabActivePage,
@@ -260,12 +349,13 @@ class SeeServiceScreen extends Component {
               )}
             </Tab>
             <Tab heading="Hizmet Detay">
-              <ScrollView>
-                <ServiceDetail
-                  service={service}
-                  _handleSendProposal={this._handleSendProposal}
-                />
-              </ScrollView>
+              <ServiceDetail
+                service={service}
+                _handleSendProposal={this._handleSendProposal}
+                masterServiceProposalQuestionPageLoading={
+                  masterServiceProposalQuestionPageLoading
+                }
+              />
             </Tab>
             <Tab heading="Teklif Ver">
               <SendProposal
@@ -279,6 +369,7 @@ class SeeServiceScreen extends Component {
                 _handleSetInitialState={this._handleSetInitialState}
                 _handleSendNewProposal={this._handleSendNewProposal}
                 proposalModel={proposalModel}
+                serviceSendProposalLoading={serviceSendProposalLoading}
               />
             </Tab>
           </Tabs>
@@ -298,7 +389,8 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = {
   getServiceCompanyPage,
-  getMasterServiceProposalQuestionPage
+  getMasterServiceProposalQuestionPage,
+  sendServiceProposal
 };
 
 export default connect(

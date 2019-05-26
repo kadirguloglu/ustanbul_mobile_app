@@ -99,7 +99,7 @@ const drawer = createDrawerNavigator(
     SeeProposal: { screen: SeeProposalScreen },
     Contact: { screen: ContactScreen },
     Chat: { screen: ChatScreen },
-    CustomerService: { screen: CompanyServiceScreen },
+    CompanyService: { screen: CompanyServiceScreen },
     SeeService: { screen: SeeServiceScreen }
   },
   {

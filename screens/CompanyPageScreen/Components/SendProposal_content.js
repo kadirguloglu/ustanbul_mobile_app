@@ -25,7 +25,8 @@ const SendProposal = props => {
     tabProposalSendActivePage,
     _handleSetInitialState,
     _handleSendNewProposal,
-    proposalModel
+    proposalModel,
+    serviceSendProposalLoading
   } = props;
 
   if (masterServiceProposalQuestionPageLoading) {
@@ -45,7 +46,12 @@ const SendProposal = props => {
           <Item rounded>
             <Input
               keyboardType="numeric"
-              onChangeText={value => _handleSetInitialState("Price", value)}
+              onChangeText={value => {
+                _handleSetInitialState("proposalModel", {
+                  ...proposalModel,
+                  Price: value
+                });
+              }}
               value={proposalModel.Price}
             />
           </Item>
@@ -74,6 +80,7 @@ const SendProposal = props => {
                 ? undefined
                 : ["tabProposalSendActivePage", 1]
             }
+            spinner={serviceSendProposalLoading}
           />
         </View>
       </Tab>
@@ -156,6 +163,7 @@ const SendProposal = props => {
                         ? undefined
                         : ["tabProposalSendActivePage", index + 2]
                     }
+                    spinner={serviceSendProposalLoading}
                   />
                 </View>
               </Tab>
@@ -238,6 +246,7 @@ const SendProposal = props => {
                         ? undefined
                         : ["tabProposalSendActivePage", index + 2]
                     }
+                    spinner={serviceSendProposalLoading}
                   />
                 </View>
               </Tab>
@@ -319,6 +328,7 @@ const SendProposal = props => {
                         ? undefined
                         : ["tabProposalSendActivePage", index + 2]
                     }
+                    spinner={serviceSendProposalLoading}
                   />
                 </View>
               </Tab>
@@ -409,6 +419,7 @@ const SendProposal = props => {
                         ? undefined
                         : ["tabProposalSendActivePage", index + 2]
                     }
+                    spinner={serviceSendProposalLoading}
                   />
                 </View>
               </Tab>
@@ -512,6 +523,7 @@ const SendProposal = props => {
                         ? undefined
                         : ["tabProposalSendActivePage", index + 2]
                     }
+                    spinner={serviceSendProposalLoading}
                   />
                 </View>
               </Tab>

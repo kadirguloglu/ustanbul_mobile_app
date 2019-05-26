@@ -88,4 +88,6 @@ export let IsExpoActive = false;
 
 export let ChatConnectionUrl = "http://demo.ustanbul.net";
 
+export let siteUrl = "http://demo.ustanbul.net";
+
 export const isAutoLogin = true;

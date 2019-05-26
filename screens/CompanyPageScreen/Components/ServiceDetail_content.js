@@ -1,67 +1,76 @@
 import React from "react";
 import { View, Text, Thumbnail } from "native-base";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 
 import { MidPath } from "../../../src/functions";
 import MyButton from "../../../components/MyButton";
 
 const ServiceDetail = props => {
-  const { service, _handleSendProposal } = props;
+  const {
+    service,
+    _handleSendProposal,
+    masterServiceProposalQuestionPageLoading,
+    headerHeight,
+    _handleSetInitialState
+  } = props;
 
   return (
-    <View style={styles.view1}>
-      <View style={styles.view4}>
-        <Text style={styles.strongTitle}>Hizmet Adresi</Text>
-        <Text>Adres Detayı : {service.AddressDescription}</Text>
-      </View>
-      <View style={styles.view4}>
-        <Text style={styles.strongTitle}>Hizmet Başlığı</Text>
-        <Text>{service.Title}</Text>
-      </View>
-      <View style={styles.view4}>
-        <Text style={styles.strongTitle}>Hizmet Notu</Text>
-        <Text>{service.Note}</Text>
-      </View>
-      <View style={styles.view4}>
-        <Text style={styles.strongTitle}>Garantörlü Hizmet Mi?</Text>
-        <Text>{service.IsGuarantor ? "Evet" : "Hayır"}</Text>
-      </View>
-      <View style={styles.view4}>
-        <Text style={styles.strongTitle}>Keşif İsteniyor Mu?</Text>
-        <Text>{service.IsDiscovery ? "Evet" : "Hayır"}</Text>
-      </View>
-      {service.Questions.length ? (
-        <View>
-          <Text style={styles.strongTitle}>
-            İlgili Hizmetin Soruları ve Cevapları
-          </Text>
+    <View style={[styles.view1]}>
+      <ScrollView>
+        <View style={styles.view4}>
+          <Text style={styles.strongTitle}>Hizmet Adresi</Text>
+          <Text>Adres Detayı : {service.AddressDescription}</Text>
         </View>
-      ) : null}
-      {service.Questions.map((item, index) => (
-        <View key={"Question-" + index} style={styles.view4}>
-          <Text style={styles.strongTitle}>{item.Question}</Text>
-          <Text>{item.Answer}</Text>
+        <View style={styles.view4}>
+          <Text style={styles.strongTitle}>Hizmet Başlığı</Text>
+          <Text>{service.Title}</Text>
         </View>
-      ))}
-      {service.Pictures.length > 0 ? (
-        <View>
-          <Text style={styles.strongTitle}>
-            İlgili Hizmetin Müşteri Tarafından Alınan Resimleri
-          </Text>
+        <View style={styles.view4}>
+          <Text style={styles.strongTitle}>Hizmet Notu</Text>
+          <Text>{service.Note}</Text>
         </View>
-      ) : null}
-      <View style={[styles.view2, styles.view4]}>
-        {service.Pictures.map((item, index) => (
-          <View key={"Picture-" + index} style={styles.view3}>
-            <Thumbnail square large source={MidPath(item.PicturePath)} />
+        <View style={styles.view4}>
+          <Text style={styles.strongTitle}>Garantörlü Hizmet Mi?</Text>
+          <Text>{service.IsGuarantor ? "Evet" : "Hayır"}</Text>
+        </View>
+        <View style={styles.view4}>
+          <Text style={styles.strongTitle}>Keşif İsteniyor Mu?</Text>
+          <Text>{service.IsDiscovery ? "Evet" : "Hayır"}</Text>
+        </View>
+        {service.Questions.length ? (
+          <View>
+            <Text style={styles.strongTitle}>
+              İlgili Hizmetin Soruları ve Cevapları
+            </Text>
+          </View>
+        ) : null}
+        {service.Questions.map((item, index) => (
+          <View key={"Question-" + index} style={styles.view4}>
+            <Text style={styles.strongTitle}>{item.Question}</Text>
+            <Text>{item.Answer}</Text>
           </View>
         ))}
-      </View>
+        {service.Pictures.length > 0 ? (
+          <View>
+            <Text style={styles.strongTitle}>
+              İlgili Hizmetin Müşteri Tarafından Alınan Resimleri
+            </Text>
+          </View>
+        ) : null}
+        <View style={[styles.view2, styles.view4]}>
+          {service.Pictures.map((item, index) => (
+            <View key={"Picture-" + index} style={styles.view3}>
+              <Thumbnail square large source={MidPath(item.PicturePath)} />
+            </View>
+          ))}
+        </View>
+      </ScrollView>
       <View>
         <MyButton
           full={true}
           press={() => _handleSendProposal()}
           text="Teklif Ver"
+          spinner={masterServiceProposalQuestionPageLoading}
         />
       </View>
     </View>
@@ -72,7 +81,8 @@ export default ServiceDetail;
 
 const styles = StyleSheet.create({
   view1: {
-    padding: 5
+    padding: 5,
+    flex: 1
   },
   view2: {
     flexDirection: "row"

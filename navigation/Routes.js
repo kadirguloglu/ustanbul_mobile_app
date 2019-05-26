@@ -62,7 +62,7 @@ const routesCompany = [
   },
 
   {
-    to: "CustomerService",
+    to: "CompanyService",
     name: "Hizmetlerim",
     permission: [],
     IOSonly: false

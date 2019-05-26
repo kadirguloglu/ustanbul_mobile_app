@@ -5,7 +5,8 @@ import {
   Text,
   ScrollView,
   ImageBackground,
-  View
+  View,
+  TouchableHighlight
 } from "react-native";
 import { connect } from "react-redux";
 import {
@@ -35,6 +36,7 @@ import Dialog from "react-native-dialog";
 import moment from "moment";
 import Modal from "react-native-modal";
 import MyButton from "../../components/MyButton";
+import { NavigationEvents } from "react-navigation";
 
 class CustomerServiceScreen extends Component {
   constructor(props) {
@@ -52,37 +54,48 @@ class CustomerServiceScreen extends Component {
       selectedProposalId: 0,
       PAGES: [],
       PAGES_DATA_CATEGORY_INDEX: [],
-      blurViewRef: null
+      blurViewRef: null,
+      activeServicePage: 0
     };
   }
-  componentWillMount() {
-    this.props
-      .customerServicePreviewData(
-        this.props.generalServiceGetResponse.activeUser.Id,
-        1
-      )
-      .then(({ payload }) => {
-        let sayac = 0;
-        let PAGES = [];
-        let PAGES_DATA_CATEGORY_INDEX = [];
-        const keys = Object.keys(payload.data);
-        for (let index = 0; index < keys.length; index++) {
-          const element = payload.data[keys[index]];
-          for (let valueIndex = 0; valueIndex < element.length; valueIndex++) {
-            const item = element[valueIndex];
-            PAGES.push(sayac);
-            PAGES_DATA_CATEGORY_INDEX.push({
-              index: sayac,
-              categoryIndex: index,
-              dataIndex: valueIndex
-            });
-            sayac++;
-          }
+
+  _handleComponentWillMount = () => {
+    const {
+      customerServicePreviewData,
+      generalServiceGetResponse
+    } = this.props;
+    const { activeUser } = generalServiceGetResponse;
+    customerServicePreviewData(activeUser.Id, 1).then(({ payload }) => {
+      let sayac = 0;
+      let PAGES = [];
+      let PAGES_DATA_CATEGORY_INDEX = [];
+      const keys = Object.keys(payload.data);
+      for (let index = 0; index < keys.length; index++) {
+        const element = payload.data[keys[index]];
+        for (let valueIndex = 0; valueIndex < element.length; valueIndex++) {
+          const item = element[valueIndex];
+          PAGES.push(sayac);
+          PAGES_DATA_CATEGORY_INDEX.push({
+            index: sayac,
+            categoryIndex: index,
+            dataIndex: valueIndex
+          });
+          sayac++;
         }
-        this.setState({ PAGES_DATA_CATEGORY_INDEX: PAGES_DATA_CATEGORY_INDEX });
-        this.setState({ PAGES: PAGES });
-      });
+      }
+      this.setState({ PAGES_DATA_CATEGORY_INDEX: PAGES_DATA_CATEGORY_INDEX });
+      this.setState({ PAGES: PAGES });
+    });
+  };
+
+  componentWillMount() {
+    this._handleComponentWillMount();
   }
+
+  navigationComponentWillMount = () => {
+    this._handleComponentWillMount();
+  };
+
   handlerUpdateServiceProposal = (item, data) => {
     this.setState({ selectedProposalId: data.ProposalID });
     this.props.proposalDetailData(data.ProposalID).then(({ payload }) => {
@@ -95,6 +108,7 @@ class CustomerServiceScreen extends Component {
       }
     });
   };
+
   renderViewPagerPage = page => {
     const {
       servicePreviewListResult
@@ -107,177 +121,156 @@ class CustomerServiceScreen extends Component {
       let item = servicePreviewListResult[key];
       let data = item[dataIndex];
       const element = (
-        <View
-          key={"Service" + page}
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            backgroundColor: "transparent"
-          }}
-        >
+        <View key={"Service" + page} style={styles.view1}>
           <View>
-            <Text
-              style={{
-                fontSize: 16,
-                padding: 10,
-                textAlign: "center",
-                color: "white",
-                borderBottomColor: "white",
-                borderBottomWidth: 1
-              }}
-            >
-              {key.substr(2)}
-            </Text>
+            <Text style={styles.text1}>{key.substr(2)}</Text>
           </View>
-          <View
-            style={{
-              backgroundColor: "white",
-              margin: 10,
-              borderRadius: 5,
-              padding: 10
-            }}
-          >
-            <Text style={{ fontSize: 15, textAlign: "center" }}>
-              {data.CategoryName}
-            </Text>
-            <Text
-              style={{
-                fontSize: 13,
-                textAlign: "center",
-                borderBottomColor: "white",
-                borderBottomWidth: 1
-              }}
-            >
+          <View style={styles.view2}>
+            <Text style={styles.text2}>{data.CategoryName}</Text>
+            <Text style={styles.text3}>
               {moment(data.CreateDate).format("DD MMMM YYYY, dddd hh:mm")}
             </Text>
             {key.indexOf("1#") > -1 ? (
               <View>
-                <Button
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() =>
-                    this.props.navigation.navigate("SeeProposal", {
+                  buttonStyle={styles.buttonStyle}
+                  press={this.props.navigation.navigate}
+                  parameters={[
+                    "SeeProposal",
+                    {
                       item: item,
                       data: data
-                    })
-                  }
-                >
-                  <Text style={styles.iconText}>Teklifleri gör</Text>
-                </Button>
-                <Button
+                    }
+                  ]}
+                  textStyle={styles.iconText}
+                  text="Teklifleri gör"
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>İncele</Text>
-                </Button>
-                <Button
+                  buttonStyle={styles.buttonStyle}
+                  onPress={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  textStyle={styles.iconText}
+                  text="İncele"
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>İptal et</Text>
-                </Button>
+                  buttonStyle={styles.buttonStyle}
+                  press={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  textStyle={styles.iconText}
+                  text="İptal et"
+                />
               </View>
             ) : key.indexOf("2#") > -1 ? (
               <View>
-                <Button
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>
-                    Usta onayı için QR oluştur
-                  </Text>
-                </Button>
-                <Button
+                  buttonStyle={styles.buttonStyle}
+                  press={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  text="Usta onayı için QR oluştur"
+                  textStyle={styles.iconText}
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>İncele</Text>
-                </Button>
-                <Button
+                  buttonStyle={styles.buttonStyle}
+                  onPress={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  textStyle={styles.iconText}
+                  text="İncele"
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>İptal Et</Text>
-                </Button>
+                  buttonStyle={styles.buttonStyle}
+                  press={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  textStyle={styles.iconText}
+                  text="İptal et"
+                />
               </View>
             ) : key.indexOf("3#") > -1 ? (
               <View>
-                <Button
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>Hizmeti onayla</Text>
-                </Button>
-                <Button
+                  buttonStyle={styles.buttonStyle}
+                  press={() => this.handlerPreviewSelectedService(item, data)}
+                  parameters={[item, data]}
+                  text="Hizmeti onayla"
+                  textStyle={styles.iconText}
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>İncele</Text>
-                </Button>
-                <Button
+                  buttonStyle={styles.buttonStyle}
+                  onPress={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  textStyle={styles.iconText}
+                  text="İncele"
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>Şikayet et</Text>
-                </Button>
+                  buttonStyle={styles.buttonStyle}
+                  press={() => this.handlerPreviewSelectedService(item, data)}
+                  parameters={[item, data]}
+                  text="Şikayet et"
+                  textStyle={styles.iconText}
+                />
               </View>
             ) : key.indexOf("4#") > -1 ? (
               <View>
-                <Button
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>Puan ver</Text>
-                </Button>
-                <Button
+                  buttonStyle={styles.buttonStyle}
+                  press={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  text="Puan ver"
+                  textStyle={styles.iconText}
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>İncele</Text>
-                </Button>
+                  buttonStyle={styles.buttonStyle}
+                  onPress={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  textStyle={styles.iconText}
+                  text="İncele"
+                />
               </View>
             ) : key.indexOf("5#") > -1 ? (
-              <Button
+              <MyButton
                 full
-                style={styles.buttonStyle}
-                onPress={() => this.handlerPreviewSelectedService(item, data)}
-              >
-                <Text style={styles.iconText}>İncele</Text>
-              </Button>
+                buttonStyle={styles.buttonStyle}
+                press={this.handlerPreviewSelectedService}
+                parameters={[item, data]}
+                text="İncele"
+                textStyle={styles.iconText}
+              />
             ) : key.indexOf("6#") > -1 ? (
               <View>
-                <Button
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>Teklifleri gör</Text>
-                </Button>
-                <Button
+                  buttonStyle={styles.buttonStyle}
+                  press={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  text="Teklifleri gör"
+                  textStyle={styles.iconText}
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>İncele</Text>
-                </Button>
-                <Button
+                  buttonStyle={styles.buttonStyle}
+                  onPress={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  textStyle={styles.iconText}
+                  text="İncele"
+                />
+                <MyButton
                   full
-                  style={styles.buttonStyle}
-                  onPress={() => this.handlerPreviewSelectedService(item, data)}
-                >
-                  <Text style={styles.iconText}>İptal et</Text>
-                </Button>
+                  buttonStyle={styles.buttonStyle}
+                  press={this.handlerPreviewSelectedService}
+                  parameters={[item, data]}
+                  textStyle={styles.iconText}
+                  text="İptal et"
+                />
               </View>
             ) : null}
           </View>
@@ -286,11 +279,13 @@ class CustomerServiceScreen extends Component {
       return element;
     }
   };
+
   handlerPreviewSelectedService = (item, data) => {
     this.props.servicePreviewDetailData(data.ID);
     this.props.servicePreviewDetailQuestionData(data.ID);
     this.setState({ modalIsVisible: true });
   };
+
   onlyNumberRegex = value => {
     this.setState({ oldProposalPrice: value + "" });
     if (value.length == 0) this.setState({ newProposalRegex: true });
@@ -298,9 +293,11 @@ class CustomerServiceScreen extends Component {
       this.setState({ newProposalRegex: true });
     } else this.setState({ newProposalRegex: false });
   };
+
   handleCancel = () => {
     this.setState({ dialogVisible: false });
   };
+
   handleUpdateProposal = () => {
     if (this.state.newProposalRegex == false) {
       MyToast("Teklifinizi kontrol ediniz");
@@ -341,14 +338,19 @@ class CustomerServiceScreen extends Component {
 
   render() {
     const {
+      customerDetailServiceResponse,
+      companyDetailServiceResponse
+    } = this.props;
+    const {
       servicePreviewDetailQuestionLoading,
       servicePreviewDetailQuestionResult,
       customerServicePreviewLoading
-    } = this.props.customerDetailServiceResponse;
+    } = customerDetailServiceResponse;
     const {
       servicePreviewDetailLoading,
       servicePreviewDetailResult
-    } = this.props.companyDetailServiceResponse;
+    } = companyDetailServiceResponse;
+    const { PAGES, activeServicePage } = this.state;
     if (customerServicePreviewLoading)
       return (
         <Root>
@@ -357,6 +359,9 @@ class CustomerServiceScreen extends Component {
       );
     return (
       <Root>
+        <NavigationEvents
+          onDidFocus={() => this.navigationComponentWillMount()}
+        />
         <Modal isVisible={this.state.modalIsVisible}>
           <ScrollView>
             <View style={{ backgroundColor: "white", padding: 10 }}>
@@ -499,6 +504,7 @@ class CustomerServiceScreen extends Component {
           </Body>
           <Right />
         </Header>
+
         <ImageBackground
           style={{
             flex: 1
@@ -509,8 +515,12 @@ class CustomerServiceScreen extends Component {
             <Tabs
               renderTabBar={() => <View />}
               style={{ backgroundColor: "transparent" }}
+              onChangeTab={value =>
+                this.setState({ activeServicePage: value.i })
+              }
+              page={activeServicePage}
             >
-              {this.state.PAGES.map((page, ix) => (
+              {PAGES.map((page, ix) => (
                 <Tab
                   key={"ViewPagerContent-" + page}
                   heading={"heading" + ix}
@@ -522,6 +532,25 @@ class CustomerServiceScreen extends Component {
             </Tabs>
           </View>
         </ImageBackground>
+        <View style={styles.dotAbsoluteBlock}>
+          <View style={styles.dotTextBlock}>
+            {PAGES.map((page, ix) => (
+              <TouchableHighlight
+                key={"dot-" + ix}
+                onPress={() => this.setState({ activeServicePage: ix })}
+              >
+                <Text
+                  style={[
+                    styles.dotText,
+                    activeServicePage == ix ? { color: ThemeColor } : null
+                  ]}
+                >
+                  .
+                </Text>
+              </TouchableHighlight>
+            ))}
+          </View>
+        </View>
       </Root>
     );
   }
@@ -569,6 +598,47 @@ const styles = StyleSheet.create({
   ServicePreviewItemTextAnswer: {
     marginBottom: 2,
     borderBottomColor: ThemeColor,
+    borderBottomWidth: 1
+  },
+  dotAbsoluteBlock: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0
+  },
+  dotTextBlock: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "flex-end"
+  },
+  dotText: { fontSize: 50, fontWeight: "bold", color: "white" },
+  view1: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    backgroundColor: "transparent"
+  },
+  text1: {
+    fontSize: 16,
+    padding: 10,
+    textAlign: "center",
+    color: "white",
+    borderBottomColor: "white",
+    borderBottomWidth: 1
+  },
+  view2: {
+    backgroundColor: "white",
+    margin: 10,
+    borderRadius: 5,
+    padding: 10
+  },
+  text2: { fontSize: 15, textAlign: "center" },
+  text3: {
+    fontSize: 13,
+    textAlign: "center",
+    borderBottomColor: "white",
     borderBottomWidth: 1
   }
 });

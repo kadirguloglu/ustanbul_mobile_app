@@ -6,12 +6,21 @@ import Information from "./GaveProposals_information";
 import Buttons from "./GaveProposals_buttons";
 
 const GaveProposals = props => {
-  const { GaveProposalMasters } = props;
+  const {
+    GaveProposalMasters,
+    serviceProposalPreviewLoading,
+    serviceProposalPreview
+  } = props;
   return GaveProposalMasters.map((item, index) => {
     return (
       <View style={styles.view1} key={"GaveProposalMaster-" + index}>
         <Information styles={styles} item={item} />
-        <Buttons item={item} styles={styles} />
+        <Buttons
+          item={item}
+          styles={styles}
+          serviceProposalPreviewLoading={serviceProposalPreviewLoading}
+          serviceProposalPreview={serviceProposalPreview}
+        />
       </View>
     );
   });

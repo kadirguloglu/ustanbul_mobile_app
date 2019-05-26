@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, ListView, ImageBackground, View } from "react-native";
+import { StyleSheet, ListView, ImageBackground } from "react-native";
 import { connect } from "react-redux";
 import {
   Root,
@@ -14,7 +14,9 @@ import {
   Tabs,
   Tab,
   Toast,
-  Container
+  Container,
+  Text,
+  View
 } from "native-base";
 import Dialog from "react-native-dialog";
 
@@ -47,7 +49,8 @@ class CompanyServiceScreen extends Component {
       selectedProposalId: 0,
       PAGES: [],
       PAGES_DATA_CATEGORY_INDEX: [],
-      blurViewRef: null
+      blurViewRef: null,
+      activeServicePage: 0
     };
   }
 
@@ -165,7 +168,8 @@ class CompanyServiceScreen extends Component {
       newProposalRegex,
       PAGES,
       modalIsVisible,
-      dialogVisible
+      dialogVisible,
+      activeServicePage
     } = this.state;
 
     if (servicePreviewDetailLoading) {
@@ -227,7 +231,14 @@ class CompanyServiceScreen extends Component {
             source={require("../../assets/splash-screen-demo.png")}
           >
             <View style={styles.view3}>
-              <Tabs renderTabBar={() => <View />} style={styles.tabs1}>
+              <Tabs
+                renderTabBar={() => <View />}
+                style={styles.tabs1}
+                onChangeTab={value =>
+                  this.setState({ activeServicePage: value.i })
+                }
+                page={activeServicePage}
+              >
                 {PAGES.map((page, ix) => (
                   <Tab
                     key={"ViewPagerContent-" + page}
@@ -254,6 +265,25 @@ class CompanyServiceScreen extends Component {
               </Tabs>
             </View>
           </ImageBackground>
+          <View style={styles.dotAbsoluteBlock}>
+            <View style={styles.dotTextBlock}>
+              {PAGES.map((page, ix) => (
+                <TouchableHighlight
+                  key={"dot-" + ix}
+                  onPress={() => this.setState({ activeServicePage: ix })}
+                >
+                  <Text
+                    style={[
+                      styles.dotText,
+                      activeServicePage == ix ? { color: ThemeColor } : null
+                    ]}
+                  >
+                    .
+                  </Text>
+                </TouchableHighlight>
+              ))}
+            </View>
+          </View>
         </Container>
       </Root>
     );
@@ -337,5 +367,19 @@ const styles = StyleSheet.create({
     flex: 1
   },
   tabs1: { backgroundColor: "transparent" },
-  tab1: { backgroundColor: "transparent" }
+  tab1: { backgroundColor: "transparent" },
+  dotAbsoluteBlock: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0
+  },
+  dotTextBlock: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "flex-end"
+  },
+  dotText: { fontSize: 50, fontWeight: "bold", color: "white" }
 });
