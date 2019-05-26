@@ -12,7 +12,8 @@ import {
   Root,
   Spinner,
   Body,
-  View
+  View,
+  Toast
 } from "native-base";
 import { ScrollView } from "react-native";
 import { connect } from "react-redux";
@@ -26,6 +27,7 @@ import {
   getServiceCustomerPage,
   serviceProposalPreview
 } from "../../src/actions/serviceService";
+import { servicePostService } from "../../src/actions/servicePost";
 
 class SeeProposalScreen extends Component {
   constructor(props) {
@@ -43,14 +45,37 @@ class SeeProposalScreen extends Component {
 
   componentWillMount() {
     const { navigation, getServiceCustomerPage } = this.props;
-    const item = navigation.getParam("item", null);
     const data = navigation.getParam("data", null);
     getServiceCustomerPage(data.ID);
   }
 
+  _handleServicePost = (service, proposal) => {
+    const {
+      generalServiceGetResponse,
+      servicePostService,
+      navigation
+    } = this.props;
+    const { getSiteData } = generalServiceGetResponse;
+    servicePostService(proposal, service, getSiteData).then(({ payload }) => {
+      if (payload === null) {
+        Toast.show({
+          text: "Teklif onaylandı ve ustaya bilgi verildi.",
+          buttonText: "Tamam",
+          duration: 5500
+        });
+        navigation.navigate("CustomerService");
+      }else{
+        Toast.show({
+          text: "Teklif onaylama başarısız. Lütfen internet bağlantınızı kontrol ediniz.",
+          buttonText: "Tamam",
+          duration: 5500
+        });
+      }
+    });
+  };
+
   navigationComponentWillMount = () => {
     const { navigation, getServiceCustomerPage } = this.props;
-    const item = navigation.getParam("item", null);
     const data = navigation.getParam("data", null);
     getServiceCustomerPage(data.ID);
   };
@@ -73,6 +98,7 @@ class SeeProposalScreen extends Component {
     } = serviceServiceResponse;
     const { proposalListPage, activeProposal } = this.state;
     const data = navigation.getParam("data", null);
+
     if (serviceCustomerPageLoading) {
       return <Spinner />;
     }
@@ -131,9 +157,10 @@ class SeeProposalScreen extends Component {
                         serviceProposalPreviewLoading
                       }
                       serviceProposalPreviewData={serviceProposalPreviewData}
-                      activeService={data}
+                      activeService={serviceCustomerPageData}
                       activeProposal={activeProposal}
                       _handleSetInitialState={this._handleSetInitialState}
+                      _handleServicePost={this._handleServicePost}
                     />
                   )}
                 </Tab>
@@ -155,15 +182,20 @@ class SeeProposalScreen extends Component {
   }
 }
 
-const mapStateToProps = ({ serviceServiceResponse }) => {
+const mapStateToProps = ({
+  serviceServiceResponse,
+  generalServiceGetResponse
+}) => {
   return {
-    serviceServiceResponse
+    serviceServiceResponse,
+    generalServiceGetResponse
   };
 };
 
 const mapDispatchToProps = {
   getServiceCustomerPage,
-  serviceProposalPreview
+  serviceProposalPreview,
+  servicePostService
 };
 
 export default connect(

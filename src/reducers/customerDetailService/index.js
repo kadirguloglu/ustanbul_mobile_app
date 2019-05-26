@@ -8,9 +8,9 @@ import {
   SET_CUSTOMER_UPDATE,
   SET_CUSTOMER_UPDATE_SUCCESS,
   SET_CUSTOMER_UPDATE_FAIL,
-  GET_CUSTOMER_SERVICE_PREVIVEW,
-  GET_CUSTOMER_SERVICE_PREVIVEW_SUCCESS,
-  GET_CUSTOMER_SERVICE_PREVIVEW_FAIL,
+  GET_CUSTOMER_SERVICE_PREVIEW,
+  GET_CUSTOMER_SERVICE_PREVIEW_SUCCESS,
+  GET_CUSTOMER_SERVICE_PREVIEW_FAIL,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION_SUCCESS,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL
@@ -50,19 +50,19 @@ export default (state = INITIAL_STATE, action) => {
       );
       return { ...state, customerServiceCountLoading: false, error: "hata" };
 
-    case GET_CUSTOMER_SERVICE_PREVIVEW:
+    case GET_CUSTOMER_SERVICE_PREVIEW:
       return { ...state, customerServicePreviewLoading: true };
-    case GET_CUSTOMER_SERVICE_PREVIVEW_SUCCESS:
+    case GET_CUSTOMER_SERVICE_PREVIEW_SUCCESS:
       return {
         ...state,
         customerServicePreviewLoading: false,
         servicePreviewListResult: action.payload.data
       };
-    case GET_CUSTOMER_SERVICE_PREVIVEW_FAIL:
+    case GET_CUSTOMER_SERVICE_PREVIEW_FAIL:
       Sentry.captureException(
         new Error(
           JSON.stringify({
-            case: "GET_CUSTOMER_SERVICE_PREVIVEW_FAIL",
+            case: "GET_CUSTOMER_SERVICE_PREVIEW_FAIL",
             error: action
           })
         )

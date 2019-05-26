@@ -5,8 +5,8 @@ import {
   SET_USER_UPDATE_URL,
   SET_CUSTOMER_UPDATE,
   SET_CUSTOMER_UPDATE_URL,
-  GET_CUSTOMER_SERVICE_PREVIVEW,
-  GET_CUSTOMER_SERVICE_PREVIVEW_URL,
+  GET_CUSTOMER_SERVICE_PREVIEW,
+  GET_CUSTOMER_SERVICE_PREVIEW_URL,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION_URL
 } from "../types/customerDetailService";
@@ -24,10 +24,10 @@ export function customerServiceCountData(activeUserId) {
 
 export function customerServicePreviewData(activeUserId, langId) {
   return {
-    type: GET_CUSTOMER_SERVICE_PREVIVEW,
+    type: GET_CUSTOMER_SERVICE_PREVIEW,
     payload: {
       request: {
-        url: GET_CUSTOMER_SERVICE_PREVIVEW_URL + `/${activeUserId}/${langId}`
+        url: GET_CUSTOMER_SERVICE_PREVIEW_URL + `/${activeUserId}/${langId}`
       }
     }
   };

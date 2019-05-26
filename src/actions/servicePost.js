@@ -1,6 +1,8 @@
 import {
   SET_SERVICE_CREATE,
-  SET_SERVICE_CREATE_URL
+  SET_SERVICE_CREATE_URL,
+  SET_SERVICE_POST_SERVICE,
+  SET_SERVICE_POST_SERVICE_URL
 } from "../types/servicePost";
 
 export function createService(serviceData, postedData) {
@@ -27,6 +29,23 @@ export function createService(serviceData, postedData) {
         data: bodyFormData,
         headers: {
           "Content-Type": "multipart/form-data"
+        }
+      }
+    }
+  };
+}
+
+export function servicePostService(proposal, service, currentSite) {
+  return {
+    type: SET_SERVICE_POST_SERVICE,
+    payload: {
+      request: {
+        url: SET_SERVICE_POST_SERVICE_URL,
+        method: "POST",
+        data: {
+          proposal: proposal,
+          service: service,
+          currentSite: currentSite
         }
       }
     }

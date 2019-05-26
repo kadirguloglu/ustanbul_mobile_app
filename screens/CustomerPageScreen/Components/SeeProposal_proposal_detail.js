@@ -11,9 +11,11 @@ const ProposalDetail = props => {
     serviceProposalPreviewData,
     activeService,
     activeProposal,
-    _handleSetInitialState
+    _handleSetInitialState,
+    _handleServicePost
   } = props;
   const { ServiceCategoryQuestion } = serviceProposalPreviewData;
+
   return (
     <View padder style={{ flex: 1 }}>
       <ScrollView>
@@ -23,15 +25,12 @@ const ProposalDetail = props => {
           <View>
             {ServiceCategoryQuestion.map((item, index) => {
               return (
-                <Text
-                  key={"Answers" + index}
-                  style={[
-                    styles.QuestionAndAnswer,
-                    styles.ServicePreviewItemTextAnswer
-                  ]}
-                >
-                  {item.Question} : {item.Answer}
-                </Text>
+                <View style={styles.questionBlock} key={"Answers" + index}>
+                  <Text style={styles.questionText}>
+                    Soru : {item.Question}
+                  </Text>
+                  <Text style={styles.answerText}>Cevap : {item.Answer}</Text>
+                </View>
               );
             })}
           </View>
@@ -51,6 +50,7 @@ const ProposalDetail = props => {
             {activeService.IsDiscovery &&
             !activeProposal.IsDiscoveryApproved ? (
               <MyButton
+                buttonStyle={styles.button}
                 press={() =>
                   console.log(
                     "activeService.IsDiscovery && !activeProposal.IsDiscoveryApproved ?"
@@ -62,12 +62,14 @@ const ProposalDetail = props => {
             ) : null}
             {activeService.IsApproved ? (
               <MyButton
+                buttonStyle={styles.button}
                 press={() => console.log("activeService.IsApproved ?")}
                 text={`Teklif daha önce onaylanmış`}
                 full={true}
               />
             ) : null}
             <MyButton
+              buttonStyle={styles.button}
               press={() => console.log("ustaya mesaj gönder")}
               text={`Ustaya mesaj gönder`}
               full={true}
@@ -76,11 +78,9 @@ const ProposalDetail = props => {
             activeService.IsGuarantor &&
             !activeProposal.IsApproved ? (
               <MyButton
-                press={() =>
-                  console.log(
-                    "!activeService.IsDiscovery && activeService.IsGuarantor && !activeProposal.IsApproved"
-                  )
-                }
+                buttonStyle={styles.button}
+                press={_handleServicePost}
+                parameters={[activeService, activeProposal]}
                 text={`Teklifi onayla ve ödemeyi yap`}
                 full={true}
               />
@@ -90,6 +90,7 @@ const ProposalDetail = props => {
             activeService.IsGuarantor &&
             !activeProposal.IsApproved ? (
               <MyButton
+                buttonStyle={styles.button}
                 press={() =>
                   console.log(
                     "activeService.IsDiscovery && activeProposal.IsDiscoveryApproved && activeService.IsGuarantor && !activeProposal.IsApproved"
@@ -116,17 +117,19 @@ const ProposalDetail = props => {
 export default ProposalDetail;
 
 const styles = StyleSheet.create({
-  ServicePreviewItemText: {
-    textAlign: "center",
-    fontSize: 15
+  questionBlock: {
+    marginBottom: 15
   },
-  ServicePreviewItemTextAnswer: {
-    marginBottom: 4,
-    borderBottomColor: ThemeColor,
-    borderBottomWidth: 1
+  questionText: {
+    fontWeight: "bold"
   },
   proposalText: {
     fontFamily: "Raleway_Light",
-    fontSize: 22
+    fontSize: 22,
+    marginBottom: 10,
+    marginTop: 10
+  },
+  button: {
+    marginBottom: 10
   }
 });

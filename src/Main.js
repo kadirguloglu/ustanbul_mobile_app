@@ -1,9 +1,14 @@
 import React from "react";
 import { StyleSheet, View, AsyncStorage } from "react-native";
 import { connect } from "react-redux";
-import { loginUser } from "../src/actions/generalServiceGet";
+import { Spinner } from "native-base";
+
+import {
+  loginUser,
+  getLanguage,
+  getSite
+} from "../src/actions/generalServiceGet";
 import AppNavigator from "../navigation/AppNavigator";
-import LoginScreen from "../screens/AuthScreen";
 import { isAutoLogin } from "../src/functions";
 
 const styles = StyleSheet.create({
@@ -25,7 +30,10 @@ class Main extends React.Component {
     };
   }
   async componentWillMount() {
-    if (isAutoLogin) this.props.loginUser("kadirguloglu1@gmail.com", "123", "");
+    const { loginUser, getLanguage, getSite } = this.props;
+    if (isAutoLogin) loginUser("kadirguloglu1@gmail.com", "123", "");
+    getLanguage(1);
+    getSite(1);
     // let deviceId = "undefined";
     // try {
     //   deviceId = DeviceInfo.getDeviceId();
@@ -124,6 +132,13 @@ class Main extends React.Component {
     );
   };
   render() {
+    const { generalServiceGetResponse } = this.props;
+    const { getSiteLoading, getLanguageLoading } = generalServiceGetResponse;
+
+    if (getSiteLoading || getLanguageLoading) {
+      return <Spinner />;
+    }
+
     return (
       <View style={styles.container}>
         {/* {Platform.OS === "ios" && <StatusBar barStyle="default" />} */}
@@ -140,7 +155,9 @@ const mapStateToProps = ({ generalServiceGetResponse }) => {
 };
 
 const mapDispatchToProps = {
-  loginUser
+  loginUser,
+  getLanguage,
+  getSite
 };
 
 export default connect(

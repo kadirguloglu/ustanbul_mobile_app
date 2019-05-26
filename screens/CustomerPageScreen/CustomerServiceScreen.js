@@ -139,7 +139,6 @@ class CustomerServiceScreen extends Component {
                   parameters={[
                     "SeeProposal",
                     {
-                      item: item,
                       data: data
                     }
                   ]}
@@ -150,7 +149,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   onPress={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   textStyle={styles.iconText}
                   text="İncele"
                 />
@@ -158,7 +157,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   press={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   textStyle={styles.iconText}
                   text="İptal et"
                 />
@@ -169,7 +168,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   press={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   text="Usta onayı için QR oluştur"
                   textStyle={styles.iconText}
                 />
@@ -177,7 +176,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   onPress={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   textStyle={styles.iconText}
                   text="İncele"
                 />
@@ -185,7 +184,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   press={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   textStyle={styles.iconText}
                   text="İptal et"
                 />
@@ -195,8 +194,8 @@ class CustomerServiceScreen extends Component {
                 <MyButton
                   full
                   buttonStyle={styles.buttonStyle}
-                  press={() => this.handlerPreviewSelectedService(item, data)}
-                  parameters={[item, data]}
+                  press={this.handlerPreviewSelectedService}
+                  parameters={[data]}
                   text="Hizmeti onayla"
                   textStyle={styles.iconText}
                 />
@@ -204,15 +203,15 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   onPress={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   textStyle={styles.iconText}
                   text="İncele"
                 />
                 <MyButton
                   full
                   buttonStyle={styles.buttonStyle}
-                  press={() => this.handlerPreviewSelectedService(item, data)}
-                  parameters={[item, data]}
+                  press={this.handlerPreviewSelectedService}
+                  parameters={[data]}
                   text="Şikayet et"
                   textStyle={styles.iconText}
                 />
@@ -223,7 +222,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   press={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   text="Puan ver"
                   textStyle={styles.iconText}
                 />
@@ -231,7 +230,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   onPress={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   textStyle={styles.iconText}
                   text="İncele"
                 />
@@ -241,7 +240,7 @@ class CustomerServiceScreen extends Component {
                 full
                 buttonStyle={styles.buttonStyle}
                 press={this.handlerPreviewSelectedService}
-                parameters={[item, data]}
+                parameters={[data]}
                 text="İncele"
                 textStyle={styles.iconText}
               />
@@ -251,7 +250,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   press={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   text="Teklifleri gör"
                   textStyle={styles.iconText}
                 />
@@ -259,7 +258,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   onPress={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   textStyle={styles.iconText}
                   text="İncele"
                 />
@@ -267,7 +266,7 @@ class CustomerServiceScreen extends Component {
                   full
                   buttonStyle={styles.buttonStyle}
                   press={this.handlerPreviewSelectedService}
-                  parameters={[item, data]}
+                  parameters={[data]}
                   textStyle={styles.iconText}
                   text="İptal et"
                 />
@@ -280,7 +279,7 @@ class CustomerServiceScreen extends Component {
     }
   };
 
-  handlerPreviewSelectedService = (item, data) => {
+  handlerPreviewSelectedService = data => {
     this.props.servicePreviewDetailData(data.ID);
     this.props.servicePreviewDetailQuestionData(data.ID);
     this.setState({ modalIsVisible: true });
