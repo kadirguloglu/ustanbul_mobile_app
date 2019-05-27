@@ -8,7 +8,9 @@ import {
   GET_CUSTOMER_SERVICE_PREVIEW,
   GET_CUSTOMER_SERVICE_PREVIEW_URL,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION,
-  GET_SERVICE_PREVIEW_DETAIL_QUESTION_URL
+  GET_SERVICE_PREVIEW_DETAIL_QUESTION_URL,
+  POST_SEND_SERVICE_POINT,
+  POST_SEND_SERVICE_POINT_URL
 } from "../types/customerDetailService";
 
 export function customerServiceCountData(activeUserId) {
@@ -69,6 +71,19 @@ export function servicePreviewDetailQuestionData(serviceID) {
     payload: {
       request: {
         url: GET_SERVICE_PREVIEW_DETAIL_QUESTION_URL + `/${serviceID}`
+      }
+    }
+  };
+}
+
+export function sendServicePoint(data) {
+  return {
+    type: POST_SEND_SERVICE_POINT,
+    payload: {
+      request: {
+        url: POST_SEND_SERVICE_POINT_URL,
+        data: data,
+        method: "POST"
       }
     }
   };

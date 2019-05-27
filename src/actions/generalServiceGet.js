@@ -8,7 +8,9 @@ import {
   GET_LANGUAGE,
   GET_LANGUAGE_URL,
   GET_SITE,
-  GET_SITE_URL
+  GET_SITE_URL,
+  GET_QR_CODE,
+  GET_QR_CODE_URL
 } from "../types/generalServiceGet";
 
 export function loginUser(email, password, id) {
@@ -65,6 +67,17 @@ export function getSite(siteId) {
     payload: {
       request: {
         url: `${GET_SITE_URL}/${siteId}`
+      }
+    }
+  };
+}
+
+export function getQrCode(serviceId) {
+  return {
+    type: GET_QR_CODE,
+    payload: {
+      request: {
+        url: `${GET_QR_CODE_URL}/${serviceId}`
       }
     }
   };

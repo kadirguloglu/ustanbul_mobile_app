@@ -10,15 +10,6 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import {
-  customerServicePreviewData,
-  servicePreviewDetailQuestionData
-} from "../../src/actions/customerDetailService";
-import { servicePreviewDetailData } from "../../src/actions/companyDetailService";
-import {
-  proposalDetailData,
-  updateServiceProposal
-} from "../../src/actions/serviceService";
-import {
   Root,
   Spinner,
   Header,
@@ -29,14 +20,28 @@ import {
   Body,
   Title,
   Tabs,
-  Tab
+  Tab,
+  Toast
 } from "native-base";
-import { ThemeColor, MyToast } from "../../src/functions";
 import Dialog from "react-native-dialog";
-import moment from "moment";
 import Modal from "react-native-modal";
-import MyButton from "../../components/MyButton";
 import { NavigationEvents } from "react-navigation";
+import QRCode from "./Components/CustomerService_qrcode";
+
+import {
+  customerServicePreviewData,
+  servicePreviewDetailQuestionData
+} from "../../src/actions/customerDetailService";
+import { servicePreviewDetailData } from "../../src/actions/companyDetailService";
+import {
+  proposalDetailData,
+  updateServiceProposal
+} from "../../src/actions/serviceService";
+import { getQrCode } from "../../src/actions/generalServiceGet";
+
+import MyButton from "../../components/MyButton";
+import { ThemeColor } from "../../src/functions";
+import Content from "./Components/CustomerService_content";
 
 class CustomerServiceScreen extends Component {
   constructor(props) {
@@ -55,7 +60,10 @@ class CustomerServiceScreen extends Component {
       PAGES: [],
       PAGES_DATA_CATEGORY_INDEX: [],
       blurViewRef: null,
-      activeServicePage: 0
+      activeServicePage: 0,
+      initialTabActivePage: 0,
+      qrCodeValue: "",
+      qrTimerValue: 120
     };
   }
 
@@ -109,174 +117,51 @@ class CustomerServiceScreen extends Component {
     });
   };
 
-  renderViewPagerPage = page => {
-    const {
-      servicePreviewListResult
-    } = this.props.customerDetailServiceResponse;
-    if (servicePreviewListResult) {
-      const { dataIndex, categoryIndex } = this.state.PAGES_DATA_CATEGORY_INDEX[
-        page
-      ];
-      const key = Object.keys(servicePreviewListResult)[categoryIndex];
-      let item = servicePreviewListResult[key];
-      let data = item[dataIndex];
-      const element = (
-        <View key={"Service" + page} style={styles.view1}>
-          <View>
-            <Text style={styles.text1}>{key.substr(2)}</Text>
-          </View>
-          <View style={styles.view2}>
-            <Text style={styles.text2}>{data.CategoryName}</Text>
-            <Text style={styles.text3}>
-              {moment(data.CreateDate).format("DD MMMM YYYY, dddd hh:mm")}
-            </Text>
-            {key.indexOf("1#") > -1 ? (
-              <View>
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.props.navigation.navigate}
-                  parameters={[
-                    "SeeProposal",
-                    {
-                      data: data
-                    }
-                  ]}
-                  textStyle={styles.iconText}
-                  text="Teklifleri gör"
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  onPress={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  textStyle={styles.iconText}
-                  text="İncele"
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  textStyle={styles.iconText}
-                  text="İptal et"
-                />
-              </View>
-            ) : key.indexOf("2#") > -1 ? (
-              <View>
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  text="Usta onayı için QR oluştur"
-                  textStyle={styles.iconText}
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  onPress={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  textStyle={styles.iconText}
-                  text="İncele"
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  textStyle={styles.iconText}
-                  text="İptal et"
-                />
-              </View>
-            ) : key.indexOf("3#") > -1 ? (
-              <View>
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  text="Hizmeti onayla"
-                  textStyle={styles.iconText}
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  onPress={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  textStyle={styles.iconText}
-                  text="İncele"
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  text="Şikayet et"
-                  textStyle={styles.iconText}
-                />
-              </View>
-            ) : key.indexOf("4#") > -1 ? (
-              <View>
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  text="Puan ver"
-                  textStyle={styles.iconText}
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  onPress={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  textStyle={styles.iconText}
-                  text="İncele"
-                />
-              </View>
-            ) : key.indexOf("5#") > -1 ? (
-              <MyButton
-                full
-                buttonStyle={styles.buttonStyle}
-                press={this.handlerPreviewSelectedService}
-                parameters={[data]}
-                text="İncele"
-                textStyle={styles.iconText}
-              />
-            ) : key.indexOf("6#") > -1 ? (
-              <View>
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  text="Teklifleri gör"
-                  textStyle={styles.iconText}
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  onPress={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  textStyle={styles.iconText}
-                  text="İncele"
-                />
-                <MyButton
-                  full
-                  buttonStyle={styles.buttonStyle}
-                  press={this.handlerPreviewSelectedService}
-                  parameters={[data]}
-                  textStyle={styles.iconText}
-                  text="İptal et"
-                />
-              </View>
-            ) : null}
-          </View>
-        </View>
-      );
-      return element;
+  _handleQrStartTimer = () => {
+    this.setState({ qrTimerValue: 120 });
+    this.qrStartTimer = setInterval(() => {
+      this._handleDecrementQrTimer();
+    }, 1000);
+  };
+
+  _handleDecrementQrTimer = () => {
+    if (this.state.qrTimerValue === 0) {
+      clearInterval(this.qrStartTimer);
+      this._handleCountDownFinishWithQrCode();
     }
+    this.setState(prevState => ({ qrTimerValue: prevState.qrTimerValue - 1 }));
+  };
+
+  _handleCountDownFinishWithQrCode = () => {
+    this.setState({ initialTabActivePage: 0 });
+    Toast.show({
+      text:
+        "120 saniye içinde QR kod okutulmalıdır. Yeni bir kod talep ediniz.",
+      buttonText: "Tamam",
+      duration: 3500
+    });
+  };
+
+  _handleGetQrCodeForMasterApproved = data => {
+    const { getQrCode } = this.props;
+    getQrCode(data.ID).then(({ payload }) => {
+      if (payload) {
+        if (payload.request) {
+          if (payload.request._response) {
+            this.setState({ initialTabActivePage: 1 });
+            this.setState({ qrCodeValue: payload.request._response });
+            this._handleQrStartTimer();
+            return;
+          }
+        }
+      }
+      Toast.show({
+        text:
+          "QR kod oluşturulamadı. Lütfen internet bağlantınızı kontrol ediniz.",
+        buttonText: "Tamam",
+        duration: 3500
+      });
+    });
   };
 
   handlerPreviewSelectedService = data => {
@@ -338,18 +223,30 @@ class CustomerServiceScreen extends Component {
   render() {
     const {
       customerDetailServiceResponse,
-      companyDetailServiceResponse
+      companyDetailServiceResponse,
+      navigation,
+      generalServiceGetResponse
     } = this.props;
     const {
       servicePreviewDetailQuestionLoading,
       servicePreviewDetailQuestionResult,
-      customerServicePreviewLoading
+      customerServicePreviewLoading,
+      servicePreviewListResult
     } = customerDetailServiceResponse;
     const {
       servicePreviewDetailLoading,
       servicePreviewDetailResult
     } = companyDetailServiceResponse;
-    const { PAGES, activeServicePage } = this.state;
+    const { getQrCodeLoading, getQrCodeData } = generalServiceGetResponse;
+
+    const {
+      PAGES,
+      activeServicePage,
+      PAGES_DATA_CATEGORY_INDEX,
+      initialTabActivePage,
+      qrCodeValue,
+      qrTimerValue
+    } = this.state;
     if (customerServicePreviewLoading)
       return (
         <Root>
@@ -491,44 +388,87 @@ class CustomerServiceScreen extends Component {
         </Dialog.Container>
         <Header>
           <Left>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.toggleDrawer()}
-            >
-              <Icon name="ios-menu" />
-            </Button>
+            {initialTabActivePage === 0 ? (
+              <Button
+                transparent
+                onPress={() => this.props.navigation.toggleDrawer()}
+              >
+                <Icon name="ios-menu" />
+              </Button>
+            ) : initialTabActivePage === 1 ? (
+              <Button
+                transparent
+                onPress={() => this.setState({ initialTabActivePage: 0 })}
+              >
+                <Icon name="ios-arrow-back" />
+              </Button>
+            ) : null}
           </Left>
           <Body>
             <Title>Hizmetlerim</Title>
           </Body>
           <Right />
         </Header>
-
         <ImageBackground
-          style={{
-            flex: 1
-          }}
+          style={styles.backgroundImage}
           source={require("../../assets/splash-screen-demo.png")}
         >
           <View style={{ flex: 1 }}>
-            <Tabs
-              renderTabBar={() => <View />}
-              style={{ backgroundColor: "transparent" }}
-              onChangeTab={value =>
-                this.setState({ activeServicePage: value.i })
-              }
-              page={activeServicePage}
-            >
-              {PAGES.map((page, ix) => (
+            {servicePreviewListResult ? (
+              <Tabs
+                renderTabBar={() => <View />}
+                style={{ backgroundColor: "transparent" }}
+                locked={true}
+                page={initialTabActivePage}
+              >
                 <Tab
-                  key={"ViewPagerContent-" + page}
-                  heading={"heading" + ix}
+                  heading="Hizmet Listesi"
                   style={{ backgroundColor: "transparent" }}
                 >
-                  {this.renderViewPagerPage(page)}
+                  <Tabs
+                    renderTabBar={() => <View />}
+                    style={{ backgroundColor: "transparent" }}
+                    onChangeTab={value =>
+                      this.setState({ activeServicePage: value.i })
+                    }
+                    page={activeServicePage}
+                  >
+                    {PAGES.map((page, ix) => (
+                      <Tab
+                        key={"ViewPagerContent-" + page}
+                        heading={"heading" + ix}
+                        style={{ backgroundColor: "transparent" }}
+                      >
+                        <Content
+                          PAGES_DATA_CATEGORY_INDEX={PAGES_DATA_CATEGORY_INDEX}
+                          servicePreviewListResult={servicePreviewListResult}
+                          navigation={navigation}
+                          styles={styles}
+                          handlerPreviewSelectedService={
+                            this.handlerPreviewSelectedService
+                          }
+                          _handleGetQrCodeForMasterApproved={
+                            this._handleGetQrCodeForMasterApproved
+                          }
+                          page={page}
+                        />
+                      </Tab>
+                    ))}
+                  </Tabs>
                 </Tab>
-              ))}
-            </Tabs>
+                <Tab heading="Qr Code">
+                  {getQrCodeLoading ? (
+                    <Spinner />
+                  ) : (
+                    <QRCode
+                      qrCodeValue={qrCodeValue}
+                      qrTimerValue={qrTimerValue}
+                      value="123"
+                    />
+                  )}
+                </Tab>
+              </Tabs>
+            ) : null}
           </View>
         </ImageBackground>
         <View style={styles.dotAbsoluteBlock}>
@@ -572,7 +512,8 @@ const mapDispatchToProps = {
   servicePreviewDetailData,
   servicePreviewDetailQuestionData,
   proposalDetailData,
-  updateServiceProposal
+  updateServiceProposal,
+  getQrCode
 };
 
 export default connect(
@@ -639,5 +580,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     borderBottomColor: "white",
     borderBottomWidth: 1
+  },
+  backgroundImage: {
+    flex: 1
   }
 });

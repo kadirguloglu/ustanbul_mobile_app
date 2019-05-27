@@ -13,7 +13,10 @@ import {
   GET_CUSTOMER_SERVICE_PREVIEW_FAIL,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION_SUCCESS,
-  GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL
+  GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL,
+  POST_SEND_SERVICE_POINT,
+  POST_SEND_SERVICE_POINT_SUCCESS,
+  POST_SEND_SERVICE_POINT_FAIL
 } from "../../types/customerDetailService";
 import Sentry from "sentry-expo";
 
@@ -141,6 +144,25 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, servicePreviewDetailQuestionLoading: false };
+
+    case POST_SEND_SERVICE_POINT:
+      return { ...state, sendServicePointLoading: true };
+    case POST_SEND_SERVICE_POINT_SUCCESS:
+      return {
+        ...state,
+        sendServicePointLoading: false,
+        sendServicePointResult: action.payload.data
+      };
+    case POST_SEND_SERVICE_POINT_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "POST_SEND_SERVICE_POINT_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, sendServicePointLoading: false };
     default:
       return { ...state };
   }

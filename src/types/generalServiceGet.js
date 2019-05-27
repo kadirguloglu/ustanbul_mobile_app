@@ -30,3 +30,8 @@ export const GET_SITE = "ALL_SCREEN/GET_SITE/LOAD";
 export const GET_SITE_SUCCESS = "ALL_SCREEN/GET_SITE/LOAD_SUCCESS";
 export const GET_SITE_FAIL = "ALL_SCREEN/GET_SITE/LOAD_FAIL";
 export const GET_SITE_URL = "/GeneralServiceGet/GetSite";
+
+export const GET_QR_CODE = "ALL_SCREEN/GET_QR_CODE/LOAD";
+export const GET_QR_CODE_SUCCESS = "ALL_SCREEN/GET_QR_CODE/LOAD_SUCCESS";
+export const GET_QR_CODE_FAIL = "ALL_SCREEN/GET_QR_CODE/LOAD_FAIL";
+export const GET_QR_CODE_URL = "/GeneralServiceGet/GetQRCode";

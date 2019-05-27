@@ -13,7 +13,10 @@ import {
   GET_LANGUAGE_FAIL,
   GET_SITE,
   GET_SITE_SUCCESS,
-  GET_SITE_FAIL
+  GET_SITE_FAIL,
+  GET_QR_CODE,
+  GET_QR_CODE_SUCCESS,
+  GET_QR_CODE_FAIL
 } from "../../types/generalServiceGet";
 import Sentry from "sentry-expo";
 
@@ -24,7 +27,8 @@ const INITIAL_STATE = {
   apiToken: "",
   error: "",
   getSiteLoading: true,
-  getLanguageLoading: true
+  getLanguageLoading: true,
+  getQrCodeLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -111,6 +115,25 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, getSiteLoading: false, error: "hata" };
+
+    case GET_QR_CODE:
+      return { ...state, getQrCodeLoading: true };
+    case GET_QR_CODE_SUCCESS:
+      return {
+        ...state,
+        getQrCodeLoading: false,
+        getQrCodeData: action.payload.data
+      };
+    case GET_QR_CODE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_QR_CODE_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, getQrCodeLoading: false, error: "hata" };
     default:
       return { ...state };
   }
