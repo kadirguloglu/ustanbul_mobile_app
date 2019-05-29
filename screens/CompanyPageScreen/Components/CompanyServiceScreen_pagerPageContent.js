@@ -11,7 +11,7 @@ export default (PagerPageContent = props => {
     handlerPreviewSelectedService,
     styles,
     handlerUpdateServiceProposal,
-    handlerServiceApproved
+    _handleApprovedService
   } = props;
   const { servicePreviewListResult } = companyDetailServiceResponse;
   if (servicePreviewListResult) {
@@ -33,6 +33,13 @@ export default (PagerPageContent = props => {
             <View>
               <MyButton
                 full
+                text="Teklifi güncelle"
+                buttonStyle={styles.buttonStyle}
+                textStyle={styles.iconText}
+                press={() => handlerUpdateServiceProposal(item, data)}
+              />
+              <MyButton
+                full
                 text="İncele"
                 buttonStyle={styles.buttonStyle}
                 textStyle={styles.iconText}
@@ -41,6 +48,14 @@ export default (PagerPageContent = props => {
             </View>
           ) : key.indexOf("2#") > -1 ? (
             <View>
+              <MyButton
+                full
+                text="Onayla ve tamamla"
+                buttonStyle={styles.buttonStyle}
+                textStyle={styles.iconText}
+                press={_handleApprovedService}
+                parameters={[data]}
+              />
               <MyButton
                 full
                 text="İncele"
@@ -70,22 +85,7 @@ export default (PagerPageContent = props => {
               />
             </View>
           ) : key.indexOf("5#") > -1 ? (
-            <MyButton
-              full
-              text="İncele"
-              buttonStyle={styles.buttonStyle}
-              textStyle={styles.iconText}
-              press={() => handlerPreviewSelectedService(item, data)}
-            />
-          ) : key.indexOf("6#") > -1 ? (
             <View>
-              <MyButton
-                full
-                text="Teklifleri gör"
-                buttonStyle={styles.buttonStyle}
-                textStyle={styles.iconText}
-                press={() => handlerPreviewSelectedService(item, data)}
-              />
               <MyButton
                 full
                 text="İncele"
@@ -93,31 +93,7 @@ export default (PagerPageContent = props => {
                 textStyle={styles.iconText}
                 press={() => handlerPreviewSelectedService(item, data)}
               />
-              <MyButton
-                full
-                text="İptal et"
-                buttonStyle={styles.buttonStyle}
-                textStyle={styles.iconText}
-                press={() => handlerPreviewSelectedService(item, data)}
-              />
             </View>
-          ) : null}
-          {key.indexOf("1#") > -1 ? (
-            <MyButton
-              full
-              text="Teklifi güncelle"
-              buttonStyle={styles.buttonStyle}
-              textStyle={styles.iconText}
-              press={() => handlerUpdateServiceProposal(item, data)}
-            />
-          ) : item.indexOf("2#") > -1 ? (
-            <MyButton
-              full
-              text="Onayla ve tamamla"
-              buttonStyle={styles.buttonStyle}
-              textStyle={styles.iconText}
-              press={() => handlerServiceApproved(item, data)}
-            />
           ) : null}
         </View>
       </View>

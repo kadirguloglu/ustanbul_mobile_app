@@ -16,7 +16,10 @@ import {
   GET_SERVICE_PREVIEW_DETAIL_QUESTION_FAIL,
   POST_SEND_SERVICE_POINT,
   POST_SEND_SERVICE_POINT_SUCCESS,
-  POST_SEND_SERVICE_POINT_FAIL
+  POST_SEND_SERVICE_POINT_FAIL,
+  POST_APPROVED_SERVICE,
+  POST_APPROVED_SERVICE_SUCCESS,
+  POST_APPROVED_SERVICE_FAIL
 } from "../../types/customerDetailService";
 import Sentry from "sentry-expo";
 
@@ -29,7 +32,8 @@ const INITIAL_STATE = {
   customerServicePreviewLoading: true,
   servicePreviewListResult: [],
   servicePreviewDetailQuestionLoading: true,
-  servicePreviewDetailQuestionResult: []
+  servicePreviewDetailQuestionResult: [],
+  approvedServiceLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -163,6 +167,25 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, sendServicePointLoading: false };
+
+    case POST_APPROVED_SERVICE:
+      return { ...state, approvedServiceLoading: true };
+    case POST_APPROVED_SERVICE_SUCCESS:
+      return {
+        ...state,
+        approvedServiceLoading: false,
+        approvedServiceResult: action.payload.data
+      };
+    case POST_APPROVED_SERVICE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "POST_APPROVED_SERVICE_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, approvedServiceLoading: false };
     default:
       return { ...state };
   }

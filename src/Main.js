@@ -31,7 +31,7 @@ class Main extends React.Component {
   }
   async componentWillMount() {
     const { loginUser, getLanguage, getSite } = this.props;
-    if (isAutoLogin) loginUser("kadirguloglu1@gmail.com", "123", "");
+    if (isAutoLogin) loginUser("teah_kadir@hotmail.com", "123", "");
     getLanguage(1);
     getSite(1);
     // let deviceId = "undefined";
@@ -133,9 +133,18 @@ class Main extends React.Component {
   };
   render() {
     const { generalServiceGetResponse } = this.props;
-    const { getSiteLoading, getLanguageLoading } = generalServiceGetResponse;
+    const {
+      getSiteLoading,
+      getLanguageLoading,
+      getSiteError,
+      getLanguageError
+    } = generalServiceGetResponse;
 
     if (getSiteLoading || getLanguageLoading) {
+      return <Spinner />;
+    }
+
+    if (getSiteError || getLanguageError) {
       return <Spinner />;
     }
 

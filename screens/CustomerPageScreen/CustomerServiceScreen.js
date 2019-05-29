@@ -6,7 +6,8 @@ import {
   ScrollView,
   ImageBackground,
   View,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from "react-native";
 import { connect } from "react-redux";
 import {
@@ -30,9 +31,17 @@ import QRCode from "./Components/CustomerService_qrcode";
 
 import {
   customerServicePreviewData,
-  servicePreviewDetailQuestionData
+  servicePreviewDetailQuestionData,
+  sendServicePoint,
+  approvedService
 } from "../../src/actions/customerDetailService";
-import { servicePreviewDetailData } from "../../src/actions/companyDetailService";
+import {
+  servicePreviewDetailData,
+  companyServiceRateData,
+  customerServiceIsPointData,
+  customerServiceOldPointData,
+  servicePointListData
+} from "../../src/actions/companyDetailService";
 import {
   proposalDetailData,
   updateServiceProposal
@@ -42,6 +51,7 @@ import { getQrCode } from "../../src/actions/generalServiceGet";
 import MyButton from "../../components/MyButton";
 import { ThemeColor } from "../../src/functions";
 import Content from "./Components/CustomerService_content";
+import Point from "./Components/CustomerService_point";
 
 class CustomerServiceScreen extends Component {
   constructor(props) {
@@ -63,9 +73,15 @@ class CustomerServiceScreen extends Component {
       activeServicePage: 0,
       initialTabActivePage: 0,
       qrCodeValue: "",
-      qrTimerValue: 120
+      qrTimerValue: 120,
+      selectRateCount: [],
+      selectedService: {}
     };
   }
+
+  _handleSetInitialState = (p, v) => {
+    this.setState({ [p]: v });
+  };
 
   _handleComponentWillMount = () => {
     const {
@@ -220,6 +236,109 @@ class CustomerServiceScreen extends Component {
     this.setState({ dialogVisible: false });
   };
 
+  _handleSetPoint = data => {
+    const {
+      companyServiceRateData,
+      generalServiceGetResponse,
+      customerServiceIsPointData,
+      customerServiceOldPointData,
+      servicePointListData
+    } = this.props;
+    const { getLanguageData } = generalServiceGetResponse;
+
+    this.setState({ selectedService: data });
+
+    companyServiceRateData(data.MasterID, getLanguageData.Id).then(
+      ({ payload }) => {
+        this.setState({ initialTabActivePage: 2 });
+      }
+    );
+    customerServiceIsPointData(data.ID, getLanguageData.Id).then(
+      ({ payload }) => {
+        if (payload.data) {
+          customerServiceOldPointData(data.ID, getLanguageData.Id);
+        } else {
+          servicePointListData(getLanguageData.Id);
+        }
+      }
+    );
+    // companyServiceRateData
+  };
+
+  _handleSendServicePoint = () => {
+    let countList = [];
+    const { selectedService, selectRateCount } = this.state;
+    const { sendServicePoint } = this.props;
+    for (let i = 0; i < selectRateCount.length; i++) {
+      const item = selectRateCount[i];
+      countList.push({
+        Rate: item.Rate,
+        ServiceScoreId: item.ID,
+        CompanyId: selectedService.MasterID,
+        CustomerServiceId: selectedService.ID
+      });
+    }
+
+    sendServicePoint(countList).then(({ payload }) => {
+      if (payload.data) {
+        this.setState({ initialTabActivePage: 0 });
+        Toast.show({
+          text:
+            "Verdiğiniz puanlar çok değerli. Size daha iyi hizmet veriyoruz.",
+          buttonText: "Tamam",
+          duration: 3500
+        });
+      } else {
+        Toast.show({
+          text:
+            "İşlem sırasında hata oluştu. İnternet bağlantınızı kontrol ediniz.",
+          buttonText: "Tamam",
+          duration: 3500
+        });
+      }
+    });
+  };
+
+  _handleApprovedService = data => {
+    const { approvedService } = this.props;
+    Alert.alert(
+      "Hizmet onayı",
+      "Hizmet onayı verdiğiniz an anlaşma tutarı kasanızdan düşülecek ve ustamıza iletilecektir. Hizmetin başarıyla tamamlandığını onaylıyor musunuz?",
+      [
+        {
+          text: "Hizmet sırasında sorun ile karşılaştım",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "Hizmet başarıyla tamamlandı",
+          onPress: () => {
+            approvedService(data.ID).then(({ payload }) => {
+              if (payload) {
+                if (payload.data) {
+                  Toast.show({
+                    text: "Hizmet onaylama işlemi başarılı.",
+                    buttonText: "Tamam",
+                    duration: 3500
+                  });
+                  this._handleComponentWillMount();
+                  return;
+                }
+              }
+              Toast.show({
+                text:
+                  "Hizmet onaylama işlemi başarısız. İnternet bağlantınızı kontrol ediniz.",
+                buttonText: "Tamam",
+                duration: 3500
+              });
+            });
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
   render() {
     const {
       customerDetailServiceResponse,
@@ -235,7 +354,18 @@ class CustomerServiceScreen extends Component {
     } = customerDetailServiceResponse;
     const {
       servicePreviewDetailLoading,
-      servicePreviewDetailResult
+      servicePreviewDetailResult,
+      companyServiceRateData,
+      companyServiceRateLoading,
+
+      customerServiceIsPointLoading,
+      customerServiceIsPointData,
+
+      customerServiceOldPointLoading,
+      customerServiceOldPointData,
+
+      servicePointListLoading,
+      servicePointListData
     } = companyDetailServiceResponse;
     const { getQrCodeLoading, getQrCodeData } = generalServiceGetResponse;
 
@@ -245,7 +375,8 @@ class CustomerServiceScreen extends Component {
       PAGES_DATA_CATEGORY_INDEX,
       initialTabActivePage,
       qrCodeValue,
-      qrTimerValue
+      qrTimerValue,
+      selectRateCount
     } = this.state;
     if (customerServicePreviewLoading)
       return (
@@ -363,6 +494,7 @@ class CustomerServiceScreen extends Component {
                 <Spinner />
               )}
               <MyButton
+                full={true}
                 press={() => this.setState({ modalIsVisible: false })}
                 text="Kapat"
               />
@@ -396,6 +528,13 @@ class CustomerServiceScreen extends Component {
                 <Icon name="ios-menu" />
               </Button>
             ) : initialTabActivePage === 1 ? (
+              <Button
+                transparent
+                onPress={() => this.setState({ initialTabActivePage: 0 })}
+              >
+                <Icon name="ios-arrow-back" />
+              </Button>
+            ) : initialTabActivePage === 2 ? (
               <Button
                 transparent
                 onPress={() => this.setState({ initialTabActivePage: 0 })}
@@ -451,10 +590,35 @@ class CustomerServiceScreen extends Component {
                             this._handleGetQrCodeForMasterApproved
                           }
                           page={page}
+                          _handleSetPoint={this._handleSetPoint}
+                          _handleApprovedService={this._handleApprovedService}
                         />
                       </Tab>
                     ))}
                   </Tabs>
+                  <View style={styles.dotAbsoluteBlock}>
+                    <View style={styles.dotTextBlock}>
+                      {PAGES.map((page, ix) => (
+                        <TouchableHighlight
+                          key={"dot-" + ix}
+                          onPress={() =>
+                            this.setState({ activeServicePage: ix })
+                          }
+                        >
+                          <Text
+                            style={[
+                              styles.dotText,
+                              activeServicePage == ix
+                                ? { color: ThemeColor }
+                                : null
+                            ]}
+                          >
+                            .
+                          </Text>
+                        </TouchableHighlight>
+                      ))}
+                    </View>
+                  </View>
                 </Tab>
                 <Tab heading="Qr Code">
                   {getQrCodeLoading ? (
@@ -463,7 +627,40 @@ class CustomerServiceScreen extends Component {
                     <QRCode
                       qrCodeValue={qrCodeValue}
                       qrTimerValue={qrTimerValue}
-                      value="123"
+                    />
+                  )}
+                </Tab>
+                <Tab heading="Puan Ver">
+                  {companyServiceRateLoading &&
+                  customerServiceIsPointLoading ? (
+                    <Spinner />
+                  ) : customerServiceIsPointData ? (
+                    customerServiceOldPointLoading ? (
+                      <Spinner />
+                    ) : (
+                      <Point
+                        companyServiceRateData={companyServiceRateData}
+                        customerServiceIsPointData={customerServiceIsPointData}
+                        customerServiceOldPointData={
+                          customerServiceOldPointData
+                        }
+                        servicePointListData={servicePointListData}
+                        _handleSetInitialState={this._handleSetInitialState}
+                        selectRateCount={selectRateCount}
+                        _handleSendServicePoint={this._handleSendServicePoint}
+                      />
+                    )
+                  ) : servicePointListLoading ? (
+                    <Spinner />
+                  ) : (
+                    <Point
+                      companyServiceRateData={companyServiceRateData}
+                      customerServiceIsPointData={customerServiceIsPointData}
+                      customerServiceOldPointData={customerServiceOldPointData}
+                      servicePointListData={servicePointListData}
+                      _handleSetInitialState={this._handleSetInitialState}
+                      selectRateCount={selectRateCount}
+                      _handleSendServicePoint={this._handleSendServicePoint}
                     />
                   )}
                 </Tab>
@@ -471,25 +668,6 @@ class CustomerServiceScreen extends Component {
             ) : null}
           </View>
         </ImageBackground>
-        <View style={styles.dotAbsoluteBlock}>
-          <View style={styles.dotTextBlock}>
-            {PAGES.map((page, ix) => (
-              <TouchableHighlight
-                key={"dot-" + ix}
-                onPress={() => this.setState({ activeServicePage: ix })}
-              >
-                <Text
-                  style={[
-                    styles.dotText,
-                    activeServicePage == ix ? { color: ThemeColor } : null
-                  ]}
-                >
-                  .
-                </Text>
-              </TouchableHighlight>
-            ))}
-          </View>
-        </View>
       </Root>
     );
   }
@@ -513,7 +691,13 @@ const mapDispatchToProps = {
   servicePreviewDetailQuestionData,
   proposalDetailData,
   updateServiceProposal,
-  getQrCode
+  getQrCode,
+  companyServiceRateData,
+  customerServiceIsPointData,
+  customerServiceOldPointData,
+  servicePointListData,
+  sendServicePoint,
+  approvedService
 };
 
 export default connect(

@@ -25,9 +25,10 @@ const INITIAL_STATE = {
   servicePreviewListResult: [],
   servicePreviewDetailLoading: false,
   servicePreviewDetailResult: [],
-  companyServiceRateLoading: false,
-  customerServiceIsPointLoading: false,
-  customerServiceOldPointLoading: false
+  companyServiceRateLoading: true,
+  customerServiceIsPointLoading: true,
+  customerServiceOldPointLoading: true,
+  servicePointListLoading: true
 };
 
 export default (state = INITIAL_STATE, action) => {

@@ -28,7 +28,9 @@ const INITIAL_STATE = {
   error: "",
   getSiteLoading: true,
   getLanguageLoading: true,
-  getQrCodeLoading: false
+  getQrCodeLoading: false,
+  getLanguageError: true,
+  getSiteError: true
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -79,10 +81,11 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, error: "hata" };
 
     case GET_LANGUAGE:
-      return { ...state, getLanguageLoading: true };
+      return { ...state, getLanguageLoading: true, getLanguageError: true };
     case GET_LANGUAGE_SUCCESS:
       return {
         ...state,
+        getLanguageError: false,
         getLanguageLoading: false,
         getLanguageData: action.payload.data
       };
@@ -95,13 +98,19 @@ export default (state = INITIAL_STATE, action) => {
           })
         )
       );
-      return { ...state, getLanguageLoading: false, error: "hata" };
+      return {
+        ...state,
+        getLanguageLoading: false,
+        getLanguageError: true,
+        error: "hata"
+      };
 
     case GET_SITE:
-      return { ...state, getSiteLoading: true };
+      return { ...state, getSiteLoading: true, getSiteError: true };
     case GET_SITE_SUCCESS:
       return {
         ...state,
+        getSiteError: false,
         getSiteLoading: false,
         getSiteData: action.payload.data
       };
@@ -114,7 +123,12 @@ export default (state = INITIAL_STATE, action) => {
           })
         )
       );
-      return { ...state, getSiteLoading: false, error: "hata" };
+      return {
+        ...state,
+        getSiteError: true,
+        getSiteLoading: false,
+        error: "hata"
+      };
 
     case GET_QR_CODE:
       return { ...state, getQrCodeLoading: true };

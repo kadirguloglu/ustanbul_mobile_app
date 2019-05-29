@@ -10,7 +10,9 @@ import {
   GET_SERVICE_PREVIEW_DETAIL_QUESTION,
   GET_SERVICE_PREVIEW_DETAIL_QUESTION_URL,
   POST_SEND_SERVICE_POINT,
-  POST_SEND_SERVICE_POINT_URL
+  POST_SEND_SERVICE_POINT_URL,
+  POST_APPROVED_SERVICE,
+  POST_APPROVED_SERVICE_URL
 } from "../types/customerDetailService";
 
 export function customerServiceCountData(activeUserId) {
@@ -70,7 +72,7 @@ export function servicePreviewDetailQuestionData(serviceID) {
     type: GET_SERVICE_PREVIEW_DETAIL_QUESTION,
     payload: {
       request: {
-        url: GET_SERVICE_PREVIEW_DETAIL_QUESTION_URL + `/${serviceID}`
+        url: `${GET_SERVICE_PREVIEW_DETAIL_QUESTION_URL}/${serviceID}`
       }
     }
   };
@@ -84,6 +86,17 @@ export function sendServicePoint(data) {
         url: POST_SEND_SERVICE_POINT_URL,
         data: data,
         method: "POST"
+      }
+    }
+  };
+}
+
+export function approvedService(Id) {
+  return {
+    type: POST_APPROVED_SERVICE,
+    payload: {
+      request: {
+        url: `${POST_APPROVED_SERVICE_URL}/${Id}`
       }
     }
   };

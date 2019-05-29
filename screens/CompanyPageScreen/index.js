@@ -1,5 +1,10 @@
 import React, { Component } from "react";
-import { StyleSheet, ListView, ImageBackground } from "react-native";
+import {
+  StyleSheet,
+  ListView,
+  ImageBackground,
+  TouchableHighlight
+} from "react-native";
 import { connect } from "react-redux";
 import {
   Root,
@@ -19,6 +24,7 @@ import {
   View
 } from "native-base";
 import Dialog from "react-native-dialog";
+import { Permissions } from "expo";
 
 import { ThemeColor } from "../../src/functions";
 import { servicePreviewDetailQuestionData } from "../../src/actions/customerDetailService";
@@ -32,6 +38,7 @@ import {
 } from "../../src/actions/serviceService";
 import PagerPageContent from "./Components/CompanyServiceScreen_pagerPageContent";
 import ModalDialog from "./Components/CompanyServiceScreen_modalDialog";
+import ApprovedServiceWithQr from "./Components/CompanyServiceScreen_approved_service_with_qr";
 
 class CompanyServiceScreen extends Component {
   constructor(props) {
@@ -50,8 +57,16 @@ class CompanyServiceScreen extends Component {
       PAGES: [],
       PAGES_DATA_CATEGORY_INDEX: [],
       blurViewRef: null,
-      activeServicePage: 0
+      activeServicePage: 0,
+      initialTabPage: 0,
+      hasCameraPermission: null,
+      scanned: true
     };
+  }
+
+  async componentDidMount() {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    this.setState({ hasCameraPermission: status === "granted" });
   }
 
   setInitialState = (p, v) => {
@@ -85,6 +100,7 @@ class CompanyServiceScreen extends Component {
         this.setState({ PAGES: PAGES });
       });
   }
+
   handlerUpdateServiceProposal = (item, data) => {
     const { proposalDetailData } = this.props;
     this.setState({ selectedProposalId: data.ProposalID });
@@ -101,6 +117,7 @@ class CompanyServiceScreen extends Component {
     this.props.servicePreviewDetailQuestionData(data.ID);
     this.setState({ modalIsVisible: true });
   };
+
   onlyNumberRegex = value => {
     this.setState({ oldProposalPrice: value + "" });
     if (value.length == 0) this.setState({ newProposalRegex: true });
@@ -108,9 +125,11 @@ class CompanyServiceScreen extends Component {
       this.setState({ newProposalRegex: true });
     } else this.setState({ newProposalRegex: false });
   };
+
   handleCancel = () => {
     this.setState({ dialogVisible: false });
   };
+
   handleUpdateProposal = () => {
     const {
       newProposalRegex,
@@ -153,6 +172,22 @@ class CompanyServiceScreen extends Component {
     this.setState({ dialogVisible: false });
   };
 
+  _handleApprovedService = data => {
+    this.setState({ initialTabPage: 1 });
+    this.setState({ scanned: false });
+  };
+
+  _handleBarCodeScanned = ({ type, data }) => {
+    this.setState({ initialTabPage: 0 });
+    this.setState({ scanned: true });
+    const { scanned } = this.state;
+    if (!scanned) {
+      console.log("LOG: -------------------------------------------------");
+      console.log("LOG: _handleBarCodeScanned -> type,data", type, data);
+      console.log("LOG: -------------------------------------------------");
+    }
+  };
+
   render() {
     const { companyDetailServiceResponse, navigation } = this.props;
     const {
@@ -169,7 +204,10 @@ class CompanyServiceScreen extends Component {
       PAGES,
       modalIsVisible,
       dialogVisible,
-      activeServicePage
+      activeServicePage,
+      initialTabPage,
+      hasCameraPermission,
+      scanned
     } = this.state;
 
     if (servicePreviewDetailLoading) {
@@ -226,63 +264,83 @@ class CompanyServiceScreen extends Component {
             </Body>
             <Right />
           </Header>
-          <ImageBackground
-            style={styles.imageBackground1}
-            source={require("../../assets/splash-screen-demo.png")}
-          >
-            <View style={styles.view3}>
-              <Tabs
-                renderTabBar={() => <View />}
-                style={styles.tabs1}
-                onChangeTab={value =>
-                  this.setState({ activeServicePage: value.i })
-                }
-                page={activeServicePage}
-              >
-                {PAGES.map((page, ix) => (
-                  <Tab
-                    key={"ViewPagerContent-" + page}
-                    heading={"heading" + ix}
-                    style={styles.tab1}
-                  >
-                    <PagerPageContent
-                      page={page}
-                      PAGES_DATA_CATEGORY_INDEX={PAGES_DATA_CATEGORY_INDEX}
-                      companyDetailServiceResponse={
-                        companyDetailServiceResponse
-                      }
-                      handlerPreviewSelectedService={
-                        this.handlerPreviewSelectedService
-                      }
-                      styles={styles}
-                      handlerUpdateServiceProposal={
-                        this.handlerUpdateServiceProposal
-                      }
-                      handlerServiceApproved={this.handlerServiceApproved}
-                    />
-                  </Tab>
-                ))}
-              </Tabs>
-            </View>
-          </ImageBackground>
-          <View style={styles.dotAbsoluteBlock}>
-            <View style={styles.dotTextBlock}>
-              {PAGES.map((page, ix) => (
-                <TouchableHighlight
-                  key={"dot-" + ix}
-                  onPress={() => this.setState({ activeServicePage: ix })}
+
+          <View style={styles.view3}>
+            <Tabs
+              renderTabBar={() => <View />}
+              locked={true}
+              page={initialTabPage}
+              style={styles.tabs1}
+            >
+              <Tab heading="Hizmet listesi" style={styles.tab1}>
+                <ImageBackground
+                  style={styles.imageBackground1}
+                  source={require("../../assets/splash-screen-demo.png")}
                 >
-                  <Text
-                    style={[
-                      styles.dotText,
-                      activeServicePage == ix ? { color: ThemeColor } : null
-                    ]}
+                  <Tabs
+                    renderTabBar={() => <View />}
+                    style={styles.tabs1}
+                    onChangeTab={value =>
+                      this.setState({ activeServicePage: value.i })
+                    }
+                    page={activeServicePage}
                   >
-                    .
-                  </Text>
-                </TouchableHighlight>
-              ))}
-            </View>
+                    {PAGES.map((page, ix) => (
+                      <Tab
+                        key={"ViewPagerContent-" + page}
+                        heading={"heading" + ix}
+                        style={styles.tab1}
+                      >
+                        <PagerPageContent
+                          page={page}
+                          PAGES_DATA_CATEGORY_INDEX={PAGES_DATA_CATEGORY_INDEX}
+                          companyDetailServiceResponse={
+                            companyDetailServiceResponse
+                          }
+                          handlerPreviewSelectedService={
+                            this.handlerPreviewSelectedService
+                          }
+                          styles={styles}
+                          handlerUpdateServiceProposal={
+                            this.handlerUpdateServiceProposal
+                          }
+                          _handleApprovedService={this._handleApprovedService}
+                        />
+                      </Tab>
+                    ))}
+                  </Tabs>
+                </ImageBackground>
+
+                <View style={styles.dotAbsoluteBlock}>
+                  <View style={styles.dotTextBlock}>
+                    {PAGES.map((page, ix) => (
+                      <TouchableHighlight
+                        key={"dot-" + ix}
+                        onPress={() => this.setState({ activeServicePage: ix })}
+                      >
+                        <Text
+                          style={[
+                            styles.dotText,
+                            activeServicePage == ix
+                              ? { color: ThemeColor }
+                              : null
+                          ]}
+                        >
+                          .
+                        </Text>
+                      </TouchableHighlight>
+                    ))}
+                  </View>
+                </View>
+              </Tab>
+              <Tab heading="QR ile hizmet onaylama">
+                <ApprovedServiceWithQr
+                  hasCameraPermission={hasCameraPermission}
+                  _handleBarCodeScanned={this._handleBarCodeScanned}
+                  scanned={scanned}
+                />
+              </Tab>
+            </Tabs>
           </View>
         </Container>
       </Root>
