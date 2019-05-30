@@ -2,7 +2,11 @@ import {
   SET_SERVICE_CREATE,
   SET_SERVICE_CREATE_URL,
   SET_SERVICE_POST_SERVICE,
-  SET_SERVICE_POST_SERVICE_URL
+  SET_SERVICE_POST_SERVICE_URL,
+  GET_READ_QR_CODE,
+  GET_READ_QR_CODE_URL,
+  POST_SERVICE_COMPLAINT,
+  POST_SERVICE_COMPLAINT_URL
 } from "../types/servicePost";
 
 export function createService(serviceData, postedData) {
@@ -47,6 +51,30 @@ export function servicePostService(proposal, service, currentSite) {
           service: service,
           currentSite: currentSite
         }
+      }
+    }
+  };
+}
+
+export function readQrCode(qrCode) {
+  return {
+    type: GET_READ_QR_CODE,
+    payload: {
+      request: {
+        url: `${GET_READ_QR_CODE_URL}/${qrCode}`
+      }
+    }
+  };
+}
+
+export function postServiceComplaint(complaint) {
+  return {
+    type: POST_SERVICE_COMPLAINT,
+    payload: {
+      request: {
+        url: POST_SERVICE_COMPLAINT_URL,
+        method: "POST",
+        data: complaint
       }
     }
   };

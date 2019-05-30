@@ -4,7 +4,13 @@ import {
   SET_SERVICE_CREATE_FAIL,
   SET_SERVICE_POST_SERVICE,
   SET_SERVICE_POST_SERVICE_SUCCESS,
-  SET_SERVICE_POST_SERVICE_FAIL
+  SET_SERVICE_POST_SERVICE_FAIL,
+  GET_READ_QR_CODE,
+  GET_READ_QR_CODE_SUCCESS,
+  GET_READ_QR_CODE_FAIL,
+  POST_SERVICE_COMPLAINT,
+  POST_SERVICE_COMPLAINT_SUCCESS,
+  POST_SERVICE_COMPLAINT_FAIL
 } from "../../types/servicePost";
 import Sentry from "sentry-expo";
 
@@ -48,6 +54,44 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, servicePostServiceLoading: false, error: "hata" };
+
+    case GET_READ_QR_CODE:
+      return { ...state, readQrCodeLoading: true };
+    case GET_READ_QR_CODE_SUCCESS:
+      return {
+        ...state,
+        readQrCodeLoading: false,
+        readQrCodeResult: action.payload.data
+      };
+    case GET_READ_QR_CODE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_READ_QR_CODE_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, readQrCodeLoading: false, error: "hata" };
+
+    case POST_SERVICE_COMPLAINT:
+      return { ...state, postServiceComplaintLoading: true };
+    case POST_SERVICE_COMPLAINT_SUCCESS:
+      return {
+        ...state,
+        postServiceComplaintLoading: false,
+        postServiceComplaintResult: action.payload.data
+      };
+    case POST_SERVICE_COMPLAINT_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "POST_SERVICE_COMPLAINT_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, postServiceComplaintLoading: false, error: "hata" };
     default:
       return { ...state };
   }

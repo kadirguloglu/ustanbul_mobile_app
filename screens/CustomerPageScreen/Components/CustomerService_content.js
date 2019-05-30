@@ -14,7 +14,8 @@ const Content = props => {
     _handleGetQrCodeForMasterApproved,
     page,
     _handleSetPoint,
-    _handleApprovedService
+    _handleApprovedService,
+    _handleComplaintService
   } = props;
   const { dataIndex, categoryIndex } = PAGES_DATA_CATEGORY_INDEX[page];
   const key = Object.keys(servicePreviewListResult)[categoryIndex];
@@ -110,7 +111,7 @@ const Content = props => {
             <MyButton
               full
               buttonStyle={styles.buttonStyle}
-              press={handlerPreviewSelectedService}
+              press={_handleComplaintService}
               parameters={[data]}
               text="Şikayet et"
               textStyle={styles.iconText}
@@ -149,8 +150,13 @@ const Content = props => {
             <MyButton
               full
               buttonStyle={styles.buttonStyle}
-              press={handlerPreviewSelectedService}
-              parameters={[data]}
+              press={navigation.navigate}
+              parameters={[
+                "SeeProposal",
+                {
+                  data: data
+                }
+              ]}
               text="Teklifleri gör"
               textStyle={styles.iconText}
             />

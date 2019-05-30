@@ -10,7 +10,9 @@ import {
   GET_SITE,
   GET_SITE_URL,
   GET_QR_CODE,
-  GET_QR_CODE_URL
+  GET_QR_CODE_URL,
+  GET_COMPLAINT_OPTION_LIST,
+  GET_COMPLAINT_OPTION_LIST_URL
 } from "../types/generalServiceGet";
 
 export function loginUser(email, password, id) {
@@ -78,6 +80,17 @@ export function getQrCode(serviceId) {
     payload: {
       request: {
         url: `${GET_QR_CODE_URL}/${serviceId}`
+      }
+    }
+  };
+}
+
+export function getComplaintOptionList(langId) {
+  return {
+    type: GET_COMPLAINT_OPTION_LIST,
+    payload: {
+      request: {
+        url: `${GET_COMPLAINT_OPTION_LIST_URL}/${langId}`
       }
     }
   };

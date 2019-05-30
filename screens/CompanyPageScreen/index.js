@@ -6,6 +6,7 @@ import {
   TouchableHighlight
 } from "react-native";
 import { connect } from "react-redux";
+import { NavigationEvents } from "react-navigation";
 import {
   Root,
   Spinner,
@@ -27,6 +28,7 @@ import Dialog from "react-native-dialog";
 import { Permissions } from "expo";
 
 import { ThemeColor } from "../../src/functions";
+
 import { servicePreviewDetailQuestionData } from "../../src/actions/customerDetailService";
 import {
   servicePreviewDetailData,
@@ -36,6 +38,8 @@ import {
   proposalDetailData,
   updateServiceProposal
 } from "../../src/actions/serviceService";
+import { readQrCode } from "../../src/actions/servicePost";
+
 import PagerPageContent from "./Components/CompanyServiceScreen_pagerPageContent";
 import ModalDialog from "./Components/CompanyServiceScreen_modalDialog";
 import ApprovedServiceWithQr from "./Components/CompanyServiceScreen_approved_service_with_qr";
@@ -74,6 +78,10 @@ class CompanyServiceScreen extends Component {
   };
 
   componentWillMount() {
+    this._handleComponentWillMount();
+  }
+
+  _handleComponentWillMount = () => {
     const { generalServiceGetResponse } = this.props;
     const { activeUser } = generalServiceGetResponse;
     this.props
@@ -99,7 +107,7 @@ class CompanyServiceScreen extends Component {
         this.setState({ PAGES_DATA_CATEGORY_INDEX: PAGES_DATA_CATEGORY_INDEX });
         this.setState({ PAGES: PAGES });
       });
-  }
+  };
 
   handlerUpdateServiceProposal = (item, data) => {
     const { proposalDetailData } = this.props;
@@ -159,6 +167,7 @@ class CompanyServiceScreen extends Component {
               buttonText: "Tamam",
               duration: 2500
             });
+            this._handleComponentWillMount();
             break;
           default:
             Toast.show({
@@ -173,6 +182,23 @@ class CompanyServiceScreen extends Component {
   };
 
   _handleApprovedService = data => {
+    const { hasCameraPermission } = this.state;
+    if (hasCameraPermission === null) {
+      Toast.show({
+        text: "Kodu okutmak için kamera erişim izni vermelisiniz.",
+        buttonText: "Tamam",
+        duration: 3500
+      });
+      return;
+    }
+    if (hasCameraPermission === false) {
+      Toast.show({
+        text: "Kodu okutmak için kamera erişim izni vermelisiniz.",
+        buttonText: "Tamam",
+        duration: 3500
+      });
+      return;
+    }
     this.setState({ initialTabPage: 1 });
     this.setState({ scanned: false });
   };
@@ -182,9 +208,53 @@ class CompanyServiceScreen extends Component {
     this.setState({ scanned: true });
     const { scanned } = this.state;
     if (!scanned) {
-      console.log("LOG: -------------------------------------------------");
-      console.log("LOG: _handleBarCodeScanned -> type,data", type, data);
-      console.log("LOG: -------------------------------------------------");
+      const { readQrCode } = this.props;
+      readQrCode(data).then(({ payload }) => {
+        if (payload) {
+          if (payload.data) {
+            switch (payload.data) {
+              case "1":
+                Toast.show({
+                  text:
+                    "Kod oluşturulduktan sonra 2 dakika içinde okutulmalıdır. Lütfen müşterinizden yeni bir kod oluşturmasını isteyiniz.",
+                  buttonText: "Tamam",
+                  duration: 3500
+                });
+                return;
+              case "2":
+                Toast.show({
+                  text: "Kod bulunamadı. Lütfen Tekrar Deneyiniz.",
+                  buttonText: "Tamam",
+                  duration: 3500
+                });
+                return;
+              case "success":
+                Toast.show({
+                  text:
+                    "İşlem başarılı. Size hizmeti onaylayarak ücret transferini gerçekleştirebilirsiniz.",
+                  buttonText: "Tamam",
+                  duration: 3500
+                });
+                this._handleComponentWillMount();
+                return;
+              default:
+                Toast.show({
+                  text:
+                    "İşlem sırasında hata oluştu. İnternet bağlantınız kontrol ediniz.",
+                  buttonText: "Tamam",
+                  duration: 3500
+                });
+                return;
+            }
+          }
+        }
+        Toast.show({
+          text:
+            "İşlem sırasında hata oluştu. İnternet bağlantınız kontrol ediniz.",
+          buttonText: "Tamam",
+          duration: 3500
+        });
+      });
     }
   };
 
@@ -219,6 +289,7 @@ class CompanyServiceScreen extends Component {
     }
     return (
       <Root>
+        <NavigationEvents onDidFocus={() => this._handleComponentWillMount()} />
         <Container>
           <ModalDialog
             modalIsVisible={modalIsVisible}
@@ -365,7 +436,8 @@ const mapDispatchToProps = {
   servicePreviewDetailData,
   servicePreviewDetailQuestionData,
   proposalDetailData,
-  updateServiceProposal
+  updateServiceProposal,
+  readQrCode
 };
 
 export default connect(

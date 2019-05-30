@@ -31,7 +31,7 @@ class Main extends React.Component {
   }
   async componentWillMount() {
     const { loginUser, getLanguage, getSite } = this.props;
-    if (isAutoLogin) loginUser("teah_kadir@hotmail.com", "123", "");
+    if (isAutoLogin) loginUser("kadirguloglu1@gmail.com", "123", "");
     getLanguage(1);
     getSite(1);
     // let deviceId = "undefined";

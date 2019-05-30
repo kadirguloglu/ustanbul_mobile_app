@@ -46,12 +46,19 @@ import {
   proposalDetailData,
   updateServiceProposal
 } from "../../src/actions/serviceService";
-import { getQrCode } from "../../src/actions/generalServiceGet";
+import {
+  getQrCode,
+  getComplaintOptionList
+} from "../../src/actions/generalServiceGet";
+import { postServiceComplaint } from "../../src/actions/servicePost";
 
 import MyButton from "../../components/MyButton";
 import { ThemeColor } from "../../src/functions";
 import Content from "./Components/CustomerService_content";
 import Point from "./Components/CustomerService_point";
+import ComplaintService from "./Components/CustomerService_complaint";
+
+import styles from "./CustomerService.styles";
 
 class CustomerServiceScreen extends Component {
   constructor(props) {
@@ -75,7 +82,11 @@ class CustomerServiceScreen extends Component {
       qrCodeValue: "",
       qrTimerValue: 120,
       selectRateCount: [],
-      selectedService: {}
+      selectedService: {},
+      data: null,
+
+      ComplaintOptionId: 0,
+      Description: ""
     };
   }
 
@@ -307,7 +318,9 @@ class CustomerServiceScreen extends Component {
       [
         {
           text: "Hizmet sırasında sorun ile karşılaştım",
-          onPress: () => console.log("Cancel Pressed"),
+          onPress: () => {
+            this._handleComplaintService(data);
+          },
           style: "cancel"
         },
         {
@@ -339,6 +352,95 @@ class CustomerServiceScreen extends Component {
     );
   };
 
+  _handleComplaintService = data => {
+    const { getComplaintOptionList, generalServiceGetResponse } = this.props;
+    const { getLanguageData } = generalServiceGetResponse;
+    this.setState({ data: data });
+    getComplaintOptionList(getLanguageData.Id).then(({ payload }) => {
+      if (payload) {
+        if (payload.data) {
+          this.setState({
+            initialTabActivePage: 3,
+            ComplaintOptionId: 0,
+            Description: ""
+          });
+          return;
+        }
+      }
+      Toast.show({
+        text:
+          "İşlem sırasında bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
+        buttonText: "Tamam",
+        duration: 3500
+      });
+    });
+  };
+
+  _handlePostServiceComplaint = () => {
+    const { ComplaintOptionId, Description, data } = this.state;
+    if (ComplaintOptionId === 0) {
+      Toast.show({
+        text: "Şikayet konusu seçiniz.",
+        buttonText: "Tamam",
+        duration: 3500
+      });
+      return;
+    }
+    if (Description.length <= 30 || Description.length >= 1000) {
+      Toast.show({
+        text: "Şikayet metniniz 30 ile 1000 karakter arasında olmalıdır.",
+        buttonText: "Tamam",
+        duration: 3500
+      });
+      return;
+    }
+    const { postServiceComplaint, generalServiceGetResponse } = this.props;
+    const { activeUser, getSiteData } = generalServiceGetResponse;
+    const complaintModel = {
+      ComplaintOptionId: ComplaintOptionId,
+      Description: Description,
+      CustomerServiceID: data.ID,
+      CompanyUserID: data.MasterID,
+      UserID: activeUser.Id,
+      SiteID: getSiteData.Id
+    };
+    postServiceComplaint(complaintModel).then(({ payload }) => {
+      if (payload) {
+        if (payload.request) {
+          if (payload.request._response) {
+            if (payload.request._response === "success") {
+              Toast.show({
+                text:
+                  "Şikayetiniz iletildi. En kısa zamanda sizin ile iletişime geçeceğiz.",
+                buttonText: "Tamam",
+                duration: 3500
+              });
+              this.setState({
+                initialTabActivePage: 0,
+                ComplaintOptionId: 0,
+                Description: ""
+              });
+              return;
+            } else {
+              Toast.show({
+                text:
+                  "Şikayet iletilemedi. İnternet bağlantınızı kontrol ediniz.",
+                buttonText: "Tamam",
+                duration: 3500
+              });
+              return;
+            }
+          }
+        }
+      }
+      Toast.show({
+        text: "Şikayet iletilemedi. İnternet bağlantınızı kontrol ediniz.",
+        buttonText: "Tamam",
+        duration: 3500
+      });
+    });
+  };
+
   render() {
     const {
       customerDetailServiceResponse,
@@ -367,7 +469,11 @@ class CustomerServiceScreen extends Component {
       servicePointListLoading,
       servicePointListData
     } = companyDetailServiceResponse;
-    const { getQrCodeLoading, getQrCodeData } = generalServiceGetResponse;
+    const {
+      getQrCodeLoading,
+      getComplaintOptionListResult,
+      getComplaintOptionListLoading
+    } = generalServiceGetResponse;
 
     const {
       PAGES,
@@ -376,7 +482,10 @@ class CustomerServiceScreen extends Component {
       initialTabActivePage,
       qrCodeValue,
       qrTimerValue,
-      selectRateCount
+      selectRateCount,
+
+      ComplaintOptionId,
+      Description
     } = this.state;
     if (customerServicePreviewLoading)
       return (
@@ -541,6 +650,13 @@ class CustomerServiceScreen extends Component {
               >
                 <Icon name="ios-arrow-back" />
               </Button>
+            ) : initialTabActivePage === 3 ? (
+              <Button
+                transparent
+                onPress={() => this.setState({ initialTabActivePage: 0 })}
+              >
+                <Icon name="ios-arrow-back" />
+              </Button>
             ) : null}
           </Left>
           <Body>
@@ -592,6 +708,7 @@ class CustomerServiceScreen extends Component {
                           page={page}
                           _handleSetPoint={this._handleSetPoint}
                           _handleApprovedService={this._handleApprovedService}
+                          _handleComplaintService={this._handleComplaintService}
                         />
                       </Tab>
                     ))}
@@ -664,6 +781,20 @@ class CustomerServiceScreen extends Component {
                     />
                   )}
                 </Tab>
+                <Tab heading="Şikayet Et">
+                  <ComplaintService
+                    _handleSetInitialState={this._handleSetInitialState}
+                    getComplaintOptionListLoading={
+                      getComplaintOptionListLoading
+                    }
+                    getComplaintOptionListResult={getComplaintOptionListResult}
+                    ComplaintOptionId={ComplaintOptionId}
+                    Description={Description}
+                    _handlePostServiceComplaint={
+                      this._handlePostServiceComplaint
+                    }
+                  />
+                </Tab>
               </Tabs>
             ) : null}
           </View>
@@ -677,12 +808,14 @@ const mapStateToProps = ({
   generalServiceGetResponse,
   customerDetailServiceResponse,
   companyDetailServiceResponse,
-  serviceServiceResponse
+  serviceServiceResponse,
+  servicePostResponse
 }) => ({
   generalServiceGetResponse,
   customerDetailServiceResponse,
   companyDetailServiceResponse,
-  serviceServiceResponse
+  serviceServiceResponse,
+  servicePostResponse
 });
 
 const mapDispatchToProps = {
@@ -697,75 +830,12 @@ const mapDispatchToProps = {
   customerServiceOldPointData,
   servicePointListData,
   sendServicePoint,
-  approvedService
+  approvedService,
+  getComplaintOptionList,
+  postServiceComplaint
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CustomerServiceScreen);
-
-const styles = StyleSheet.create({
-  iconText: {
-    fontSize: 18,
-    color: "white"
-  },
-  buttonStyle: {
-    backgroundColor: ThemeColor,
-    margin: 10,
-    borderRadius: 5
-  },
-  ServicePreviewItemText: {
-    textAlign: "center",
-    fontSize: 15
-  },
-  ServicePreviewItemTextAnswer: {
-    marginBottom: 2,
-    borderBottomColor: ThemeColor,
-    borderBottomWidth: 1
-  },
-  dotAbsoluteBlock: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    top: 0
-  },
-  dotTextBlock: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "flex-end"
-  },
-  dotText: { fontSize: 50, fontWeight: "bold", color: "white" },
-  view1: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    backgroundColor: "transparent"
-  },
-  text1: {
-    fontSize: 16,
-    padding: 10,
-    textAlign: "center",
-    color: "white",
-    borderBottomColor: "white",
-    borderBottomWidth: 1
-  },
-  view2: {
-    backgroundColor: "white",
-    margin: 10,
-    borderRadius: 5,
-    padding: 10
-  },
-  text2: { fontSize: 15, textAlign: "center" },
-  text3: {
-    fontSize: 13,
-    textAlign: "center",
-    borderBottomColor: "white",
-    borderBottomWidth: 1
-  },
-  backgroundImage: {
-    flex: 1
-  }
-});

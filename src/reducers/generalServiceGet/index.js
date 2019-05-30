@@ -16,7 +16,10 @@ import {
   GET_SITE_FAIL,
   GET_QR_CODE,
   GET_QR_CODE_SUCCESS,
-  GET_QR_CODE_FAIL
+  GET_QR_CODE_FAIL,
+  GET_COMPLAINT_OPTION_LIST,
+  GET_COMPLAINT_OPTION_LIST_SUCCESS,
+  GET_COMPLAINT_OPTION_LIST_FAIL
 } from "../../types/generalServiceGet";
 import Sentry from "sentry-expo";
 
@@ -30,7 +33,8 @@ const INITIAL_STATE = {
   getLanguageLoading: true,
   getQrCodeLoading: false,
   getLanguageError: true,
-  getSiteError: true
+  getSiteError: true,
+  getComplaintOptionListLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -148,6 +152,25 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, getQrCodeLoading: false, error: "hata" };
+
+    case GET_COMPLAINT_OPTION_LIST:
+      return { ...state, getComplaintOptionListLoading: true };
+    case GET_COMPLAINT_OPTION_LIST_SUCCESS:
+      return {
+        ...state,
+        getComplaintOptionListLoading: false,
+        getComplaintOptionListResult: action.payload.data
+      };
+    case GET_COMPLAINT_OPTION_LIST_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_COMPLAINT_OPTION_LIST_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, getComplaintOptionListLoading: false, error: "hata" };
     default:
       return { ...state };
   }
