@@ -1,6 +1,10 @@
-import { Toast } from "native-base";
+import React from "react";
+import { Toast, View } from "native-base";
 import Storage from "react-native-storage";
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, Dimensions } from "react-native";
+import AnimatedLoader from "react-native-animated-loader";
+
+const { width, height } = Dimensions.get("window");
 
 export function SmallPath(PicturePaths) {
   try {
@@ -91,3 +95,29 @@ export let ChatConnectionUrl = "http://demo.ustanbul.net";
 export let siteUrl = "http://demo.ustanbul.net";
 
 export const isAutoLogin = true;
+
+export const Loader = props => {
+  return (
+    <View
+      style={{
+        width: width,
+        height: height,
+        position: "absolute",
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <AnimatedLoader
+        visible={true}
+        overlayColor="transparent"
+        source={require("../lottie-loader.json")}
+        animationStyle={{
+          width: width,
+          height: height
+        }}
+        speed={1}
+      />
+    </View>
+  );
+};

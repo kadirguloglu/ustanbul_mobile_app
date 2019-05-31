@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import {
-  StyleSheet,
-  ListView,
   Text,
-  ScrollView,
   ImageBackground,
   View,
   TouchableHighlight,
@@ -25,7 +22,6 @@ import {
   Toast
 } from "native-base";
 import Dialog from "react-native-dialog";
-import Modal from "react-native-modal";
 import { NavigationEvents } from "react-navigation";
 import QRCode from "./Components/CustomerService_qrcode";
 
@@ -33,7 +29,8 @@ import {
   customerServicePreviewData,
   servicePreviewDetailQuestionData,
   sendServicePoint,
-  approvedService
+  approvedService,
+  cancelService
 } from "../../src/actions/customerDetailService";
 import {
   servicePreviewDetailData,
@@ -52,31 +49,25 @@ import {
 } from "../../src/actions/generalServiceGet";
 import { postServiceComplaint } from "../../src/actions/servicePost";
 
-import MyButton from "../../components/MyButton";
-import { ThemeColor } from "../../src/functions";
+import { ThemeColor, Loader } from "../../src/functions";
 import Content from "./Components/CustomerService_content";
 import Point from "./Components/CustomerService_point";
 import ComplaintService from "./Components/CustomerService_complaint";
+import CustomerServicePreview from "./Components/CustomerService_preview";
+import CustomerServiceHeader from "./Components/CustomerService_header";
 
 import styles from "./CustomerService.styles";
 
 class CustomerServiceScreen extends Component {
   constructor(props) {
     super(props);
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       activeTab: 0,
-      getToast: false,
-      fabActive: false,
-      iconIsText: false,
-      modalIsVisible: false,
-      dialogVisible: false,
       newProposalRegex: true,
       oldProposalPrice: "0",
       selectedProposalId: 0,
       PAGES: [],
       PAGES_DATA_CATEGORY_INDEX: [],
-      blurViewRef: null,
       activeServicePage: 0,
       initialTabActivePage: 0,
       qrCodeValue: "",
@@ -131,19 +122,6 @@ class CustomerServiceScreen extends Component {
     this._handleComponentWillMount();
   };
 
-  handlerUpdateServiceProposal = (item, data) => {
-    this.setState({ selectedProposalId: data.ProposalID });
-    this.props.proposalDetailData(data.ProposalID).then(({ payload }) => {
-      if (this.props.serviceServiceResponse.proposalDetailLoading == false) {
-        this.setState({
-          oldProposalPrice:
-            this.props.serviceServiceResponse.proposalDetailResult.Price + ""
-        });
-        this.setState({ dialogVisible: true });
-      }
-    });
-  };
-
   _handleQrStartTimer = () => {
     this.setState({ qrTimerValue: 120 });
     this.qrStartTimer = setInterval(() => {
@@ -191,10 +169,10 @@ class CustomerServiceScreen extends Component {
     });
   };
 
-  handlerPreviewSelectedService = data => {
+  _handlerPreviewSelectedService = data => {
     this.props.servicePreviewDetailData(data.ID);
     this.props.servicePreviewDetailQuestionData(data.ID);
-    this.setState({ modalIsVisible: true });
+    this.setState({ initialTabActivePage: 4 });
   };
 
   onlyNumberRegex = value => {
@@ -203,48 +181,6 @@ class CustomerServiceScreen extends Component {
     else if (/^(\d*\.)?\d+$/.test(value)) {
       this.setState({ newProposalRegex: true });
     } else this.setState({ newProposalRegex: false });
-  };
-
-  handleCancel = () => {
-    this.setState({ dialogVisible: false });
-  };
-
-  handleUpdateProposal = () => {
-    if (this.state.newProposalRegex == false) {
-      MyToast("Teklifinizi kontrol ediniz");
-      return;
-    }
-    this.props
-      .updateServiceProposal(
-        this.state.oldProposalPrice,
-        this.state.selectedProposalId
-      )
-      .then(({ payload }) => {
-        if (this.props.serviceServiceResponse.proposalDetailLoading == false) {
-          let lst;
-          if (
-            this.props.updateServiceProposalResult.UpdateServiceProposalResult
-          ) {
-            lst = this.props.updateServiceProposalResult
-              .UpdateServiceProposalResult;
-          } else {
-            lst = this.props.updateServiceProposalResult;
-          }
-          switch (lst) {
-            case "success":
-              MyToast("Teklifiniz güncellendi.");
-              break;
-            case "error":
-              MyToast(
-                "Teklifiniz güncellenirken hata oluştu. Tekrar deneyiniz."
-              );
-              break;
-            default:
-              break;
-          }
-        }
-      });
-    this.setState({ dialogVisible: false });
   };
 
   _handleSetPoint = data => {
@@ -441,6 +377,46 @@ class CustomerServiceScreen extends Component {
     });
   };
 
+  _handleCancelService = data => {
+    const { cancelService } = this.props;
+    Alert.alert(
+      "Uyarı",
+      "Hizmeti iptal etmek istediğinize emin misiniz?",
+      [
+        {
+          text: "Hayır",
+          onPress: () => {},
+          style: "cancel"
+        },
+        {
+          text: "Evet",
+          onPress: () => {
+            cancelService(data.ID).then(({ payload }) => {
+              if (payload) {
+                if (payload.data) {
+                  Toast.show({
+                    text: "İptal işlemi başarılı.",
+                    buttonText: "Tamam",
+                    duration: 3500
+                  });
+                  this._handleComponentWillMount();
+                  return;
+                }
+              }
+              Toast.show({
+                text:
+                  "İptal işlemi başarısız. İnternet bağlantınızı kontrol ediniz.",
+                buttonText: "Tamam",
+                duration: 3500
+              });
+            });
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
   render() {
     const {
       customerDetailServiceResponse,
@@ -483,187 +459,24 @@ class CustomerServiceScreen extends Component {
       qrCodeValue,
       qrTimerValue,
       selectRateCount,
+      oldProposalPrice,
+      newProposalRegex,
 
       ComplaintOptionId,
       Description
     } = this.state;
-    if (customerServicePreviewLoading)
-      return (
-        <Root>
-          <Spinner />
-        </Root>
-      );
+
     return (
       <Root>
+        {customerServicePreviewLoading ? <Loader /> : null}
         <NavigationEvents
           onDidFocus={() => this.navigationComponentWillMount()}
         />
-        <Modal isVisible={this.state.modalIsVisible}>
-          <ScrollView>
-            <View style={{ backgroundColor: "white", padding: 10 }}>
-              {servicePreviewDetailLoading ? (
-                <Spinner />
-              ) : servicePreviewDetailResult ? (
-                <View>
-                  <Text style={styles.ServicePreviewItemText}>
-                    Adres Açıklaması
-                  </Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.AddressDescription}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>Not</Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.Note}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>
-                    Garantörlü mü?
-                  </Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.IsGuarantor ? "evet" : "hayir"}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>
-                    Müşteri onaydı mı?
-                  </Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.IsApproved ? "evet" : "hayir"}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>
-                    Usta onayladı mı?
-                  </Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.IsMasterApproved
-                      ? "evet"
-                      : "hayir"}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>
-                    Keşif istendi mi?
-                  </Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.IsDiscovery ? "evet" : "hayir"}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>
-                    Ödeme yapıldı mı?
-                  </Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.IsPayment ? "evet" : "hayir"}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>
-                    İptal edildi mi?
-                  </Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.IsActive ? "evet" : "hayir"}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>
-                    Ülke / İl / İlçe / Mahalle
-                  </Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.CountryName
-                      ? servicePreviewDetailResult.CountryName.trim()
-                      : ""}{" "}
-                    /{" "}
-                    {servicePreviewDetailResult.CountyName
-                      ? servicePreviewDetailResult.CountyName.trim()
-                      : ""}{" "}
-                    /{" "}
-                    {servicePreviewDetailResult.DiscrictName
-                      ? servicePreviewDetailResult.DiscrictName.trim()
-                      : ""}{" "}
-                    /{" "}
-                    {servicePreviewDetailResult.NeigborhoodName
-                      ? servicePreviewDetailResult.NeigborhoodName.trim()
-                      : ""}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>Hizmet kodu</Text>
-                  <Text style={styles.ServicePreviewItemTextAnswer}>
-                    {servicePreviewDetailResult.ID}
-                    {servicePreviewDetailResult.CodeText}
-                  </Text>
-                  <Text style={styles.ServicePreviewItemText}>
-                    Sorulara verilen cevaplar
-                  </Text>
-                  {servicePreviewDetailQuestionLoading ? (
-                    <Spinner />
-                  ) : (
-                    servicePreviewDetailQuestionResult.map((item, index) => {
-                      return (
-                        <Text
-                          key={"Answers" + index}
-                          style={[
-                            styles.QuestionAndAnswer,
-                            styles.ServicePreviewItemTextAnswer
-                          ]}
-                        >
-                          {item.Question} : {item.Answer}
-                        </Text>
-                      );
-                    })
-                  )}
-                </View>
-              ) : (
-                <Spinner />
-              )}
-              <MyButton
-                full={true}
-                press={() => this.setState({ modalIsVisible: false })}
-                text="Kapat"
-              />
-            </View>
-          </ScrollView>
-        </Modal>
-        <Dialog.Container visible={this.state.dialogVisible}>
-          <Dialog.Title>Teklif Güncelleme</Dialog.Title>
-          <Dialog.Description>
-            {!this.state.newProposalRegex
-              ? "Yeni teklifinizi yazınız. Sayısal Değer Giriniz"
-              : "Yeni teklifinizi yazınız."}
-          </Dialog.Description>
-          <Dialog.Input
-            onChangeText={value => this.onlyNumberRegex(value)}
-            value={this.state.oldProposalPrice}
-          />
-          <Dialog.Button label="İptal et" onPress={() => this.handleCancel()} />
-          <Dialog.Button
-            label="Teklifi güncelle"
-            onPress={() => this.handleUpdateProposal()}
-          />
-        </Dialog.Container>
-        <Header>
-          <Left>
-            {initialTabActivePage === 0 ? (
-              <Button
-                transparent
-                onPress={() => this.props.navigation.toggleDrawer()}
-              >
-                <Icon name="ios-menu" />
-              </Button>
-            ) : initialTabActivePage === 1 ? (
-              <Button
-                transparent
-                onPress={() => this.setState({ initialTabActivePage: 0 })}
-              >
-                <Icon name="ios-arrow-back" />
-              </Button>
-            ) : initialTabActivePage === 2 ? (
-              <Button
-                transparent
-                onPress={() => this.setState({ initialTabActivePage: 0 })}
-              >
-                <Icon name="ios-arrow-back" />
-              </Button>
-            ) : initialTabActivePage === 3 ? (
-              <Button
-                transparent
-                onPress={() => this.setState({ initialTabActivePage: 0 })}
-              >
-                <Icon name="ios-arrow-back" />
-              </Button>
-            ) : null}
-          </Left>
-          <Body>
-            <Title>Hizmetlerim</Title>
-          </Body>
-          <Right />
-        </Header>
+        <CustomerServiceHeader
+          initialTabActivePage={initialTabActivePage}
+          navigation={navigation}
+          _handleSetInitialState={this._handleSetInitialState}
+        />
         <ImageBackground
           style={styles.backgroundImage}
           source={require("../../assets/splash-screen-demo.png")}
@@ -688,30 +501,37 @@ class CustomerServiceScreen extends Component {
                     }
                     page={activeServicePage}
                   >
-                    {PAGES.map((page, ix) => (
-                      <Tab
-                        key={"ViewPagerContent-" + page}
-                        heading={"heading" + ix}
-                        style={{ backgroundColor: "transparent" }}
-                      >
-                        <Content
-                          PAGES_DATA_CATEGORY_INDEX={PAGES_DATA_CATEGORY_INDEX}
-                          servicePreviewListResult={servicePreviewListResult}
-                          navigation={navigation}
-                          styles={styles}
-                          handlerPreviewSelectedService={
-                            this.handlerPreviewSelectedService
-                          }
-                          _handleGetQrCodeForMasterApproved={
-                            this._handleGetQrCodeForMasterApproved
-                          }
-                          page={page}
-                          _handleSetPoint={this._handleSetPoint}
-                          _handleApprovedService={this._handleApprovedService}
-                          _handleComplaintService={this._handleComplaintService}
-                        />
-                      </Tab>
-                    ))}
+                    {PAGES.map((page, ix) => {
+                      return (
+                        <Tab
+                          key={"ViewPagerContent-" + page}
+                          heading={"heading" + ix}
+                          style={{ backgroundColor: "transparent" }}
+                        >
+                          <Content
+                            PAGES_DATA_CATEGORY_INDEX={
+                              PAGES_DATA_CATEGORY_INDEX
+                            }
+                            servicePreviewListResult={servicePreviewListResult}
+                            navigation={navigation}
+                            styles={styles}
+                            _handlerPreviewSelectedService={
+                              this._handlerPreviewSelectedService
+                            }
+                            _handleGetQrCodeForMasterApproved={
+                              this._handleGetQrCodeForMasterApproved
+                            }
+                            page={page}
+                            _handleSetPoint={this._handleSetPoint}
+                            _handleApprovedService={this._handleApprovedService}
+                            _handleComplaintService={
+                              this._handleComplaintService
+                            }
+                            _handleCancelService={this._handleCancelService}
+                          />
+                        </Tab>
+                      );
+                    })}
                   </Tabs>
                   <View style={styles.dotAbsoluteBlock}>
                     <View style={styles.dotTextBlock}>
@@ -795,6 +615,20 @@ class CustomerServiceScreen extends Component {
                     }
                   />
                 </Tab>
+                <Tab heading="Hizmet Önizleme">
+                  <CustomerServicePreview
+                    styles={styles}
+                    servicePreviewDetailLoading={servicePreviewDetailLoading}
+                    servicePreviewDetailResult={servicePreviewDetailResult}
+                    servicePreviewDetailQuestionLoading={
+                      servicePreviewDetailQuestionLoading
+                    }
+                    servicePreviewDetailQuestionResult={
+                      servicePreviewDetailQuestionResult
+                    }
+                    _handleSetInitialState={this._handleSetInitialState}
+                  />
+                </Tab>
               </Tabs>
             ) : null}
           </View>
@@ -832,7 +666,8 @@ const mapDispatchToProps = {
   sendServicePoint,
   approvedService,
   getComplaintOptionList,
-  postServiceComplaint
+  postServiceComplaint,
+  cancelService
 };
 
 export default connect(

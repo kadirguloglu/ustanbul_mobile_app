@@ -19,7 +19,10 @@ import {
   POST_SEND_SERVICE_POINT_FAIL,
   POST_APPROVED_SERVICE,
   POST_APPROVED_SERVICE_SUCCESS,
-  POST_APPROVED_SERVICE_FAIL
+  POST_APPROVED_SERVICE_FAIL,
+  GET_CANCEL_SERVICE,
+  GET_CANCEL_SERVICE_SUCCESS,
+  GET_CANCEL_SERVICE_FAIL
 } from "../../types/customerDetailService";
 import Sentry from "sentry-expo";
 
@@ -33,7 +36,8 @@ const INITIAL_STATE = {
   servicePreviewListResult: [],
   servicePreviewDetailQuestionLoading: true,
   servicePreviewDetailQuestionResult: [],
-  approvedServiceLoading: false
+  approvedServiceLoading: false,
+  getCancelServiceLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -186,6 +190,25 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, approvedServiceLoading: false };
+
+    case GET_CANCEL_SERVICE:
+      return { ...state, getCancelServiceLoading: true };
+    case GET_CANCEL_SERVICE_SUCCESS:
+      return {
+        ...state,
+        getCancelServiceLoading: false,
+        getCancelServiceResult: action.payload.data
+      };
+    case GET_CANCEL_SERVICE_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "GET_CANCEL_SERVICE_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, getCancelServiceLoading: false };
     default:
       return { ...state };
   }

@@ -6298,6 +6298,13 @@ react-native-animatable@1.3.2, react-native-animatable@^1.2.4, react-native-anim
   dependencies:
     prop-types "^15.5.10"
 
+react-native-animated-loader@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-animated-loader/-/react-native-animated-loader-0.0.7.tgz#a5b8a4fc38ecae418693dc1bd9ffaac9528b82c6"
+  integrity sha512-s0CK5wKvQzZDYFKrKx2fz3bYmcr0PSdAzfrvSSPTyrvzYfmSW1bfN5cRkR8ouBXDRDnqRSfZYKQElCKhiBLbaQ==
+  dependencies:
+    prop-types "^15.6.2"
+
 react-native-blur@3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/react-native-blur/-/react-native-blur-3.2.2.tgz#5bfb50638d148982c9560436554ed01d77d6d07d"

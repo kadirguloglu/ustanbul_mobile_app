@@ -12,7 +12,9 @@ import {
   POST_SEND_SERVICE_POINT,
   POST_SEND_SERVICE_POINT_URL,
   POST_APPROVED_SERVICE,
-  POST_APPROVED_SERVICE_URL
+  POST_APPROVED_SERVICE_URL,
+  GET_CANCEL_SERVICE,
+  GET_CANCEL_SERVICE_URL
 } from "../types/customerDetailService";
 
 export function customerServiceCountData(activeUserId) {
@@ -97,6 +99,17 @@ export function approvedService(Id) {
     payload: {
       request: {
         url: `${POST_APPROVED_SERVICE_URL}/${Id}`
+      }
+    }
+  };
+}
+
+export function cancelService(Id) {
+  return {
+    type: GET_CANCEL_SERVICE,
+    payload: {
+      request: {
+        url: `${GET_CANCEL_SERVICE_URL}/${Id}`
       }
     }
   };
