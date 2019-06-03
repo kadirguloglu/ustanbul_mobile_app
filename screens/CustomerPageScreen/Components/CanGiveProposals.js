@@ -6,8 +6,11 @@ import Information from "./CanGiveProposals_information";
 import Buttons from "./CanGiveProposals_buttons";
 
 const CanGiveProposals = props => {
-  const { CanGiveProposalMasters } = props;
-  return CanGiveProposalMasters.map((item, index) => {
+  const { serviceCustomerPageData } = props;
+  if (!serviceCustomerPageData) {
+    return <Spinner />;
+  }
+  return serviceCustomerPageData.CanGiveProposalMasters.map((item, index) => {
     return (
       <View style={styles.view1} key={"CanGiveProposals-" + index}>
         <Information styles={styles} item={item} />

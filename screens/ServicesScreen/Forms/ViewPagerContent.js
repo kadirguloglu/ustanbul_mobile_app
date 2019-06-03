@@ -31,6 +31,7 @@ const ViewPagerContent = props => {
     view2,
     view3,
     view4,
+    headerHeight,
     currentLocation,
     _handleMapPress,
     handleCreateService,
@@ -43,7 +44,9 @@ const ViewPagerContent = props => {
     handleContractOpen,
     contracts,
     serviceCreateDataResult,
-    _handleSetInitialState
+    _handleSetInitialState,
+    isMapReady,
+    onMapLayout
   } = props;
   switch (page) {
     case 0:
@@ -362,6 +365,9 @@ const ViewPagerContent = props => {
         </View>
       );
     case 6:
+      let calcMapHeight = view1 + view2 + view3 + view4 + headerHeight;
+      calcMapHeight = calcMapHeight == 0 ? 100 : calcMapHeight;
+
       return (
         <View key={"renderPage" + 6}>
           <View onLayout={event => _handleViewHeightSetState(event, "view1")}>
@@ -393,8 +399,7 @@ const ViewPagerContent = props => {
           {locationPermission ? (
             <View
               style={{
-                flex: 1,
-                height: height - (view1 + view2 + view3 + view4)
+                height: parseInt(height - calcMapHeight)
               }}
             >
               <MapView
@@ -403,12 +408,14 @@ const ViewPagerContent = props => {
                   latitude: currentLocation.latitude,
                   longitude: currentLocation.longitude,
                   latitudeDelta: 0.005,
-                  longitudeDelta:
-                    0.005 * (width / (height - (view1 + view2 + view3 + view4)))
+                  longitudeDelta: 0.005
                 }}
                 onPress={_handleMapPress}
+                onLayout={onMapLayout}
               >
-                {currentLocation !== null && currentLocation !== undefined ? (
+                {currentLocation !== null &&
+                currentLocation !== undefined &&
+                isMapReady ? (
                   <MapView.Marker
                     coordinate={{
                       latitude: currentLocation.latitude,

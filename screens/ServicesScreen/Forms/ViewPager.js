@@ -4,20 +4,6 @@ import { View, Tabs, Tab } from "native-base";
 import ViewPagerContent from "./ViewPagerContent";
 
 const ViewPager = props => {
-  //   constructor(props) {
-  //     super(props);
-  //     this.state = {
-  //       currentPosition: 0
-  //     };
-  //   }
-  //   componentWillReceiveProps(nextProps, nextState) {
-  //     if (nextState.currentPosition != this.state.currentPosition) {
-  //       if (this.viewPager) {
-  //         this.setState({ currentPosition: nextState.currentPosition });
-  //         this.viewPager.setPage(nextState.currentPosition);
-  //       }
-  //     }
-  //   }
   const {
     PAGES,
     serviceServiceResponse,
@@ -31,6 +17,7 @@ const ViewPager = props => {
     view2,
     view3,
     view4,
+    headerHeight,
     currentLocation,
     _handleMapPress,
     handleCreateService,
@@ -42,7 +29,9 @@ const ViewPager = props => {
     handleDatePickerMaxMinValue,
     activeViewPagerPage,
     _handleSetInitialState,
-    _validate
+    _validate,
+    isMapReady,
+    onMapLayout
   } = props;
   return (
     <View style={styles.container}>
@@ -62,6 +51,7 @@ const ViewPager = props => {
               view2={view2}
               view3={view3}
               view4={view4}
+              headerHeight={headerHeight}
               currentLocation={currentLocation}
               _handleMapPress={_handleMapPress}
               handleCreateService={handleCreateService}
@@ -74,6 +64,8 @@ const ViewPager = props => {
               serviceCreateDataResult={serviceCreateDataResult}
               _handleSetInitialState={_handleSetInitialState}
               _validate={_validate}
+              isMapReady={isMapReady}
+              onMapLayout={onMapLayout}
             />
           </Tab>
         ))}

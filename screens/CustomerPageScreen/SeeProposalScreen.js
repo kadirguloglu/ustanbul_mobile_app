@@ -29,6 +29,8 @@ import {
 } from "../../src/actions/serviceService";
 import { servicePostService } from "../../src/actions/servicePost";
 
+import { Loader } from "../../src/functions";
+
 class SeeProposalScreen extends Component {
   constructor(props) {
     super(props);
@@ -57,20 +59,27 @@ class SeeProposalScreen extends Component {
     } = this.props;
     const { getSiteData } = generalServiceGetResponse;
     servicePostService(proposal, service, getSiteData).then(({ payload }) => {
-      if (payload === null) {
-        Toast.show({
-          text: "Teklif onaylandı ve ustaya bilgi verildi.",
-          buttonText: "Tamam",
-          duration: 5500
-        });
-        navigation.navigate("CustomerService");
-      }else{
-        Toast.show({
-          text: "Teklif onaylama başarısız. Lütfen internet bağlantınızı kontrol ediniz.",
-          buttonText: "Tamam",
-          duration: 5500
-        });
+      if (payload) {
+        if (payload.request) {
+          if (payload.request._response === "success") {
+            Toast.show({
+              text: "Teklif onaylandı ve ustaya bilgi verildi.",
+              buttonText: "Tamam",
+              duration: 5500
+            });
+            navigation.navigate("CustomerService", {
+              data: navigation.getParam("data", null)
+            });
+            return;
+          }
+        }
       }
+      Toast.show({
+        text:
+          "Teklif onaylama başarısız. Lütfen internet bağlantınızı kontrol ediniz.",
+        buttonText: "Tamam",
+        duration: 5500
+      });
     });
   };
 
@@ -99,14 +108,12 @@ class SeeProposalScreen extends Component {
     const { proposalListPage, activeProposal } = this.state;
     const data = navigation.getParam("data", null);
 
-    if (serviceCustomerPageLoading) {
-      return <Spinner />;
-    }
     return (
       <Root>
         <NavigationEvents
           onDidFocus={() => this.navigationComponentWillMount()}
         />
+        {serviceCustomerPageLoading ? <Loader /> : null}
         <Container>
           <Header>
             <Left>
@@ -138,9 +145,7 @@ class SeeProposalScreen extends Component {
                 <Tab heading="Teklif Listesi">
                   <ScrollView>
                     <GaveProposals
-                      GaveProposalMasters={
-                        serviceCustomerPageData.GaveProposalMasters
-                      }
+                      serviceCustomerPageData={serviceCustomerPageData}
                       serviceProposalPreviewLoading={
                         serviceProposalPreviewLoading
                       }
@@ -169,9 +174,7 @@ class SeeProposalScreen extends Component {
             <Tab heading="Teklif Verebilecekler">
               <ScrollView>
                 <CanGiveProposals
-                  CanGiveProposalMasters={
-                    serviceCustomerPageData.CanGiveProposalMasters
-                  }
+                  serviceCustomerPageData={serviceCustomerPageData}
                 />
               </ScrollView>
             </Tab>

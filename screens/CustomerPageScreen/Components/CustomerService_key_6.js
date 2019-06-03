@@ -12,7 +12,7 @@ const CustomerServiceKey6 = props => {
   } = props;
   return (
     <View>
-      <MyButton
+      {/* <MyButton
         full
         buttonStyle={styles.buttonStyle}
         press={navigation.navigate}
@@ -24,7 +24,7 @@ const CustomerServiceKey6 = props => {
         ]}
         text="Teklifleri gör"
         textStyle={styles.iconText}
-      />
+      /> */}
       <MyButton
         full
         buttonStyle={styles.buttonStyle}

@@ -2,7 +2,6 @@ import React from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { View, Spinner, Text } from "native-base";
 
-import { ThemeColor } from "../../../src/functions";
 import MyButton from "../../../components/MyButton";
 
 const ProposalDetail = props => {
@@ -15,7 +14,9 @@ const ProposalDetail = props => {
     _handleServicePost
   } = props;
   const { ServiceCategoryQuestion } = serviceProposalPreviewData;
-
+  if (!activeService) {
+    return <Spinner />;
+  }
   return (
     <View padder style={{ flex: 1 }}>
       <ScrollView>

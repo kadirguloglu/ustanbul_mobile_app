@@ -8,6 +8,9 @@ export default StyleSheet.create({
     color: "white"
   },
   buttonStyle: {
+    marginBottom: 10
+  },
+  buttonStyle_old: {
     backgroundColor: ThemeColor,
     margin: 10,
     borderRadius: 5

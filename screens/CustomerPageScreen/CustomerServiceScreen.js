@@ -1,29 +1,8 @@
 import React, { Component } from "react";
-import {
-  Text,
-  ImageBackground,
-  View,
-  TouchableHighlight,
-  Alert
-} from "react-native";
+import { ImageBackground, View, Alert } from "react-native";
 import { connect } from "react-redux";
-import {
-  Root,
-  Spinner,
-  Header,
-  Button,
-  Icon,
-  Left,
-  Right,
-  Body,
-  Title,
-  Tabs,
-  Tab,
-  Toast
-} from "native-base";
-import Dialog from "react-native-dialog";
+import { Root, Spinner, Tabs, Tab, Toast, TabHeading, Icon } from "native-base";
 import { NavigationEvents } from "react-navigation";
-import QRCode from "./Components/CustomerService_qrcode";
 
 import {
   customerServicePreviewData,
@@ -49,12 +28,14 @@ import {
 } from "../../src/actions/generalServiceGet";
 import { postServiceComplaint } from "../../src/actions/servicePost";
 
-import { ThemeColor, Loader } from "../../src/functions";
+import { Loader } from "../../src/functions";
+
 import Content from "./Components/CustomerService_content";
 import Point from "./Components/CustomerService_point";
 import ComplaintService from "./Components/CustomerService_complaint";
 import CustomerServicePreview from "./Components/CustomerService_preview";
 import CustomerServiceHeader from "./Components/CustomerService_header";
+import QRCode from "./Components/CustomerService_qrcode";
 
 import styles from "./CustomerService.styles";
 
@@ -75,6 +56,7 @@ class CustomerServiceScreen extends Component {
       selectRateCount: [],
       selectedService: {},
       data: null,
+      servicePreviewListResultKeys: [],
 
       ComplaintOptionId: 0,
       Description: ""
@@ -92,25 +74,14 @@ class CustomerServiceScreen extends Component {
     } = this.props;
     const { activeUser } = generalServiceGetResponse;
     customerServicePreviewData(activeUser.Id, 1).then(({ payload }) => {
-      let sayac = 0;
-      let PAGES = [];
-      let PAGES_DATA_CATEGORY_INDEX = [];
-      const keys = Object.keys(payload.data);
-      for (let index = 0; index < keys.length; index++) {
-        const element = payload.data[keys[index]];
-        for (let valueIndex = 0; valueIndex < element.length; valueIndex++) {
-          const item = element[valueIndex];
-          PAGES.push(sayac);
-          PAGES_DATA_CATEGORY_INDEX.push({
-            index: sayac,
-            categoryIndex: index,
-            dataIndex: valueIndex
+      if (payload) {
+        if (payload.data) {
+          const keys = Object.keys(payload.data);
+          this.setState({
+            servicePreviewListResultKeys: keys
           });
-          sayac++;
         }
       }
-      this.setState({ PAGES_DATA_CATEGORY_INDEX: PAGES_DATA_CATEGORY_INDEX });
-      this.setState({ PAGES: PAGES });
     });
   };
 
@@ -417,6 +388,53 @@ class CustomerServiceScreen extends Component {
     );
   };
 
+  renderTabHeading = item => {
+    switch (item) {
+      case "1#Gelen Teklifler":
+        return (
+          <TabHeading>
+            <Icon name="ios-clipboard" />
+          </TabHeading>
+        );
+      case "2#Tamamlanmayı Bekleyenler":
+        return (
+          <TabHeading>
+            <Icon name="ios-filing" />
+          </TabHeading>
+        );
+      case "3#Onay Bekleyenler":
+        return (
+          <TabHeading>
+            <Icon name="ios-checkmark" />
+          </TabHeading>
+        );
+      case "4#Gelen Teklifler":
+        return (
+          <TabHeading>
+            <Icon name="ios-information" />
+          </TabHeading>
+        );
+      case "5#İptal Edilenler":
+        return (
+          <TabHeading>
+            <Icon name="ios-close" />
+          </TabHeading>
+        );
+      case "6#Bekleyenler":
+        return (
+          <TabHeading>
+            <Icon name="ios-clock" />
+          </TabHeading>
+        );
+      default:
+        return (
+          <TabHeading>
+            <Icon name="ios-sync" />
+          </TabHeading>
+        );
+    }
+  };
+
   render() {
     const {
       customerDetailServiceResponse,
@@ -452,18 +470,14 @@ class CustomerServiceScreen extends Component {
     } = generalServiceGetResponse;
 
     const {
-      PAGES,
-      activeServicePage,
-      PAGES_DATA_CATEGORY_INDEX,
       initialTabActivePage,
       qrCodeValue,
       qrTimerValue,
       selectRateCount,
-      oldProposalPrice,
-      newProposalRegex,
 
       ComplaintOptionId,
-      Description
+      Description,
+      servicePreviewListResultKeys
     } = this.state;
 
     return (
@@ -482,7 +496,8 @@ class CustomerServiceScreen extends Component {
           source={require("../../assets/splash-screen-demo.png")}
         >
           <View style={{ flex: 1 }}>
-            {servicePreviewListResult ? (
+            {servicePreviewListResult &&
+            servicePreviewListResultKeys.length > 0 ? (
               <Tabs
                 renderTabBar={() => <View />}
                 style={{ backgroundColor: "transparent" }}
@@ -494,68 +509,57 @@ class CustomerServiceScreen extends Component {
                   style={{ backgroundColor: "transparent" }}
                 >
                   <Tabs
-                    renderTabBar={() => <View />}
                     style={{ backgroundColor: "transparent" }}
-                    onChangeTab={value =>
-                      this.setState({ activeServicePage: value.i })
-                    }
-                    page={activeServicePage}
+                    locked={true}
                   >
-                    {PAGES.map((page, ix) => {
+                    {servicePreviewListResultKeys.map((item, index) => {
                       return (
                         <Tab
-                          key={"ViewPagerContent-" + page}
-                          heading={"heading" + ix}
                           style={{ backgroundColor: "transparent" }}
+                          key={"1heading-" + index}
+                          heading={this.renderTabHeading(item)}
                         >
-                          <Content
-                            PAGES_DATA_CATEGORY_INDEX={
-                              PAGES_DATA_CATEGORY_INDEX
-                            }
-                            servicePreviewListResult={servicePreviewListResult}
-                            navigation={navigation}
-                            styles={styles}
-                            _handlerPreviewSelectedService={
-                              this._handlerPreviewSelectedService
-                            }
-                            _handleGetQrCodeForMasterApproved={
-                              this._handleGetQrCodeForMasterApproved
-                            }
-                            page={page}
-                            _handleSetPoint={this._handleSetPoint}
-                            _handleApprovedService={this._handleApprovedService}
-                            _handleComplaintService={
-                              this._handleComplaintService
-                            }
-                            _handleCancelService={this._handleCancelService}
-                          />
+                          <Tabs
+                            renderTabBar={() => <View />}
+                            style={{ backgroundColor: "transparent" }}
+                          >
+                            {servicePreviewListResult[item].map((elem, ix) => {
+                              return (
+                                <Tab
+                                  key={"ViewPagerContent-" + ix}
+                                  heading={"heading" + ix}
+                                  style={{ backgroundColor: "transparent" }}
+                                >
+                                  <Content
+                                    dataKey={item}
+                                    data={elem}
+                                    navigation={navigation}
+                                    styles={styles}
+                                    _handlerPreviewSelectedService={
+                                      this._handlerPreviewSelectedService
+                                    }
+                                    _handleGetQrCodeForMasterApproved={
+                                      this._handleGetQrCodeForMasterApproved
+                                    }
+                                    _handleSetPoint={this._handleSetPoint}
+                                    _handleApprovedService={
+                                      this._handleApprovedService
+                                    }
+                                    _handleComplaintService={
+                                      this._handleComplaintService
+                                    }
+                                    _handleCancelService={
+                                      this._handleCancelService
+                                    }
+                                  />
+                                </Tab>
+                              );
+                            })}
+                          </Tabs>
                         </Tab>
                       );
                     })}
                   </Tabs>
-                  <View style={styles.dotAbsoluteBlock}>
-                    <View style={styles.dotTextBlock}>
-                      {PAGES.map((page, ix) => (
-                        <TouchableHighlight
-                          key={"dot-" + ix}
-                          onPress={() =>
-                            this.setState({ activeServicePage: ix })
-                          }
-                        >
-                          <Text
-                            style={[
-                              styles.dotText,
-                              activeServicePage == ix
-                                ? { color: ThemeColor }
-                                : null
-                            ]}
-                          >
-                            .
-                          </Text>
-                        </TouchableHighlight>
-                      ))}
-                    </View>
-                  </View>
                 </Tab>
                 <Tab heading="Qr Code">
                   {getQrCodeLoading ? (

@@ -1,17 +1,20 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { View } from "native-base";
+import { View, Spinner } from "native-base";
 
 import Information from "./GaveProposals_information";
 import Buttons from "./GaveProposals_buttons";
 
 const GaveProposals = props => {
   const {
-    GaveProposalMasters,
+    serviceCustomerPageData,
     serviceProposalPreviewLoading,
     serviceProposalPreview
   } = props;
-  return GaveProposalMasters.map((item, index) => {
+  if (!serviceCustomerPageData) {
+    return <Spinner />;
+  }
+  return serviceCustomerPageData.GaveProposalMasters.map((item, index) => {
     return (
       <View style={styles.view1} key={"GaveProposalMaster-" + index}>
         <Information styles={styles} item={item} />

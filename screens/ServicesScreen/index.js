@@ -17,20 +17,24 @@ import {
   Right,
   Body,
   Title,
-  Spinner,
-  Text
+  Spinner
 } from "native-base";
 import { connect } from "react-redux";
-import { serviceCreateData } from "../../src/actions/serviceService";
-import { createService } from "../../src/actions/servicePost";
-import { IsValidDate, ThemeColor } from "../../src/functions";
+import { NavigationEvents } from "react-navigation";
 import moment from "moment";
 import Modal from "react-native-modal";
-import MyButton from "../../components/MyButton";
 import { Permissions, ImagePicker } from "expo";
 import Geocoder from "react-native-geocoding";
-import styles from "./index-css";
+
+import { serviceCreateData } from "../../src/actions/serviceService";
+import { createService } from "../../src/actions/servicePost";
+
+import { IsValidDate, ThemeColor } from "../../src/functions";
+
+import MyButton from "../../components/MyButton";
 import ViewPager from "./Forms/ViewPager";
+
+import styles from "./index-css";
 
 Geocoder.init("AIzaSyArGwRN6xy2dTu7Nv2eapfvN2ghQgH_E7o"); // use a valid API key
 
@@ -59,6 +63,7 @@ class ServicesScreen extends Component {
       view2: 10,
       view3: 10,
       view4: 10,
+      headerHeight: 10,
       currentPosition: 0,
       serviceCreateDataResult: [],
       serviceCreateDataLoading: true,
@@ -71,6 +76,7 @@ class ServicesScreen extends Component {
       headerPageSwapIcon: null,
       modalIsVisible: false,
       modalContent: "",
+      isMapReady: false,
 
       serviceParameter: {
         CategoryID: -1,
@@ -110,6 +116,10 @@ class ServicesScreen extends Component {
   };
 
   async componentWillMount() {
+    this._handleNavigationComponentWillMount();
+  }
+
+  _handleNavigationComponentWillMount = async () => {
     let PAGES = [];
     const { navigation } = this.props;
     const itemId = navigation.getParam("CategoryID", -1);
@@ -178,7 +188,8 @@ class ServicesScreen extends Component {
       this.setState({ PAGES });
       this.setState({ dataLoading: false });
     });
-  }
+    this._handleCheckLocationPermission();
+  };
 
   handlerContactCheckAndCloseModal = () => {
     this.setState({ modalIsVisible: false });
@@ -790,6 +801,10 @@ class ServicesScreen extends Component {
     }
   };
 
+  onMapLayout = () => {
+    this.setState({ isMapReady: true });
+  };
+
   render() {
     const { serviceServiceResponse, navigation } = this.props;
     const {
@@ -806,13 +821,18 @@ class ServicesScreen extends Component {
       view2,
       view3,
       view4,
+      headerHeight,
       currentLocation,
       locationPermission,
-      activeViewPagerPage
+      activeViewPagerPage,
+      isMapReady
     } = this.state;
     if (serviceCreateDataLoading) return <Spinner />;
     return (
       <Root>
+        <NavigationEvents
+          onDidFocus={() => this._handleNavigationComponentWillMount()}
+        />
         <React.Fragment>
           <Modal isVisible={modalIsVisible}>
             <View style={{ flex: 1 }}>
@@ -823,7 +843,12 @@ class ServicesScreen extends Component {
               />
             </View>
           </Modal>
-          <Header style={{ backgroundColor: ThemeColor }}>
+          <Header
+            onLayout={event =>
+              this._handleViewHeightSetState(event, "headerHeight")
+            }
+            style={{ backgroundColor: ThemeColor }}
+          >
             <Left>
               {currentPosition > 0 && currentPosition < PAGES.length - 1 ? (
                 <Button
@@ -872,6 +897,7 @@ class ServicesScreen extends Component {
               view2={view2}
               view3={view3}
               view4={view4}
+              headerHeight={headerHeight}
               currentLocation={currentLocation}
               _handleMapPress={this._handleMapPress}
               handleCreateService={this.handleCreateService}
@@ -884,6 +910,8 @@ class ServicesScreen extends Component {
               activeViewPagerPage={activeViewPagerPage}
               _handleSetInitialState={this._handleSetInitialState}
               _validate={this._validate}
+              isMapReady={isMapReady}
+              onMapLayout={this.onMapLayout}
             />
           </View>
         </React.Fragment>

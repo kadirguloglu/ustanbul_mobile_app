@@ -9,7 +9,8 @@ import {
   getSite
 } from "../src/actions/generalServiceGet";
 import AppNavigator from "../navigation/AppNavigator";
-import { isAutoLogin } from "../src/functions";
+
+import { isAutoLogin, Loader } from "../src/functions";
 
 const styles = StyleSheet.create({
   container: {
@@ -141,11 +142,11 @@ class Main extends React.Component {
     } = generalServiceGetResponse;
 
     if (getSiteLoading || getLanguageLoading) {
-      return <Spinner />;
+      return <Loader />;
     }
 
     if (getSiteError || getLanguageError) {
-      return <Spinner />;
+      return <Loader />;
     }
 
     return (
