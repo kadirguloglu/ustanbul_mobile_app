@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "101589148647",
+    "firebase_url": "https://ustanbul-1560531396275.firebaseio.com",
+    "project_id": "ustanbul-1560531396275",
+    "storage_bucket": "ustanbul-1560531396275.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101589148647:android:0895dfb95beab512",
+        "android_client_info": {
+          "package_name": "com.ustanbul.ustanbulapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "101589148647-l253gtrcbihb83kj421p5oimrp0t5v6o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ustanbul.ustanbulapp",
+            "certificate_hash": "2b1914773fcd1e9f9590a958a994db5ada5ea8bf"
+          }
+        },
+        {
+          "client_id": "101589148647-abitllh1klnaori3b243hg1hu26hi82m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsFJznc-JEbrqChTBAQhA5PKPl-0G0-Q8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "101589148647-abitllh1klnaori3b243hg1hu26hi82m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "101589148647-a2r4erngf2ou7deslr3tl85ifqc0nd85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ustanbul.ustanbulapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,26 @@
+  Keystore password: 5a2e1f0c9e3d4e21af345337b0cef68f
+  Key alias:         QGthZGlyZ3Vsb2dsdTEvdXN0YW5idWxfYXBw
+  Key password:      81d3f6bb1381417db23aaefd5cf09372
+
+  Google Certificate Fingerprint:     2B:19:14:77:3F:CD:1E:9F:95:90:A9:58:A9:94:DB:5A:DA:5E:A8:BF
+Google Certificate Hash (SHA-1):    2B1914773FCD1E9F9590A958A994DB5ADA5EA8BF
+Google Certificate Hash (SHA-256):  2395F3BD0CD6659C233A8A7C10DBFFC024E1A43066622ACD36F72A54D7901938
+Facebook Key Hash:                  KxkUdz/NHp+VkKlYqZTbWtpeqL8=
+
+<string name="facebook_app_id">445869672863651</string>
+<string name="fb_login_protocol_scheme">fb445869672863651</string>
+
+
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+  <key>CFBundleURLSchemes</key>
+  <array>
+    <string>fb445869672863651</string>
+  </array>
+  </dict>
+</array>
+<key>FacebookAppID</key>
+<string>445869672863651</string>
+<key>FacebookDisplayName</key>
+<string>ustanbul.net</string>

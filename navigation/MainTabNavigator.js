@@ -18,6 +18,7 @@ import ChatScreen from "../screens/ChatScreen";
 import ContactScreen from "../screens/ContactScreen";
 import CompanyServiceScreen from "../screens/CompanyPageScreen";
 import SeeServiceScreen from "../screens/CompanyPageScreen/SeeServiceScreen";
+import SearchScreen from "../screens/SearchScreen";
 // import LinksScreen from "../screens/LinksScreen";
 // import SettingsScreen from "../screens/SettingsScreen";
 // import DepartmentScreen from "../screens/DepartmentScreen";
@@ -29,12 +30,41 @@ const HomeStack = createStackNavigator({
 
 HomeStack.navigationOptions = {
   tabBarLabel: "Anasayfa",
-  title: "test",
-  headerMode: "none",
+  header: null,
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === "ios" ? `ios-home` : "md-home"}
+      name={Platform.OS === "ios" ? `ios-home` : "ios-home"}
+    />
+  )
+};
+
+const SearchStack = createStackNavigator({
+  Search: SearchScreen
+});
+
+SearchStack.navigationOptions = {
+  tabBarLabel: "Arama",
+  header: null,
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === "ios" ? `ios-search` : "ios-search"}
+    />
+  )
+};
+
+const ServiceStack = createStackNavigator({
+  ServiceStack: SeeServiceScreen
+});
+
+ServiceStack.navigationOptions = {
+  tabBarLabel: "Hizmetler",
+  header: null,
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === "ios" ? "ios-document" : "ios-document"}
     />
   )
 };
@@ -49,7 +79,7 @@ UserMenuStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === "ios" ? "ios-person" : "md-person"}
+      name={Platform.OS === "ios" ? "ios-person" : "ios-person"}
     />
   )
 };
@@ -82,12 +112,21 @@ UserMenuStack.navigationOptions = {
 //   )
 // };
 
-const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  UserMenuStack
-  // LinksStack,
-  // SettingsStack
-});
+const tabNavigator = createBottomTabNavigator(
+  {
+    HomeStack,
+    SearchStack,
+    ServiceStack,
+    UserMenuStack
+    // LinksStack,
+    // SettingsStack
+  },
+  {
+    tabBarOptions: {
+      showLabel: false
+    }
+  }
+);
 
 const drawer = createDrawerNavigator(
   {

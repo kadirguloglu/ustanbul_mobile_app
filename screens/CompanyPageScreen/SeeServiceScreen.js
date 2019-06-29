@@ -16,7 +16,7 @@ import {
   Toast
 } from "native-base";
 import { NavigationEvents } from "react-navigation";
-import { ScrollView, Keyboard } from "react-native";
+import { ScrollView, Keyboard, Alert } from "react-native";
 
 import {
   getServiceCompanyPage,
@@ -28,6 +28,9 @@ import ServiceDetail from "./Components/ServiceDetail_content";
 import SendProposal from "./Components/SendProposal_content";
 
 class SeeServiceScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -41,16 +44,36 @@ class SeeServiceScreen extends Component {
     this.setState({ [p]: v });
   };
 
-  componentWillMount() {
+  _handleComponentWillMount = () => {
     const { generalServiceGetResponse } = this.props;
     const { activeUser } = generalServiceGetResponse;
+    if (activeUser.Id == 0) {
+      Alert.alert(
+        "Uyarı",
+        "Öncelikle giriş yapmalısınız",
+        [
+          {
+            text: "Giriş yap",
+            onPress: () => this.props.navigation.navigate("Login")
+          },
+          {
+            text: "Anasayfa",
+            onPress: () => this.props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+    }
     this.props.getServiceCompanyPage(activeUser.Id, 1, 999);
+  };
+
+  componentWillMount() {
+    this._handleComponentWillMount();
   }
 
   navigationComponentWillMount = () => {
-    const { generalServiceGetResponse } = this.props;
-    const { activeUser } = generalServiceGetResponse;
-    this.props.getServiceCompanyPage(activeUser.Id, 1, 999);
+    this._handleComponentWillMount();
   };
 
   _handleServiceDetail = service => {

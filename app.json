@@ -3,15 +3,14 @@
     "name": "ustanbul",
     "slug": "ustanbul_app",
     "privacy": "public",
-    "sdkVersion": "32.0.0",
+    "sdkVersion": "33.0.0",
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#59aae1"
+      "resizeMode": "contain"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -19,33 +18,20 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.ustanbul.ustanbulapp",
       "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.101589148647-a2r4erngf2ou7deslr3tl85ifqc0nd85"
+        },
         "googleMapsApiKey": "AIzaSyAaojSZELr1ms-IsybXMaQpvymfCgfV5u4"
       }
     },
     "android": {
-      "permissions": [
-        "CAMERA",
-        "READ_INTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ],
-      "package": "com.ustanbul.ustanbul_app",
+      "googleServicesFile": "./google-services.json",
+      "package": "com.ustanbul.ustanbulapp",
       "config": {
         "googleMaps": { "apiKey": "AIzaSyBGiUl-nMWsqNcp0awlOkWAa6kVUYS6tzk" }
       }
-    },
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "freelance",
-            "project": "ustanbul",
-            "authToken": "90746b2258ac44c3b7e913c89ec12b8474f393685b4d4fc1881b668d1b95bb86"
-          }
-        }
-      ]
     }
   }
 }

@@ -19,8 +19,15 @@ import {
   GET_QR_CODE_FAIL,
   GET_COMPLAINT_OPTION_LIST,
   GET_COMPLAINT_OPTION_LIST_SUCCESS,
-  GET_COMPLAINT_OPTION_LIST_FAIL
+  GET_COMPLAINT_OPTION_LIST_FAIL,
+  LOGOUT_USER,
+  LOGOUT_USER_SUCCESS,
+  LOGOUT_USER_FAIL,
+  LOGIN_POST,
+  LOGIN_POST_FAIL,
+  LOGIN_POST_SUCCESS
 } from "../../types/generalServiceGet";
+import { AsyncStorage } from "react-native";
 import Sentry from "sentry-expo";
 
 const INITIAL_STATE = {
@@ -34,7 +41,9 @@ const INITIAL_STATE = {
   getQrCodeLoading: false,
   getLanguageError: true,
   getSiteError: true,
-  getComplaintOptionListLoading: false
+  getComplaintOptionListLoading: false,
+  loginAuthenticationUserLoading: false,
+  loginPostLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -55,9 +64,20 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state };
 
     case LOGIN_AUTHENTICATION_USER:
-      return { ...state };
+      return { ...state, loginAuthenticationUserLoading: true };
     case LOGIN_AUTHENTICATION_USER_SUCCESS:
-      return { ...state, activeUser: action.payload.data };
+      if (action) {
+        if (action.payload) {
+          if (action.payload.data) {
+            AsyncStorage.setItem("@activeUserID", action.payload.data.Id + "");
+          }
+        }
+      }
+      return {
+        ...state,
+        loginAuthenticationUserLoading: false,
+        activeUser: action.payload.data
+      };
     case LOGIN_AUTHENTICATION_USER_FAIL:
       Sentry.captureException(
         new Error(
@@ -67,7 +87,29 @@ export default (state = INITIAL_STATE, action) => {
           })
         )
       );
-      return { ...state };
+      return { ...state, loginAuthenticationUserLoading: false };
+
+    case LOGOUT_USER:
+      return { ...state, logoutUserLoading: true };
+    case LOGOUT_USER_SUCCESS:
+      try {
+        AsyncStorage.removeItem("@activeUserID");
+      } catch (error) {}
+      return {
+        ...state,
+        logoutUserLoading: false,
+        activeUser: { Id: 0 }
+      };
+    case LOGOUT_USER_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "LOGOUT_USER_FAIL",
+            error: action
+          })
+        )
+      );
+      return { ...state, logoutUserLoading: false };
 
     case GET_TOKEN:
       return { ...state };
@@ -171,6 +213,49 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, getComplaintOptionListLoading: false, error: "hata" };
+
+    case LOGIN_POST:
+      return { ...state, loginPostLoading: true };
+    case LOGIN_POST_SUCCESS:
+      let newActiveUser = {
+        Id: 0
+      };
+      if (action) {
+        if (action.payload) {
+          if (action.payload.data) {
+            if (action.payload.data.State) {
+              console.log("LOG: --------------------------------------------");
+              console.log("LOG: action.payload.data", action.payload.data);
+              console.log("LOG: --------------------------------------------");
+              AsyncStorage.setItem(
+                "@activeUserID",
+                action.payload.data.LoginUserData.Id + ""
+              );
+              newActiveUser = action.payload.data.LoginUserData;
+            }
+          }
+        }
+      }
+      return {
+        ...state,
+        loginPostLoading: false,
+        activeUser: newActiveUser
+      };
+    case LOGIN_POST_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "LOGIN_POST_FAIL",
+            error: action
+          })
+        )
+      );
+      return {
+        ...state,
+        loginPostLoading: false,
+        loginPostError: true
+      };
+
     default:
       return { ...state };
   }

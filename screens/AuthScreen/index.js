@@ -1,23 +1,10 @@
 import React, { Component } from "react";
 import { Content } from "native-base";
 import { connect } from "react-redux";
-import * as Animatable from "react-native-animatable";
-import {
-  ImageBackground,
-  Dimensions,
-  View,
-  Text,
-  Button,
-  TextInput,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableHighlight,
-  StatusBar
-} from "react-native";
+import { StyleSheet, StatusBar } from "react-native";
 import LoginForm from "../../components/LoginForm";
 import RegisterForm from "../../components/RegisterForm";
 
-const { width, height } = Dimensions.get("window");
 class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -60,16 +47,16 @@ class LoginScreen extends Component {
             form_change={this.getRegisterPage}
           />
         ) : this.state.pageState == "register" ? (
-          <RegisterForm form_change={this.getLoginPage} />
+          <RegisterForm
+            form_change={this.getLoginPage}
+            navigation={this.props.navigation}
+          />
         ) : null}
       </Content>
     );
   }
 }
-const mapStateToProps = ({ isLoginState, errorLoginUser }) => ({
-  isLoginState,
-  errorLoginUser
-});
+const mapStateToProps = ({}) => ({});
 
 const mapDispatchToProps = {};
 

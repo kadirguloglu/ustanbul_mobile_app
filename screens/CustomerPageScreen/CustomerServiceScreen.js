@@ -40,6 +40,9 @@ import QRCode from "./Components/CustomerService_qrcode";
 import styles from "./CustomerService.styles";
 
 class CustomerServiceScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -73,6 +76,24 @@ class CustomerServiceScreen extends Component {
       generalServiceGetResponse
     } = this.props;
     const { activeUser } = generalServiceGetResponse;
+    if (activeUser.Id == 0) {
+      Alert.alert(
+        "Uyarı",
+        "Öncelikle giriş yapmalısınız",
+        [
+          {
+            text: "Giriş yap",
+            onPress: () => this.props.navigation.navigate("Login")
+          },
+          {
+            text: "Anasayfa",
+            onPress: () => this.props.navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+    }
     customerServicePreviewData(activeUser.Id, 1).then(({ payload }) => {
       if (payload) {
         if (payload.data) {

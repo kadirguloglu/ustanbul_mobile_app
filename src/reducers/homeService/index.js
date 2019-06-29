@@ -10,7 +10,10 @@ import {
   GET_CONTACT_MESSAGE_SUBJECT_FAIL,
   POST_CONTACT_MESSAGE,
   POST_CONTACT_MESSAGE_SUCCESS,
-  POST_CONTACT_MESSAGE_FAIL
+  POST_CONTACT_MESSAGE_FAIL,
+  CATEGORY_SEARCH,
+  CATEGORY_SEARCH_SUCCESS,
+  CATEGORY_SEARCH_FAIL
 } from "../../types/homeService";
 import Sentry from "sentry-expo";
 
@@ -22,7 +25,8 @@ const INITIAL_STATE = {
   searchCategoriesResult: [],
   contactSubjectLoading: true,
   contactSubjectResult: [],
-  contactMessagePostResult: {}
+  contactMessagePostResult: {},
+  categorySearchData: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -102,6 +106,29 @@ export default (state = INITIAL_STATE, action) => {
         )
       );
       return { ...state, contactSubjectLoading: false };
+
+    case CATEGORY_SEARCH:
+      return { ...state, categorySearchLoading: true };
+    case CATEGORY_SEARCH_SUCCESS:
+      return {
+        ...state,
+        categorySearchLoading: false,
+        categorySearchData: action.payload.data
+      };
+    case CATEGORY_SEARCH_FAIL:
+      Sentry.captureException(
+        new Error(
+          JSON.stringify({
+            case: "CATEGORY_SEARCH_FAIL",
+            error: action
+          })
+        )
+      );
+      return {
+        ...state,
+        contactSubjectLoading: false,
+        categorySearchError: true
+      };
     default:
       return { ...state };
   }

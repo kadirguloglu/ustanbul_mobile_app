@@ -35,103 +35,26 @@ class Main extends React.Component {
     if (isAutoLogin) loginUser("kadirguloglu1@gmail.com", "123", "");
     getLanguage(1);
     getSite(1);
-    // let deviceId = "undefined";
-    // try {
-    //   deviceId = DeviceInfo.getDeviceId();
-    // } catch (err) {
-    //   deviceId = "undefined";
-    // }
-    // if (deviceId === "undefined") {
-    //   axios
-    //     .get(apiUrl + "/GeneralServiceGet/getToken/true/" + deviceId)
-    //     .then(function(response) {
-    //       apiToken = response.data.GetTokenResult;
-    //       AsyncStorage.setItem("_getUserToken", apiToken);
-    //       instance.defaults.headers["securetoken"] = apiToken;
-    //     });
-    // } else {
-    //   try {
-    //     const value = await AsyncStorage.getItem("_getUserToken");
-    //     // if (value !== null && value !== '') {
-    //     if (true) {
-    //       apiToken = value;
-    //       instance.defaults.headers["securetoken"] = apiToken;
-    //       this.setState({ isTokenLoading: false });
-    //     } else {
-    //       axios
-    //         .get(apiUrl + "/GeneralServiceGet/getToken/true/" + deviceId)
-    //         .then(function(response) {
-    //           apiToken = response.data;
-    //           AsyncStorage.setItem("_getUserToken", apiToken);
-    //           instance.defaults.headers["securetoken"] = apiToken;
-    //           this.setState({ isTokenLoading: false });
-    //         })
-    //         .catch(function(error) {});
-    //     }
-    //   } catch (error) {
-    //     axios
-    //       .get(apiUrl + "/GeneralServiceGet/getToken/true/" + deviceId)
-    //       .then(function(response) {
-    //         apiToken = response.data;
-    //         AsyncStorage.setItem("_getUserToken", apiToken);
-    //         instance.defaults.headers["securetoken"] = apiToken;
-    //         this.setState({ isTokenLoading: false });
-    //       });
-    //   }
-    // }
 
     try {
-      const value = await AsyncStorage.getItem("_activeUserID");
+      const value = await AsyncStorage.getItem("@activeUserID");
       if (value !== null) {
-        this.props
-          .loginUser("", "", value)
-          .then(({ payload }) => {
-            this.setState({ isLoggedIn: true });
-          })
-          .catch(() => {
-            this.setState({ isLoggedIn: false });
-          });
+        loginUser("", "", value).then(({ payload }) => {
+          if (payload) {
+            if (payload.data) {
+              if (payload.data.ErrorText !== "") {
+                alert(payload.data.ErrorText);
+              } else {
+                AsyncStorage.setItem("@activeUserID", payload.data.Id + "");
+              }
+            }
+          }
+        });
       } else {
-        this.setState({ isLoggedIn: false });
       }
-    } catch (err) {
-      this.setState({ isLoggedIn: false });
-    }
-
-    _retrieveData = async () => {
-      try {
-        const value = await AsyncStorage.getItem("_getIsIntroScreen");
-        if (value !== null) {
-          this.setState({ isIntro: false });
-        } else {
-          this.setState({ isIntro: true });
-        }
-      } catch (err) {
-        this.setState({ isIntro: true });
-      }
-    };
-    this.setState({ isReady: true });
+    } catch (err) {}
   }
 
-  _simulateLogin = (username, password) => {
-    this.props
-      .loginUser(username, password, "")
-      .then(({ payload }) => {
-        AsyncStorage.setItem("_activeUserID", payload.data.ID);
-        this.setState({ isLoggedIn: true, isLoading: false });
-      })
-      .catch(err => {
-        this.setState({ isLoggedIn: false, isLoading: false });
-      });
-  };
-
-  _simulateSignup = (username, password, fullName) => {
-    this.setState({ isLoading: true });
-    setTimeout(
-      () => this.setState({ isLoggedIn: true, isLoading: false }),
-      1000
-    );
-  };
   render() {
     const { generalServiceGetResponse } = this.props;
     const {

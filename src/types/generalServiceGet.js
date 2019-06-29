@@ -21,6 +21,11 @@ export const LOGIN_AUTHENTICATION_USER_FAIL =
 export const LOGIN_AUTHENTICATION_USER_URL =
   "/GeneralServiceGet/GetActiveUserView";
 
+export const LOGOUT_USER = "LOGOUT_USER/LOAD";
+export const LOGOUT_USER_SUCCESS = "LOGOUT_USER/LOAD_SUCCESS";
+export const LOGOUT_USER_FAIL = "LOGOUT_USER/LOAD_FAIL";
+export const LOGOUT_USER_URL = "api/values";
+
 export const GET_LANGUAGE = "ALL_SCREEN/GET_LANGUAGE/LOAD";
 export const GET_LANGUAGE_SUCCESS = "ALL_SCREEN/GET_LANGUAGE/LOAD_SUCCESS";
 export const GET_LANGUAGE_FAIL = "ALL_SCREEN/GET_LANGUAGE/LOAD_FAIL";
@@ -44,3 +49,8 @@ export const GET_COMPLAINT_OPTION_LIST_FAIL =
   "ALL_SCREEN/GET_COMPLAINT_OPTION_LIST/LOAD_FAIL";
 export const GET_COMPLAINT_OPTION_LIST_URL =
   "/GeneralServiceGet/ComplaintOptionList";
+
+export const LOGIN_POST = "LOGIN_POST/LOAD";
+export const LOGIN_POST_SUCCESS = "LOGIN_POST/LOAD_SUCCESS";
+export const LOGIN_POST_FAIL = "LOGIN_POST/LOAD_FAIL";
+export const LOGIN_POST_URL = "/CustomerService/Login";

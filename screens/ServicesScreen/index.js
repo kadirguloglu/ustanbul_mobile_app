@@ -5,7 +5,8 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   WebView,
-  Keyboard
+  Keyboard,
+  Alert
 } from "react-native";
 import {
   Icon,
@@ -29,7 +30,7 @@ import Geocoder from "react-native-geocoding";
 import { serviceCreateData } from "../../src/actions/serviceService";
 import { createService } from "../../src/actions/servicePost";
 
-import { IsValidDate, ThemeColor } from "../../src/functions";
+import { IsValidDate, ThemeColor, Loader } from "../../src/functions";
 
 import MyButton from "../../components/MyButton";
 import ViewPager from "./Forms/ViewPager";
@@ -121,7 +122,87 @@ class ServicesScreen extends Component {
 
   _handleNavigationComponentWillMount = async () => {
     let PAGES = [];
-    const { navigation } = this.props;
+    const { navigation, generalServiceGetResponse } = this.props;
+    const { activeUser } = generalServiceGetResponse;
+    try {
+      if (activeUser) {
+        if (activeUser.Id > 0) {
+          if (activeUser.IsCompany) {
+            Alert.alert(
+              "Uyarı",
+              "Şimdilik usta üyeliği ile hizmet talebi alamıyoruz. Lütfen kişisel hesabınız ile kayıt olunuz",
+              [
+                {
+                  text: "Kayıt ol",
+                  onPress: () => navigation.navigate("Login")
+                },
+                {
+                  text: "Anasayfa",
+                  onPress: () => navigation.navigate("Home"),
+                  style: "cancel"
+                }
+              ],
+              { cancelable: false }
+            );
+            return;
+          }
+        } else if (activeUser.Id == 0) {
+          Alert.alert(
+            "Uyarı",
+            "Hizmet oluşturmak için lütfen giriş yapınız",
+            [
+              {
+                text: "Giriş yap",
+                onPress: () => navigation.navigate("Login")
+              },
+              {
+                text: "Anasayfa",
+                onPress: () => navigation.navigate("Home"),
+                style: "cancel"
+              }
+            ],
+            { cancelable: false }
+          );
+          return;
+        }
+      } else if (activeUser == undefined || activeUser == null) {
+        Alert.alert(
+          "Uyarı",
+          "Hizmet oluşturmak için lütfen giriş yapınız",
+          [
+            {
+              text: "Giriş yap",
+              onPress: () => navigation.navigate("Login")
+            },
+            {
+              text: "Anasayfa",
+              onPress: () => navigation.navigate("Home"),
+              style: "cancel"
+            }
+          ],
+          { cancelable: false }
+        );
+        return;
+      }
+    } catch (e) {
+      Alert.alert(
+        "Uyarı",
+        "Hizmet oluşturmak için lütfen giriş yapınız",
+        [
+          {
+            text: "Giriş yap",
+            onPress: () => navigation.navigate("Login")
+          },
+          {
+            text: "Anasayfa",
+            onPress: () => navigation.navigate("Home"),
+            style: "cancel"
+          }
+        ],
+        { cancelable: false }
+      );
+      return;
+    }
     const itemId = navigation.getParam("CategoryID", -1);
     let cameraResult = await requestCameraPermission();
     this.setState({
@@ -144,7 +225,7 @@ class ServicesScreen extends Component {
         }
       });
 
-      let activeUserId = this.props.generalServiceGetResponse.activeUser.Id;
+      let activeUserId = activeUser.Id;
       this.setState({
         serviceParameter: {
           ...this.state.serviceParameter,
@@ -827,7 +908,7 @@ class ServicesScreen extends Component {
       activeViewPagerPage,
       isMapReady
     } = this.state;
-    if (serviceCreateDataLoading) return <Spinner />;
+    if (serviceCreateDataLoading) return <Loader />;
     return (
       <Root>
         <NavigationEvents

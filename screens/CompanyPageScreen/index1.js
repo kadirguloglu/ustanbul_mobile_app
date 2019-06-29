@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  ListView,
-  AsyncStorage,
-  View,
-  Text,
-  ScrollView
-} from "react-native";
+import { StyleSheet, AsyncStorage, View, Text, ScrollView } from "react-native";
 import { connect } from "react-redux";
 import {
   companyServicePreviewData,
@@ -47,7 +40,6 @@ let PAGES_DATA_CATEGORY_INDEX = [];
 class CompanyServiceScreen extends Component {
   constructor(props) {
     super(props);
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       currentPosition: 0,
       getToast: false,

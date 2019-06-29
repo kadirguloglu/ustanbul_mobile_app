@@ -7,7 +7,7 @@ import styles from "../styles";
 import HeaderHello from "./Header_hello";
 
 const Header = props => {
-  const { activeUser, navigation } = props;
+  const { activeUser, navigation, getSiteData } = props;
   return (
     <View>
       <ImageBackground
@@ -32,7 +32,7 @@ const Header = props => {
             </View>
             <View style={styles.logo_block}>
               <Text style={[styles.font_raleway_bold, styles.logo]}>
-                FixMasTR
+                {getSiteData.Name}
               </Text>
             </View>
             <View>

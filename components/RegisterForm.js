@@ -36,20 +36,38 @@ class RegisterForm extends Component {
   }
   componentWillMount() {}
   render() {
+    const { generalServiceGetResponse } = this.props;
+    const { getSiteData } = generalServiceGetResponse;
     if (this.state.RegisterFormType == "Customer") {
-      return <CustomerForm open_register_form={this.registerFormNull} />;
+      return (
+        <CustomerForm
+          open_register_form={this.registerFormNull}
+          navigation={this.props.navigation}
+        />
+      );
     }
     if (this.state.RegisterFormType == "Master") {
-      return <MasterForm open_register_form={this.registerFormNull} />;
+      return (
+        <MasterForm
+          open_register_form={this.registerFormNull}
+          navigation={this.props.navigation}
+        />
+      );
     }
     if (this.state.RegisterFormType == "Company") {
-      return <CompanyForm open_register_form={this.registerFormNull} />;
+      return (
+        <CompanyForm
+          open_register_form={this.registerFormNull}
+          navigation={this.props.navigation}
+        />
+      );
     }
     if (this.state.RegisterFormType == "Facebook") {
       return (
         <FacebookForm
           open_register_form={this.registerFormNull}
           login_form={this.props.form_change}
+          navigation={this.props.navigation}
         />
       );
     }
@@ -58,6 +76,7 @@ class RegisterForm extends Component {
         <TwitterForm
           open_register_form={this.registerFormNull}
           login_form={this.props.form_change}
+          navigation={this.props.navigation}
         />
       );
     }
@@ -66,6 +85,7 @@ class RegisterForm extends Component {
         <GooglePlusForm
           open_register_form={this.registerFormNull}
           login_form={this.props.form_change}
+          navigation={this.props.navigation}
         />
       );
     }
@@ -85,7 +105,7 @@ class RegisterForm extends Component {
               delay={500}
               style={[styles.logoView, { height: this.state.logoHeight }]}
             >
-              <Text style={[styles.logoText]}>FixMasTR</Text>
+              <Text style={[styles.logoText]}>{getSiteData.Name}</Text>
             </Animatable.View>
             <Animatable.View
               animation="zoomIn"
@@ -95,25 +115,6 @@ class RegisterForm extends Component {
               }}
               style={styles.loginFormView}
             >
-              {/* <View style={styles.inputContainer}>
-                            <FontAwesome
-                                style={styles.inputIcon}
-                                name="user"
-                                size={16} />
-                            <TextInput style={styles.input}
-                                underlineColorAndroid='transparent'
-                                placeholder='Mail adresiniz' onChangeText={(v) => this.setState({ email: v })} />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <FontAwesome
-                                style={styles.inputIcon}
-                                name="lock"
-                                size={16} />
-                            <TextInput style={styles.input}
-                                underlineColorAndroid='transparent'
-                                placeholder='Şifreniz'
-                                secureTextEntry={true} onChangeText={(v) => this.setState({ password: v })} />
-                        </View> */}
               <View style={{ marginBottom: 10 }}>
                 <Button
                   style={styles.button}
@@ -122,6 +123,7 @@ class RegisterForm extends Component {
                     this.setState({ RegisterFormType: "Customer" })
                   }
                   color="#d6471a"
+                  navigation={this.props.navigation}
                 />
               </View>
               <View style={{ marginBottom: 10 }}>
@@ -130,16 +132,17 @@ class RegisterForm extends Component {
                   title="Ustayım"
                   onPress={() => this.setState({ RegisterFormType: "Master" })}
                   color="#19c53b"
+                  navigation={this.props.navigation}
                 />
               </View>
-              <View style={{ marginBottom: 10 }}>
+              {/* <View style={{ marginBottom: 10 }}>
                 <Button
                   style={styles.button}
                   title="Şirketim"
                   onPress={() => this.setState({ RegisterFormType: "Company" })}
                   color={ThemeColor}
                 />
-              </View>
+              </View> */}
               <View style={styles.lineByLine}>
                 <View style={styles.line} />
                 <Text style={styles.lineByText}>sosyal medya ile kayıt ol</Text>
@@ -187,7 +190,9 @@ class RegisterForm extends Component {
   }
 }
 
-const mapStateToProps = ({}) => ({});
+const mapStateToProps = ({ generalServiceGetResponse }) => ({
+  generalServiceGetResponse
+});
 
 const mapDispatchToProps = {};
 

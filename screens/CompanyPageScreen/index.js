@@ -1,10 +1,5 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  ListView,
-  ImageBackground,
-  TouchableHighlight
-} from "react-native";
+import { StyleSheet, ImageBackground, TouchableHighlight } from "react-native";
 import { connect } from "react-redux";
 import { NavigationEvents } from "react-navigation";
 import {
@@ -47,7 +42,6 @@ import ApprovedServiceWithQr from "./Components/CompanyServiceScreen_approved_se
 class CompanyServiceScreen extends Component {
   constructor(props) {
     super(props);
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       activeTab: 0,
       getToast: false,

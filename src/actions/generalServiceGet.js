@@ -12,10 +12,16 @@ import {
   GET_QR_CODE,
   GET_QR_CODE_URL,
   GET_COMPLAINT_OPTION_LIST,
-  GET_COMPLAINT_OPTION_LIST_URL
+  GET_COMPLAINT_OPTION_LIST_URL,
+  LOGOUT_USER,
+  LOGOUT_USER_URL,
+  LOGIN_POST,
+  LOGIN_POST_URL
 } from "../types/generalServiceGet";
 
 export function loginUser(email, password, id) {
+  if (id === null) id = 0;
+  if (id === undefined) id = 0;
   return {
     type: LOGIN_AUTHENTICATION_USER,
     payload: {
@@ -91,6 +97,30 @@ export function getComplaintOptionList(langId) {
     payload: {
       request: {
         url: `${GET_COMPLAINT_OPTION_LIST_URL}/${langId}`
+      }
+    }
+  };
+}
+
+export function logoutUser() {
+  return {
+    type: LOGOUT_USER,
+    payload: {
+      request: {
+        url: `${LOGOUT_USER_URL}`
+      }
+    }
+  };
+}
+
+export function loginPost(userData) {
+  return {
+    type: LOGIN_POST,
+    payload: {
+      request: {
+        url: LOGIN_POST_URL,
+        data: userData,
+        method: "POST"
       }
     }
   };

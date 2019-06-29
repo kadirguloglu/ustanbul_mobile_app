@@ -94,7 +94,7 @@ export let ChatConnectionUrl = "http://demo.ustanbul.net";
 
 export let siteUrl = "http://demo.ustanbul.net";
 
-export const isAutoLogin = true;
+export const isAutoLogin = false;
 
 export const Loader = props => {
   return (
@@ -113,7 +113,7 @@ export const Loader = props => {
         overlayColor="transparent"
         source={require("../lottie-loader.json")}
         animationStyle={{
-          width: width,
+          width: width * 0.5,
           height: height
         }}
         speed={1}

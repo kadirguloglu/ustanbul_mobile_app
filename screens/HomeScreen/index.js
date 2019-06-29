@@ -15,7 +15,7 @@ import {
   popularCategories,
   searchCategories
 } from "../../src/actions/homeService";
-import { loginUser } from "../../src/actions/generalServiceGet";
+import { loginUser, getSite } from "../../src/actions/generalServiceGet";
 import {
   ThemeColor,
   IsFullData,
@@ -40,6 +40,7 @@ class HomeScreen extends Component {
   static navigationOptions = {
     header: null
   };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -49,48 +50,73 @@ class HomeScreen extends Component {
       loadingPressCategory: false
     };
   }
+
   componentWillMount() {
-    this.props.popularCategories("1", "1", "1", "12");
+    const {
+      generalServiceGetResponse,
+      popularCategories,
+      serviceCategoriesAndSubCategories
+    } = this.props;
+    const { getLanguageData, getSiteData } = generalServiceGetResponse;
+    popularCategories(getSiteData.Id, getLanguageData.Id, "1", "12");
     if (IsFullData) {
-      this.props.serviceCategoriesAndSubCategories("1", "1");
+      serviceCategoriesAndSubCategories(getSiteData.Id, getLanguageData.Id);
     }
-    this._renderItemOpportunity = function({ item, index }) {
-      return (
-        <TouchableOpacity
-          activeOpacity={1}
-          style={{
-            width: itemWidth,
-            height: slideHeightOpportunity,
-            paddingHorizontal: itemHorizontalMargin,
-            paddingBottom: 18
-          }}
-        >
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: itemHorizontalMargin,
-              right: itemHorizontalMargin,
-              bottom: 18,
-              shadowColor: colors.black,
-              shadowOpacity: 0.25,
-              shadowOffset: { width: 0, height: 10 },
-              shadowRadius: 10,
-              borderRadius: entryBorderRadius,
-              borderWidth: 1,
-              borderColor: ThemeColor
-            }}
-          />
-          <View style={[styles.imageContainer]}>
-            <Image
-              source={require("../../assets/firsat.png")}
-              style={styles.image}
-            />
-          </View>
-        </TouchableOpacity>
-      );
-    };
+
+    storage
+      .load({
+        key: "activeUserID"
+      })
+      .then(ret => {
+        this.props.loginUser("", "", ret);
+      })
+      .catch(err => {
+        switch (err.name) {
+          case "NotFoundError":
+            break;
+          case "ExpiredError":
+            break;
+        }
+      });
   }
+
+  _renderItemOpportunity = ({ item, index }) => {
+    return (
+      <TouchableOpacity
+        activeOpacity={1}
+        style={{
+          width: itemWidth,
+          height: slideHeightOpportunity,
+          paddingHorizontal: itemHorizontalMargin,
+          paddingBottom: 18
+        }}
+      >
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: itemHorizontalMargin,
+            right: itemHorizontalMargin,
+            bottom: 18,
+            shadowColor: colors.black,
+            shadowOpacity: 0.25,
+            shadowOffset: { width: 0, height: 10 },
+            shadowRadius: 10,
+            borderRadius: entryBorderRadius,
+            borderWidth: 1,
+            borderColor: ThemeColor
+          }}
+        />
+        <View style={[styles.imageContainer]}>
+          <Image
+            source={require("../../assets/firsat.png")}
+            style={styles.image}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   handlePressCategory = ID => {
     const { activeUser } = this.props.generalServiceGetResponse;
 
@@ -134,23 +160,8 @@ class HomeScreen extends Component {
       CategoryID: ID
     });
   };
-  componentDidMount() {
-    storage
-      .load({
-        key: "activeUserID"
-      })
-      .then(ret => {
-        this.props.loginUser("", "", ret);
-      })
-      .catch(err => {
-        switch (err.name) {
-          case "NotFoundError":
-            break;
-          case "ExpiredError":
-            break;
-        }
-      });
-  }
+
+  componentDidMount() {}
   render() {
     const {
       homeServiceResponse,
@@ -160,12 +171,16 @@ class HomeScreen extends Component {
     } = this.props;
     const { popularCategoriesResult } = homeServiceResponse;
     const { serviceCategoriesResult } = categoryServiceResponse;
-    const { activeUser } = generalServiceGetResponse;
+    const { activeUser, getSiteData } = generalServiceGetResponse;
     return (
       <Container>
         <Content>
           <View style={styles.container}>
-            <Header activeUser={activeUser} navigation={navigation} />
+            <Header
+              getSiteData={getSiteData}
+              activeUser={activeUser}
+              navigation={navigation}
+            />
             <View style={styles.content}>
               <PopularCategories
                 popularCategoriesResult={popularCategoriesResult}

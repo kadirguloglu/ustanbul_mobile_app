@@ -6,7 +6,9 @@ import {
   GET_CONTACT_MESSAGE_SUBJECT,
   GET_CONTACT_MESSAGE_SUBJECT_URL,
   POST_CONTACT_MESSAGE,
-  POST_CONTACT_MESSAGE_URL
+  POST_CONTACT_MESSAGE_URL,
+  CATEGORY_SEARCH,
+  CATEGORY_SEARCH_URL
 } from "../types/homeService";
 
 export function popularCategories(siteid, langid, topcategory, count) {
@@ -62,6 +64,17 @@ export function postContactSubject(contactMessage) {
         url: POST_CONTACT_MESSAGE_URL,
         data: contactMessage,
         method: "POST"
+      }
+    }
+  };
+}
+
+export function categorySearch(text, siteId, langId) {
+  return {
+    type: CATEGORY_SEARCH,
+    payload: {
+      request: {
+        url: `${CATEGORY_SEARCH_URL}/${text}/${siteId}/${langId}/null/null/1/1`
       }
     }
   };

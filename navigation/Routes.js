@@ -1,112 +1,27 @@
 import { connect } from "react-redux";
 import React from "react";
 import { Text, List, ListItem } from "native-base";
-import { Platform } from "react-native";
 
-const routesCustomer = [
-  {
-    to: "Home",
-    name: "Anasayfa",
-    permission: [],
-    IOSonly: true
-  },
-
-  {
-    to: "CustomerDetail",
-    name: "Hesap Özeti",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "CustomerService",
-    name: "Hizmetlerim",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "Chat",
-    name: "Mesajlar",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "Contact",
-    name: "Bize Ulaş",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "Logout",
-    name: "Çıkış Yap",
-    permission: [],
-    IOSonly: false
-  }
-];
-const routesCompany = [
-  {
-    to: "Home",
-    name: "Anasayfa",
-    permission: [],
-    IOSonly: true
-  },
-
-  {
-    to: "SeeService",
-    name: "Teklif Ver Para Kazan",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "CompanyService",
-    name: "Hizmetlerim",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "CustomerDetail",
-    name: "Hesap Özeti",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "Home",
-    name: "Kartlarım",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "Contact",
-    name: "Bize Ulaş",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "Chat",
-    name: "Üyeliği Uzat",
-    permission: [],
-    IOSonly: false
-  },
-
-  {
-    to: "Logout",
-    name: "Çıkış Yap",
-    permission: [],
-    IOSonly: false
-  }
-];
+import { logoutUser } from "../src/actions/generalServiceGet";
+import { routesCustomer, routesCompany } from "../constants/StaticRoutes";
 class DrawerLinks extends React.Component {
+  _handleLogout = () => {
+    const { logoutUser } = this.props;
+    logoutUser();
+  };
   checkPermission = data => {
+    const { navigation } = this.props;
     return (
-      <ListItem button onPress={() => this.props.navigation.navigate(data.to)}>
+      <ListItem
+        button
+        onPress={() =>
+          data.isFunction
+            ? data.to === "Logout"
+              ? this._handleLogout()
+              : null
+            : navigation.navigate(data.to)
+        }
+      >
         <Text>{data.name}</Text>
       </ListItem>
     );
@@ -152,4 +67,11 @@ const mapStateToProps = ({ generalServiceGetResponse }) => {
   };
 };
 
-export default connect(mapStateToProps)(DrawerLinks);
+const mapDispatchToProps = {
+  logoutUser
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DrawerLinks);

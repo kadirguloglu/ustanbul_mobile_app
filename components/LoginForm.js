@@ -8,39 +8,245 @@ import {
   ActivityIndicator,
   Button,
   TouchableHighlight,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
-import { ThemeColor } from "../src/functions";
-import { loginUser } from "../src/actions/generalServiceGet";
+import * as Facebook from "expo-facebook";
+import { Toast } from "native-base";
+import * as GoogleSignIn from "expo-google-sign-in";
+import { AppAuth } from "expo-app-auth";
+import * as Constants from "expo-constants";
+
+import { ThemeColor, Loader } from "../src/functions";
+
+import { loginUser, loginPost } from "../src/actions/generalServiceGet";
 import styles from "./LoginFormCss";
 
 const { height } = Dimensions.get("window");
+
+const config = {
+  issuer: "https://accounts.google.com",
+  scopes: ["openid", "profile"],
+  /* This is the CLIENT_ID generated from a Firebase project */
+  clientId:
+    "101589148647-a2r4erngf2ou7deslr3tl85ifqc0nd85.apps.googleusercontent.com"
+};
+
+/*
+ * StorageKey is used for caching the OAuth Key in your app so you can use it later.
+ * This can be any string value, but usually it follows this format: @AppName:NameOfValue
+ */
+const StorageKey = "@PillarValley:GoogleOAuthKey";
+
 class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      password: "",
+      email: "kadirguloglu1@gmail.com",
+      password: "123",
       logoHeight: height
     };
   }
-  componentWillMount() {}
+  async componentWillMount() {}
+
+  /*
+   * Notice that Sign-In / Sign-Out aren't operations provided by this module.
+   * We emulate them by using authAsync / revokeAsync.
+   * For instance if you wanted an "isAuthenticated" flag, you would observe your local tokens.
+   * If the tokens exist then you are "Signed-In".
+   * Likewise if you cannot refresh the tokens, or they don't exist, then you are "Signed-Out"
+   */
+  signInAsync = async () => {
+    const authState = await AppAuth.authAsync(config);
+    await cacheAuthAsync(authState);
+    console.log("signInAsync", authState);
+    return authState;
+  };
+
+  /* Let's save our user tokens so when the app resets we can try and get them later */
+  cacheAuthAsync = async authState => {
+    return AsyncStorage.setItem(StorageKey, JSON.stringify(authState));
+  };
+
+  /* Before we start our app, we should check to see if a user is signed-in or not */
+  getCachedAuthAsync = async () => {
+    /* First we will try and get the cached auth */
+    const value = await AsyncStorage.getItem(StorageKey);
+    /* Async Storage stores data as strings, we should parse our data back into a JSON */
+    const authState = JSON.parse(value);
+    console.log("getCachedAuthAsync", authState);
+    if (authState) {
+      /* If our data exists, than we should see if it's expired */
+      if (checkIfTokenExpired(authState)) {
+        /*
+         * The session has expired.
+         * Let's try and refresh it using the refresh token that some
+         * OAuth providers will return when we sign-in initially.
+         */
+        return refreshAuthAsync(authState);
+      } else {
+        return authState;
+      }
+    }
+    return null;
+  };
+
+  /*
+   * You might be familiar with the term "Session Expired", this method will check if our session has expired.
+   * An expired session means that we should reauthenticate our user.
+   * You can learn more about why on the internet: https://www.quora.com/Why-do-web-sessions-expire
+   * > Fun Fact: Charlie Cheever the creator of Expo also made Quora :D
+   */
+  checkIfTokenExpired = ({ accessTokenExpirationDate }) => {
+    return new Date(accessTokenExpirationDate) < new Date();
+  };
+
+  /*
+   * Some OAuth providers will return a "Refresh Token" when you sign-in initially.
+   * When our session expires, we can exchange the refresh token to get new auth tokens.
+   * > Auth tokens are not the same as a Refresh token
+   *
+   * Not every provider (very few actually) will return a new "Refresh Token".
+   * This just means the user will have to Sign-In more often.
+   */
+  refreshAuthAsync = async ({ refreshToken }) => {
+    const authState = await AppAuth.refreshAsync(config, refreshToken);
+    console.log("refreshAuthAsync", authState);
+    await cacheAuthAsync(authState);
+    return authState;
+  };
+
+  /*
+   * To sign-out we want to revoke our tokens.
+   * This is what high-level auth solutions like FBSDK are doing behind the scenes.
+   */
+  signOutAsync = async ({ accessToken }) => {
+    try {
+      await AppAuth.revokeAsync(config, {
+        token: accessToken,
+        isClientIdProvided: true
+      });
+      /*
+       * We are removing the cached tokens so we can check on our auth state later.
+       * No tokens = Not Signed-In :)
+       */
+      await AsyncStorage.removeItem(StorageKey);
+      return null;
+    } catch ({ message }) {
+      alert(`Failed to revoke token: ${message}`);
+    }
+  };
 
   handlePressLogin = () => {
     this.props
       .loginUser(this.state.email, this.state.password)
       .then(({ payload }) => {
-        if (payload.data.ErrorText !== "") {
-          alert(payload.data.ErrorText);
-        } else {
-          this.props.navigation.navigate("Home");
+        if (payload) {
+          if (payload.data) {
+            if (payload.data.ErrorText !== "") {
+              alert(payload.data.ErrorText);
+            } else {
+              AsyncStorage.setItem("@activeUserID", payload.data.Id + "");
+              this.props.navigation.navigate("Home");
+            }
+          }
         }
       });
   };
 
+  _loginWithGoogle = async () => {
+    await this.signInAsync();
+  };
+
+  _loginWithFacebook = async () => {
+    const { loginPost, navigation } = this.props;
+    try {
+      const {
+        type,
+        token,
+        expires,
+        permissions,
+        declinedPermissions
+      } = await Facebook.logInWithReadPermissionsAsync("445869672863651", {
+        permissions: ["public_profile", "email"]
+      });
+      if (type === "success") {
+        const response = await fetch(
+          `https://graph.facebook.com/me?fields=email&access_token=${token}`
+        );
+        var facebookResult = await response.json();
+
+        if (facebookResult.error) {
+          Toast.show({
+            text: "İnternet bağlantınızı kontrol ediniz.",
+            type: "danger",
+            duration: "3500"
+          });
+        } else {
+          if (facebookResult.email) {
+            loginPost({
+              Email: facebookResult.email,
+              RegisterType: "Facebook"
+            }).then(({ payload }) => {
+              if (payload) {
+                if (payload.data) {
+                  if (payload.data.State) {
+                    navigation.navigate("Home");
+                  } else {
+                    if (payload.data.ExceptionType == 1) {
+                      Toast.show({
+                        text: "Üyelik bulunamadı. Lütfen ilk önce üye olunuz.",
+                        type: "danger",
+                        duration: "3500"
+                      });
+                    }
+                    if (payload.data.ExceptionType == 2) {
+                      Toast.show({
+                        text:
+                          "Üyelik aktivasyonu geçersiz. Lütfen üyeliğiniz aktif ediniz.",
+                        type: "danger",
+                        duration: "3500"
+                      });
+                    }
+                    if (payload.data.ExceptionType == 3) {
+                      Toast.show({
+                        text:
+                          "Bu üyelik sosyal medya hesabı ile kayıt olmamıştır. Lütfen şifreniz ile giriş yapınız.",
+                        type: "danger",
+                        duration: "3500"
+                      });
+                    }
+                  }
+                }
+              }
+            });
+          } else {
+            Toast.show({
+              text: "Mail adresiniz bulunamadı.",
+              type: "danger",
+              duration: "3500"
+            });
+          }
+        }
+      } else {
+        if (type === "cancel") {
+          alert("İşlem iptal edildi.");
+        }
+      }
+    } catch ({ message }) {
+      alert(`Giriş işlemi başarısız. Hata mesajı : ${message}`);
+    }
+  };
   render() {
+    const { generalServiceGetResponse } = this.props;
+    const {
+      getSiteData,
+      loginAuthenticationUserLoading,
+      loginPostLoading
+    } = generalServiceGetResponse;
+    // if (loginPostLoading) return <Loader />;
     return (
       <ImageBackground
         source={require("../assets/background/login-register-background.png")}
@@ -56,7 +262,7 @@ class LoginForm extends Component {
             delay={500}
             style={[styles.logoView, { height: this.state.logoHeight }]}
           >
-            <Text style={[styles.logoText]}>FixMasTR</Text>
+            <Text style={[styles.logoText]}>{getSiteData.Name}</Text>
           </Animatable.View>
           <Animatable.View
             animation="zoomIn"
@@ -85,7 +291,7 @@ class LoginForm extends Component {
                 onChangeText={v => this.setState({ password: v })}
               />
             </View>
-            {this.props.isLoginState ? (
+            {loginAuthenticationUserLoading ? (
               <ActivityIndicator style={styles.button} color={ThemeColor} />
             ) : (
               <Button
@@ -105,20 +311,20 @@ class LoginForm extends Component {
                 style={styles.socialLoginIcon}
                 name="google"
                 size={19}
-                onPress={() => console.log("google ile giriş yap")}
+                onPress={() => this._loginWithGoogle()}
               />
               <FontAwesome
                 style={styles.socialLoginIcon}
                 name="facebook"
                 size={19}
-                onPress={() => console.log("facebook ile giriş yap")}
+                onPress={() => this._loginWithFacebook()}
               />
-              <FontAwesome
+              {/* <FontAwesome
                 style={styles.socialLoginIcon}
                 name="twitter"
                 size={19}
                 onPress={() => console.log("twitter ile giriş yap")}
-              />
+              /> */}
             </View>
             <TouchableHighlight
               onPress={() => this.props.form_change()}
@@ -136,13 +342,13 @@ class LoginForm extends Component {
   }
 }
 
-const mapStateToProps = ({ isLoginState, errorLoginUser }) => ({
-  isLoginState,
-  errorLoginUser
+const mapStateToProps = ({ generalServiceGetResponse }) => ({
+  generalServiceGetResponse
 });
 
 const mapDispatchToProps = {
-  loginUser
+  loginUser,
+  loginPost
 };
 
 export default connect(

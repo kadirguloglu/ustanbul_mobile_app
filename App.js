@@ -1,5 +1,8 @@
 import React from "react";
-import { AppLoading, Asset, Font, Icon } from "expo";
+import { AppLoading } from "expo";
+import * as Icon from "@expo/vector-icons";
+import { Asset } from "expo-asset";
+import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import { Root } from "native-base";
 import { StatusBar } from "react-native";
