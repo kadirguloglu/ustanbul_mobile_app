@@ -30,14 +30,12 @@ export function serviceCreateData(categoryid, siteid, langid) {
   };
 }
 
-export function userChatMessageOld(openingUserID) {
+export function userChatMessageOld(ID, openingUserID) {
   return {
     type: SET_USER_CHAT_MESSAGE_OLD,
     payload: {
       request: {
-        url:
-          SET_USER_CHAT_MESSAGE_OLD_URL +
-          `/${states.activeUser.ID}/${openingUserID}`
+        url: SET_USER_CHAT_MESSAGE_OLD_URL + `/${ID}/${openingUserID}`
       }
     }
   };

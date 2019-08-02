@@ -11,7 +11,8 @@ const ProposalDetail = props => {
     activeService,
     activeProposal,
     _handleSetInitialState,
-    _handleServicePost
+    _handleServicePost,
+    _handleSendMasterMessage
   } = props;
   const { ServiceCategoryQuestion } = serviceProposalPreviewData;
   if (!activeService) {
@@ -71,7 +72,8 @@ const ProposalDetail = props => {
             ) : null}
             <MyButton
               buttonStyle={styles.button}
-              press={() => console.log("ustaya mesaj gönder")}
+              press={_handleSendMasterMessage}
+              parameters={[activeService, activeProposal]}
               text={`Ustaya mesaj gönder`}
               full={true}
             />

@@ -50,6 +50,7 @@ class UserMenuScreen extends Component {
             : navigation.navigate(data.to)
         }
         icon
+        key={"loginUserMenu" + index}
       >
         <Left>
           <Icon
@@ -93,6 +94,7 @@ class UserMenuScreen extends Component {
                     button
                     onPress={() => navigation.navigate("Login")}
                     icon
+                    key={"loginUserMenu"}
                   >
                     <Left>
                       <Icon

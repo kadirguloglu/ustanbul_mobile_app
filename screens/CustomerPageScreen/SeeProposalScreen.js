@@ -97,6 +97,12 @@ class SeeProposalScreen extends Component {
     });
   };
 
+  _handleSendMasterMessage = (e, a) => {
+    this.props.navigation.navigate("Chat", {
+      blockId: a.UserID
+    });
+  };
+
   render() {
     const { serviceServiceResponse, navigation } = this.props;
     const {
@@ -166,6 +172,7 @@ class SeeProposalScreen extends Component {
                       activeProposal={activeProposal}
                       _handleSetInitialState={this._handleSetInitialState}
                       _handleServicePost={this._handleServicePost}
+                      _handleSendMasterMessage={this._handleSendMasterMessage}
                     />
                   )}
                 </Tab>

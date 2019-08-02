@@ -33,7 +33,14 @@ export default StyleSheet.create({
     width: width * 0.8 - 30 - 18
   },
   button: {
-    borderRadius: 10,
+    borderBottomEndRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    borderBottomStartRadius: 10,
+    borderTopEndRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderTopStartRadius: 10,
     width: width * 0.8,
     flexDirection: "row",
     justifyContent: "center",

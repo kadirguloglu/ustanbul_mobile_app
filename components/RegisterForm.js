@@ -43,6 +43,7 @@ class RegisterForm extends Component {
         <CustomerForm
           open_register_form={this.registerFormNull}
           navigation={this.props.navigation}
+          login_form={this.props.form_change}
         />
       );
     }
@@ -51,6 +52,7 @@ class RegisterForm extends Component {
         <MasterForm
           open_register_form={this.registerFormNull}
           navigation={this.props.navigation}
+          login_form={this.props.form_change}
         />
       );
     }
@@ -59,6 +61,7 @@ class RegisterForm extends Component {
         <CompanyForm
           open_register_form={this.registerFormNull}
           navigation={this.props.navigation}
+          login_form={this.props.form_change}
         />
       );
     }
@@ -149,14 +152,14 @@ class RegisterForm extends Component {
                 <View style={styles.line} />
               </View>
               <View style={styles.socialLoginContainer}>
-                <FontAwesome
+                {/* <FontAwesome
                   style={styles.socialLoginIcon}
                   name="google"
                   size={19}
                   onPress={() =>
                     this.setState({ RegisterFormType: "GooglePlus" })
                   }
-                />
+                /> */}
                 <FontAwesome
                   style={styles.socialLoginIcon}
                   name="facebook"
@@ -165,12 +168,12 @@ class RegisterForm extends Component {
                     this.setState({ RegisterFormType: "Facebook" })
                   }
                 />
-                <FontAwesome
+                {/* <FontAwesome
                   style={styles.socialLoginIcon}
                   name="twitter"
                   size={19}
                   onPress={() => this.setState({ RegisterFormType: "Twitter" })}
-                />
+                /> */}
               </View>
 
               <TouchableHighlight

@@ -104,7 +104,7 @@ class FacebookForm extends Component {
               </Text>
             </TouchableHighlight>
           </View>
-          <View style={{ marginBottom: 10 }}>
+          {/* <View style={{ marginBottom: 10 }}>
             <TouchableHighlight
               style={styles.button}
               onPress={() => console.log("")}
@@ -119,7 +119,7 @@ class FacebookForm extends Component {
             >
               <Text style={styles.buttonText}>Şirketim</Text>
             </TouchableHighlight>
-          </View>
+          </View> */}
           <TouchableHighlight
             onPress={() => this.props.login_form()}
             style={styles.registerTextContainer}

@@ -131,6 +131,16 @@ export const routesCompany = [
   },
 
   {
+    to: "Chat",
+    name: "Mesajlar",
+    permission: [],
+    IOSonly: false,
+    menu: true,
+    icon: "ios-chatboxes",
+    isFunction: false
+  },
+
+  {
     to: "Logout",
     name: "Çıkış Yap",
     permission: [],

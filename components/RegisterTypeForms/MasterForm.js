@@ -327,11 +327,20 @@ class MasterForm extends Component {
             ) : (
               <Button
                 style={styles.button}
-                title="Giriş yap"
+                title="Kayıt ol"
                 onPress={() => this._handleSubmitRegisterMaster()}
                 color={ThemeColor}
               />
             )}
+            <TouchableHighlight
+              onPress={() => this.props.login_form()}
+              style={styles.registerTextContainer}
+            >
+              <View style={{ flexDirection: "row" }}>
+                <Text style={[styles.text_1]}>Hesabım var mı?{"   "}</Text>
+                <Text style={[styles.text_2]}>Giriş Yap</Text>
+              </View>
+            </TouchableHighlight>
           </Animatable.View>
         </Animatable.View>
       </ImageBackground>

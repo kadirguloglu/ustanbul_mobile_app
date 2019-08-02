@@ -224,9 +224,6 @@ export default (state = INITIAL_STATE, action) => {
         if (action.payload) {
           if (action.payload.data) {
             if (action.payload.data.State) {
-              console.log("LOG: --------------------------------------------");
-              console.log("LOG: action.payload.data", action.payload.data);
-              console.log("LOG: --------------------------------------------");
               AsyncStorage.setItem(
                 "@activeUserID",
                 action.payload.data.LoginUserData.Id + ""

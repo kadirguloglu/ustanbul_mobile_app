@@ -1,7 +1,17 @@
 import React, { Component } from "react";
 import { ImageBackground, View, Alert } from "react-native";
 import { connect } from "react-redux";
-import { Root, Spinner, Tabs, Tab, Toast, TabHeading, Icon } from "native-base";
+import {
+  Root,
+  Spinner,
+  Tabs,
+  Tab,
+  Toast,
+  TabHeading,
+  Icon,
+  Text,
+  ScrollableTab
+} from "native-base";
 import { NavigationEvents } from "react-navigation";
 
 import {
@@ -415,42 +425,49 @@ class CustomerServiceScreen extends Component {
         return (
           <TabHeading>
             <Icon name="ios-clipboard" />
+            <Text>Gelen Teklifler</Text>
           </TabHeading>
         );
       case "2#Tamamlanmayı Bekleyenler":
         return (
           <TabHeading>
             <Icon name="ios-filing" />
+            <Text>Tamamlanmayı Bekleyenler</Text>
           </TabHeading>
         );
       case "3#Onay Bekleyenler":
         return (
           <TabHeading>
             <Icon name="ios-checkmark" />
+            <Text>Onay Bekleyenler</Text>
           </TabHeading>
         );
       case "4#Gelen Teklifler":
         return (
           <TabHeading>
             <Icon name="ios-information" />
+            <Text>Gelen Teklifler</Text>
           </TabHeading>
         );
       case "5#İptal Edilenler":
         return (
           <TabHeading>
             <Icon name="ios-close" />
+            <Text>İptal Edilenler</Text>
           </TabHeading>
         );
       case "6#Bekleyenler":
         return (
           <TabHeading>
             <Icon name="ios-clock" />
+            <Text>Bekleyenler</Text>
           </TabHeading>
         );
       default:
         return (
           <TabHeading>
             <Icon name="ios-sync" />
+            <Text>Tamamlananlar</Text>
           </TabHeading>
         );
     }
@@ -532,6 +549,7 @@ class CustomerServiceScreen extends Component {
                   <Tabs
                     style={{ backgroundColor: "transparent" }}
                     locked={true}
+                    renderTabBar={() => <ScrollableTab />}
                   >
                     {servicePreviewListResultKeys.map((item, index) => {
                       return (

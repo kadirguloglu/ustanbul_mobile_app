@@ -41,6 +41,19 @@ class SeeServiceScreen extends Component {
   }
 
   _handleSetInitialState = (p, v) => {
+    if (p == "tabProposalSendActivePage") {
+      console.log(
+        "LOG: ----------------------------------------------------------"
+      );
+      console.log(
+        "LOG: SeeServiceScreen -> _handleSetInitialState -> p,v",
+        p,
+        v
+      );
+      console.log(
+        "LOG: ----------------------------------------------------------"
+      );
+    }
     this.setState({ [p]: v });
   };
 
@@ -341,9 +354,10 @@ class SeeServiceScreen extends Component {
                 <Button
                   transparent
                   onPress={() =>
-                    this.setState({
-                      tabProposalSendActivePage: tabProposalSendActivePage - 1
-                    })
+                    this._handleSetInitialState(
+                      "tabProposalSendActivePage",
+                      tabProposalSendActivePage - 1
+                    )
                   }
                 >
                   <Icon name="ios-arrow-back" />

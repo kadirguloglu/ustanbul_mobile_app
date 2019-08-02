@@ -90,7 +90,7 @@ export let IsFullData = false;
 
 export let IsExpoActive = false;
 
-export let ChatConnectionUrl = "http://demo.ustanbul.net";
+export let ChatConnectionUrl = "http://demo.ustanbul.net/liveChatHub";
 
 export let siteUrl = "http://demo.ustanbul.net";
 

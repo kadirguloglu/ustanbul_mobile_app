@@ -15,7 +15,6 @@ import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Facebook from "expo-facebook";
 import { Toast } from "native-base";
-import * as GoogleSignIn from "expo-google-sign-in";
 import { AppAuth } from "expo-app-auth";
 import * as Constants from "expo-constants";
 
@@ -46,7 +45,8 @@ class LoginForm extends Component {
     this.state = {
       email: "kadirguloglu1@gmail.com",
       password: "123",
-      logoHeight: height
+      logoHeight: height,
+      isLoader: false
     };
   }
   async componentWillMount() {}
@@ -61,7 +61,6 @@ class LoginForm extends Component {
   signInAsync = async () => {
     const authState = await AppAuth.authAsync(config);
     await cacheAuthAsync(authState);
-    console.log("signInAsync", authState);
     return authState;
   };
 
@@ -76,7 +75,6 @@ class LoginForm extends Component {
     const value = await AsyncStorage.getItem(StorageKey);
     /* Async Storage stores data as strings, we should parse our data back into a JSON */
     const authState = JSON.parse(value);
-    console.log("getCachedAuthAsync", authState);
     if (authState) {
       /* If our data exists, than we should see if it's expired */
       if (checkIfTokenExpired(authState)) {
@@ -113,7 +111,6 @@ class LoginForm extends Component {
    */
   refreshAuthAsync = async ({ refreshToken }) => {
     const authState = await AppAuth.refreshAsync(config, refreshToken);
-    console.log("refreshAuthAsync", authState);
     await cacheAuthAsync(authState);
     return authState;
   };
@@ -162,6 +159,7 @@ class LoginForm extends Component {
 
   _loginWithFacebook = async () => {
     const { loginPost, navigation } = this.props;
+    this.setState({ isLoader: true });
     try {
       const {
         type,
@@ -194,30 +192,27 @@ class LoginForm extends Component {
                 if (payload.data) {
                   if (payload.data.State) {
                     navigation.navigate("Home");
+                    this.setState({ isLoader: false });
                   } else {
+                    let toastMessage = "";
                     if (payload.data.ExceptionType == 1) {
-                      Toast.show({
-                        text: "Üyelik bulunamadı. Lütfen ilk önce üye olunuz.",
-                        type: "danger",
-                        duration: "3500"
-                      });
+                      toastMessage =
+                        "Üyelik bulunamadı. Lütfen ilk önce üye olunuz.";
                     }
                     if (payload.data.ExceptionType == 2) {
-                      Toast.show({
-                        text:
-                          "Üyelik aktivasyonu geçersiz. Lütfen üyeliğiniz aktif ediniz.",
-                        type: "danger",
-                        duration: "3500"
-                      });
+                      toastMessage =
+                        "Üyelik aktivasyonu geçersiz. Lütfen üyeliğiniz aktif ediniz.";
                     }
                     if (payload.data.ExceptionType == 3) {
-                      Toast.show({
-                        text:
-                          "Bu üyelik sosyal medya hesabı ile kayıt olmamıştır. Lütfen şifreniz ile giriş yapınız.",
-                        type: "danger",
-                        duration: "3500"
-                      });
+                      toastMessage =
+                        "Bu üyelik sosyal medya hesabı ile kayıt olmamıştır. Lütfen şifreniz ile giriş yapınız.";
                     }
+                    Toast.show({
+                      text: toastMessage,
+                      type: "danger",
+                      duration: "3500"
+                    });
+                    this.setState({ isLoader: false });
                   }
                 }
               }
@@ -228,18 +223,30 @@ class LoginForm extends Component {
               type: "danger",
               duration: "3500"
             });
+            this.setState({ isLoader: false });
           }
         }
       } else {
         if (type === "cancel") {
-          alert("İşlem iptal edildi.");
-        }
+          Toast.show({
+            text: "İşlem iptal edildi.",
+            type: "danger",
+            duration: "3500"
+          });
+          this.setState({ isLoader: false });
+        } else this.setState({ isLoader: false });
       }
     } catch ({ message }) {
-      alert(`Giriş işlemi başarısız. Hata mesajı : ${message}`);
+      Toast.show({
+        text: `Giriş işlemi başarısız. Hata mesajı : ${message}`,
+        type: "danger",
+        duration: "3500"
+      });
+      this.setState({ isLoader: false });
     }
   };
   render() {
+    const { isLoader } = this.state;
     const { generalServiceGetResponse } = this.props;
     const {
       getSiteData,
@@ -253,6 +260,7 @@ class LoginForm extends Component {
         style={styles.fullBackgroundImage}
         resizeMode="cover"
       >
+        {isLoader ? <Loader /> : null}
         <Animatable.View
           animation="bounceInDown"
           style={[styles.loginScreenView]}
@@ -279,6 +287,7 @@ class LoginForm extends Component {
                 underlineColorAndroid="transparent"
                 placeholder="Mail adresiniz"
                 onChangeText={v => this.setState({ email: v })}
+                keyboardType="email-address"
               />
             </View>
             <View style={styles.inputContainer}>
@@ -307,12 +316,12 @@ class LoginForm extends Component {
               <View style={styles.line} />
             </View>
             <View style={styles.socialLoginContainer}>
-              <FontAwesome
+              {/* <FontAwesome
                 style={styles.socialLoginIcon}
                 name="google"
                 size={19}
                 onPress={() => this._loginWithGoogle()}
-              />
+              /> */}
               <FontAwesome
                 style={styles.socialLoginIcon}
                 name="facebook"

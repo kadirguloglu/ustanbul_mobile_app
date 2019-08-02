@@ -5,7 +5,7 @@ import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import { Root } from "native-base";
-import { StatusBar } from "react-native";
+import { StatusBar, AsyncStorage } from "react-native";
 
 import Main from "./src/Main";
 
@@ -20,18 +20,24 @@ import Sentry from "sentry-expo";
 
 Sentry.enableInExpoDevelopment = true;
 
+const _apiUrl = "http://api.ustanbul.net";
+const _getTokenUrl = "/api/Token";
+let token = "";
+
 Sentry.config(
   "https://49f724a6070f44efb4f9fcc909980b8a@sentry.io/1462198"
 ).install();
 
 const client = axios.create({
-  baseURL: "http://api.ustanbul.net",
+  baseURL: _apiUrl,
   responseType: "json"
 });
 
 client.interceptors.request.use(request => {
   //alert("Request : " + JSON.stringify(request));
+  request.headers["Authorization"] = token;
   //console.log("Request : ", request);
+
   return request;
 });
 
@@ -49,15 +55,51 @@ const store = createStore(
 
 export default class App extends React.Component {
   state = {
-    isLoadingComplete: false
+    isLoadingToken: true,
+    isLoadingFontAndAssets: true
   };
+
+  async componentWillMount() {
+    try {
+      const value = await AsyncStorage.getItem("@bearerToken");
+      if (value !== null) {
+        token = value;
+        this.setState({ isLoadingToken: false });
+      } else {
+        this.getToken();
+      }
+    } catch (error) {
+      this.getToken();
+    }
+  }
+
+  getToken() {
+    axios
+      .post(_apiUrl + _getTokenUrl, {
+        UserName: "9e897927c9c127643be5c73df535d07c",
+        Password: "9e897927c9c127643be5c73df535d07c"
+      })
+      .then(({ data }) => {
+        if (data) {
+          if (data.Token) {
+            token = "Bearer " + data.Token;
+            try {
+              AsyncStorage.setItem("@bearerToken", "Bearer " + data.Token);
+            } catch (error) {
+              // Error saving data
+            }
+            this.setState({ isLoadingToken: false });
+          }
+        }
+      });
+  }
 
   render() {
     return (
       <Root>
         <StatusBar hidden />
         <Provider store={store}>
-          {!this.state.isLoadingComplete && !this.props.skipLoadingScreen ? (
+          {this.state.isLoadingToken || this.state.isLoadingFontAndAssets ? (
             <AppLoading
               startAsync={this._loadResourcesAsync}
               onError={this._handleLoadingError}
@@ -128,6 +170,6 @@ export default class App extends React.Component {
   };
 
   _handleFinishLoading = () => {
-    this.setState({ isLoadingComplete: true });
+    this.setState({ isLoadingFontAndAssets: false });
   };
 }

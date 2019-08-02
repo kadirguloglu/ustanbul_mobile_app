@@ -14,6 +14,9 @@ export default (state = INITIAL_STATE, action) => {
     case POST_USER_CHAT_READ_MESSAGE_SUCCESS:
       return { ...state };
     case POST_USER_CHAT_READ_MESSAGE_FAIL:
+      console.log("LOG: ------------------");
+      console.log("LOG: action", action);
+      console.log("LOG: ------------------");
       Sentry.captureException(
         new Error(
           JSON.stringify({

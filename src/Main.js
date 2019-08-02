@@ -63,11 +63,9 @@ class Main extends React.Component {
       getSiteError,
       getLanguageError
     } = generalServiceGetResponse;
-
     if (getSiteLoading || getLanguageLoading) {
       return <Loader />;
     }
-
     if (getSiteError || getLanguageError) {
       return <Loader />;
     }
