@@ -38,10 +38,14 @@ import { NavigationEvents } from "react-navigation";
 import { messageUserList } from "../../src/actions/messageServiceGet";
 import { userChatReadMessage } from "../../src/actions/messageServicePost";
 import { userChatMessageOld } from "../../src/actions/serviceService";
-import { SmallPath, ChatConnectionUrl, ThemeColor } from "../../src/functions";
+import {
+  SmallPath,
+  ChatConnectionUrl,
+  ThemeColor,
+  hubConnection
+} from "../../src/functions";
 import UserList from "./Components/UserList";
 import MessageDetail from "./Components/MessageDetail";
-import { HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
 let deviceHeight = Dimensions.get("window").height;
 var deviceWidth = Dimensions.get("window").width;
@@ -60,7 +64,6 @@ class ChatScreen extends Component {
       writingMessage: "",
       writing: [],
       IsSendMessageApproved: true,
-      hubConnection: null,
       refreshingChatUserList: false,
       messageTabPage: 0,
       chatTextBoxHeight: 30,
@@ -69,14 +72,7 @@ class ChatScreen extends Component {
     };
   }
 
-  componentWillMount() {
-    this.setState({
-      hubConnection: new HubConnectionBuilder()
-        .withUrl(ChatConnectionUrl)
-        .configureLogging(LogLevel.Debug)
-        .build()
-    });
-  }
+  componentWillMount() {}
 
   _handleRefreshChatUserList = () => {
     const { generalServiceGetResponse } = this.props;
@@ -113,12 +109,6 @@ class ChatScreen extends Component {
       navigation
     } = this.props;
     const { activeUser } = generalServiceGetResponse;
-    const { hubConnection } = this.state;
-
-    hubConnection
-      .start()
-      .then()
-      .catch(err => console.log("Error while establishing connection", err));
 
     hubConnection.on(
       "readingChatBlock",
@@ -170,7 +160,7 @@ class ChatScreen extends Component {
   };
 
   _handlerSetMessage = () => {
-    const { hubConnection, selectedMessageUser, writingMessage } = this.state;
+    const { selectedMessageUser, writingMessage } = this.state;
     const { generalServiceGetResponse } = this.props;
     const { activeUser } = generalServiceGetResponse;
     const { Id } = activeUser;
@@ -233,7 +223,6 @@ class ChatScreen extends Component {
   };
 
   _handlerWriting = value => {
-    const { hubConnection } = this.state;
     this.setState({ writingMessage: value });
     if (isStartWriting == false) {
       let displayType = "block";
@@ -293,9 +282,9 @@ class ChatScreen extends Component {
             );
         });
       }
-      return <Spinner />;
+      return <Spinner key={"message-spin"} />;
     } else {
-      return <Text>Mesajlar Yüklenemedi</Text>;
+      return <Text key={"message-error"}>Mesajlar Yüklenemedi</Text>;
     }
   };
 

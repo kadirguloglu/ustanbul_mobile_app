@@ -529,14 +529,8 @@ const SendProposal = props => {
               </Tab>
             );
           case 6:
-            console.log("LOG: --------------------------");
-            console.log("LOG: item,index", item, index);
-            console.log("LOG: --------------------------");
             return null;
           default:
-            console.log("LOG: --------------------------");
-            console.log("LOG: item,index", item, index);
-            console.log("LOG: --------------------------");
             return null;
         }
       })}

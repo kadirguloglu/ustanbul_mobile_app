@@ -30,6 +30,9 @@ const ServiceQuestion = props => {
   const item =
     serviceServiceResponse.serviceCreateDataResult.Questions[questIndex - 7];
   const i = questIndex - 7;
+  if (item == undefined) {
+    return null;
+  }
   if (item.QuestionType == 1) {
     return (
       <View key={"renderPage" + questIndex} style={styles.pageTopView}>

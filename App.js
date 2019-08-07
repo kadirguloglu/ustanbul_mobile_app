@@ -1,11 +1,11 @@
 import React from "react";
-import { AppLoading } from "expo";
+import { AppLoading, Notifications } from "expo";
 import * as Icon from "@expo/vector-icons";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import { Root } from "native-base";
-import { StatusBar, AsyncStorage } from "react-native";
+import { StatusBar, AsyncStorage, Alert } from "react-native";
 
 import Main from "./src/Main";
 
@@ -18,11 +18,25 @@ import axiosMiddleware from "redux-axios-middleware";
 import logger from "redux-logger";
 import Sentry from "sentry-expo";
 
+import * as TaskManager from "expo-task-manager";
+import * as BackgroundFetch from "expo-background-fetch";
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
+
+import runFirstTime from "./src/functions";
+
 Sentry.enableInExpoDevelopment = true;
 
 const _apiUrl = "http://api.ustanbul.net";
 const _getTokenUrl = "/api/Token";
 let token = "";
+
+async function getiOSNotificationPermission() {
+  const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+  if (status !== "granted") {
+    await Permissions.askAsync(Permissions.NOTIFICATIONS);
+  }
+}
 
 Sentry.config(
   "https://49f724a6070f44efb4f9fcc909980b8a@sentry.io/1462198"
@@ -53,13 +67,54 @@ const store = createStore(
   applyMiddleware(thunk, axiosMiddleware(client))
 );
 
+const FETCH_TASKNAME = "test-background-fetch";
+const INTERVAL = 60;
+
+TaskManager.defineTask(FETCH_TASKNAME, ({ data, error }) => {
+  if (error) {
+    // Error occurred - check `error.message` for more details.
+    return;
+  }
+  if (data) {
+    // do something with the locations captured in the background
+  }
+});
+
 export default class App extends React.Component {
   state = {
     isLoadingToken: true,
     isLoadingFontAndAssets: true
   };
 
+  listenForNotifications = () => {
+    Notifications.addListener(notification => {
+      if (notification.origin === "received") {
+        //Alert.alert(notification.title, notification.body);
+      }
+    });
+  };
+
+  setLocalNotification = () => {
+    this.listenForNotifications();
+    const localNotification = {
+      title: "Example Title!",
+      body: "This is the body text of the local notification",
+      android: {
+        sound: true
+      },
+      ios: {
+        sound: true
+      }
+    };
+    Notifications.scheduleLocalNotificationAsync(localNotification);
+  };
+
   async componentWillMount() {
+    runFirstTime();
+    getiOSNotificationPermission();
+    await Location.startLocationUpdatesAsync(FETCH_TASKNAME, {
+      accuracy: Location.Accuracy.Balanced
+    });
     try {
       const value = await AsyncStorage.getItem("@bearerToken");
       if (value !== null) {
@@ -71,6 +126,8 @@ export default class App extends React.Component {
     } catch (error) {
       this.getToken();
     }
+
+    await BackgroundFetch.registerTaskAsync(taskName);
   }
 
   getToken() {

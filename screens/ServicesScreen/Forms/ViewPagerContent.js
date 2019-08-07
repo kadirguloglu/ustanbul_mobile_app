@@ -11,7 +11,7 @@ import {
   Spinner,
   Textarea
 } from "native-base";
-import { MapView } from "expo";
+import MapView from "react-native-maps";
 import ContractContent from "./ContractContent";
 import ServiceQuestion from "./ServiceQuestion";
 
@@ -429,7 +429,7 @@ const ViewPagerContent = props => {
 
           {page == PAGES.length - 1 ? (
             <View
-              style={styles.buttonContainer}
+              //style={styles.buttonContainer}
               onLayout={event => _handleViewHeightSetState(event, "view4")}
             >
               {serviceServiceResponse.serviceCreateLoading ? (
@@ -444,7 +444,10 @@ const ViewPagerContent = props => {
               )}
             </View>
           ) : (
-            <View onLayout={event => _handleViewHeightSetState(event, "view4")}>
+            <View
+              style={styles.buttonContainer}
+              onLayout={event => _handleViewHeightSetState(event, "view4")}
+            >
               <TouchableHighlight
                 onPress={() =>
                   _handleSetInitialState("activeViewPagerPage", page + 1)

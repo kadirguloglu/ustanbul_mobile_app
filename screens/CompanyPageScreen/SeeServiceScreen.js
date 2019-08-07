@@ -28,9 +28,9 @@ import ServiceDetail from "./Components/ServiceDetail_content";
 import SendProposal from "./Components/SendProposal_content";
 
 class SeeServiceScreen extends Component {
-  static navigationOptions = {
-    header: null
-  };
+  // static navigationOptions = {
+  //   header: null
+  // };
   constructor(props) {
     super(props);
     this.state = {
@@ -41,19 +41,6 @@ class SeeServiceScreen extends Component {
   }
 
   _handleSetInitialState = (p, v) => {
-    if (p == "tabProposalSendActivePage") {
-      console.log(
-        "LOG: ----------------------------------------------------------"
-      );
-      console.log(
-        "LOG: SeeServiceScreen -> _handleSetInitialState -> p,v",
-        p,
-        v
-      );
-      console.log(
-        "LOG: ----------------------------------------------------------"
-      );
-    }
     this.setState({ [p]: v });
   };
 
@@ -325,93 +312,87 @@ class SeeServiceScreen extends Component {
       proposalModel
     } = this.state;
     return (
-      <Root>
+      <Container>
         <NavigationEvents
           onDidFocus={() => this.navigationComponentWillMount()}
         />
-        <Container>
-          <Header>
-            <Left>
-              {tabActivePage === 0 ? (
-                <Button transparent onPress={() => navigation.toggleDrawer()}>
-                  <Icon name="ios-menu" />
-                </Button>
-              ) : tabActivePage === 1 ? (
-                <Button
-                  transparent
-                  onPress={() => this.setState({ tabActivePage: 0 })}
-                >
-                  <Icon name="ios-arrow-back" />
-                </Button>
-              ) : tabProposalSendActivePage === 0 ? (
-                <Button
-                  transparent
-                  onPress={() => this.setState({ tabActivePage: 1 })}
-                >
-                  <Icon name="ios-arrow-back" />
-                </Button>
-              ) : (
-                <Button
-                  transparent
-                  onPress={() =>
-                    this._handleSetInitialState(
-                      "tabProposalSendActivePage",
-                      tabProposalSendActivePage - 1
-                    )
-                  }
-                >
-                  <Icon name="ios-arrow-back" />
-                </Button>
-              )}
-            </Left>
-            <Body>
-              <Title>Teklif ver para kazan</Title>
-            </Body>
-          </Header>
-          <Tabs
-            locked={true}
-            renderTabBar={() => <View />}
-            page={tabActivePage}
-          >
-            <Tab heading="Hizmetler">
-              {serviceCompanyPageLoading ? (
-                <Spinner />
-              ) : (
-                <ScrollView>
-                  <SeeServiceContent
-                    serviceCompanyPageData={serviceCompanyPageData.Data}
-                    _handleServiceDetail={this._handleServiceDetail}
-                  />
-                </ScrollView>
-              )}
-            </Tab>
-            <Tab heading="Hizmet Detay">
-              <ServiceDetail
-                service={service}
-                _handleSendProposal={this._handleSendProposal}
-                masterServiceProposalQuestionPageLoading={
-                  masterServiceProposalQuestionPageLoading
+        <Header>
+          <Left>
+            {tabActivePage === 0 ? (
+              <Button transparent onPress={() => navigation.toggleDrawer()}>
+                <Icon name="ios-menu" />
+              </Button>
+            ) : tabActivePage === 1 ? (
+              <Button
+                transparent
+                onPress={() => this.setState({ tabActivePage: 0 })}
+              >
+                <Icon name="ios-arrow-back" />
+              </Button>
+            ) : tabProposalSendActivePage === 0 ? (
+              <Button
+                transparent
+                onPress={() => this.setState({ tabActivePage: 1 })}
+              >
+                <Icon name="ios-arrow-back" />
+              </Button>
+            ) : (
+              <Button
+                transparent
+                onPress={() =>
+                  this._handleSetInitialState(
+                    "tabProposalSendActivePage",
+                    tabProposalSendActivePage - 1
+                  )
                 }
-              />
-            </Tab>
-            <Tab heading="Teklif Ver">
-              <SendProposal
-                masterServiceProposalQuestionPageLoading={
-                  masterServiceProposalQuestionPageLoading
-                }
-                masterServiceProposalQuestionPageData={
-                  masterServiceProposalQuestionPageData
-                }
-                tabProposalSendActivePage={tabProposalSendActivePage}
-                _handleSetInitialState={this._handleSetInitialState}
-                _handleSendNewProposal={this._handleSendNewProposal}
-                proposalModel={proposalModel}
-                serviceSendProposalLoading={serviceSendProposalLoading}
-              />
-            </Tab>
-          </Tabs>
-        </Container>
-      </Root>
+              >
+                <Icon name="ios-arrow-back" />
+              </Button>
+            )}
+          </Left>
+          <Body>
+            <Title>Teklif ver para kazan</Title>
+          </Body>
+        </Header>
+        <Tabs locked={true} renderTabBar={() => <View />} page={tabActivePage}>
+          <Tab heading="Hizmetler">
+            {serviceCompanyPageLoading ? (
+              <Spinner />
+            ) : (
+              <ScrollView>
+                <SeeServiceContent
+                  serviceCompanyPageData={serviceCompanyPageData.Data}
+                  _handleServiceDetail={this._handleServiceDetail}
+                />
+              </ScrollView>
+            )}
+          </Tab>
+          <Tab heading="Hizmet Detay">
+            <ServiceDetail
+              service={service}
+              _handleSendProposal={this._handleSendProposal}
+              masterServiceProposalQuestionPageLoading={
+                masterServiceProposalQuestionPageLoading
+              }
+            />
+          </Tab>
+          <Tab heading="Teklif Ver">
+            <SendProposal
+              masterServiceProposalQuestionPageLoading={
+                masterServiceProposalQuestionPageLoading
+              }
+              masterServiceProposalQuestionPageData={
+                masterServiceProposalQuestionPageData
+              }
+              tabProposalSendActivePage={tabProposalSendActivePage}
+              _handleSetInitialState={this._handleSetInitialState}
+              _handleSendNewProposal={this._handleSendNewProposal}
+              proposalModel={proposalModel}
+              serviceSendProposalLoading={serviceSendProposalLoading}
+            />
+          </Tab>
+        </Tabs>
+      </Container>
     );
   }
 }

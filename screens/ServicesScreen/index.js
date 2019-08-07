@@ -24,7 +24,8 @@ import { connect } from "react-redux";
 import { NavigationEvents } from "react-navigation";
 import moment from "moment";
 import Modal from "react-native-modal";
-import { Permissions, ImagePicker } from "expo";
+import * as ImagePicker from "expo-image-picker";
+import * as Permissions from "expo-permissions";
 import Geocoder from "react-native-geocoding";
 
 import { serviceCreateData } from "../../src/actions/serviceService";
@@ -65,7 +66,6 @@ class ServicesScreen extends Component {
       view3: 10,
       view4: 10,
       headerHeight: 10,
-      currentPosition: 0,
       serviceCreateDataResult: [],
       serviceCreateDataLoading: true,
       locationPermission: false,
@@ -234,7 +234,7 @@ class ServicesScreen extends Component {
       });
 
       if (PAGES.length == 0) {
-        let pageCount = 7 + data.Questions.length;
+        let pageCount = 6 + data.Questions.length;
         for (x = 0; x <= pageCount; x++) {
           PAGES.push(x);
         }
@@ -555,16 +555,6 @@ class ServicesScreen extends Component {
       navigator.geolocation.clearWatch(this.watchID);
     }
   }
-
-  // componentWillReceiveProps(nextProps, nextState) {
-  //   if (nextState.currentPosition != this.state.currentPosition) {
-  //     if (this.viewPager) {
-  //       this.setState({ currentPosition: nextState.currentPosition });
-  //       this.viewPager.setPage(nextState.currentPosition);
-  //     }
-  //   }
-  // }
-
   _validate = () => {
     Keyboard.dismiss();
     postedData = {};
@@ -831,7 +821,7 @@ class ServicesScreen extends Component {
                     text:
                       "Hizmet oluşturulamadı. Lütfen tekrar deneyiniz ve internet bağlantınız kontrol ediniz.",
                     buttonText: "Tamam",
-                    duration: 2500
+                    duration: 5500
                   });
                   return;
                 case 1:
@@ -839,7 +829,7 @@ class ServicesScreen extends Component {
                     text:
                       "Size ne yakın konumdaki ustalarımıza bildirim gönderildi.",
                     buttonText: "Tamam",
-                    duration: 2500
+                    duration: 10000
                   });
                   this.props.navigation.navigate("Home");
                   return;
@@ -856,7 +846,7 @@ class ServicesScreen extends Component {
                     text:
                       "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
                     buttonText: "Tamam",
-                    duration: 2500
+                    duration: 5500
                   });
                   return;
               }
@@ -865,7 +855,7 @@ class ServicesScreen extends Component {
                 text:
                   "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
                 buttonText: "Tamam",
-                duration: 2500
+                duration: 5500
               });
               return;
             }
@@ -874,7 +864,7 @@ class ServicesScreen extends Component {
               text:
                 "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
               buttonText: "Tamam",
-              duration: 2500
+              duration: 5500
             });
             return;
           }
@@ -895,7 +885,6 @@ class ServicesScreen extends Component {
     const {
       modalIsVisible,
       modalContent,
-      currentPosition,
       PAGES,
       serviceParameter,
       view1,
@@ -910,93 +899,93 @@ class ServicesScreen extends Component {
     } = this.state;
     if (serviceCreateDataLoading) return <Loader />;
     return (
-      <Root>
+      <React.Fragment>
         <NavigationEvents
           onDidFocus={() => this._handleNavigationComponentWillMount()}
         />
-        <React.Fragment>
-          <Modal isVisible={modalIsVisible}>
-            <View style={{ flex: 1 }}>
-              <WebView source={{ html: modalContent }} />
-              <MyButton
-                press={() => this.handlerContactCheckAndCloseModal()}
-                text="Okudum Onaylıyorum"
-              />
-            </View>
-          </Modal>
-          <Header
-            onLayout={event =>
-              this._handleViewHeightSetState(event, "headerHeight")
-            }
-            style={{ backgroundColor: ThemeColor }}
-          >
-            <Left>
-              {currentPosition > 0 && currentPosition < PAGES.length - 1 ? (
-                <Button
-                  transparent
-                  onPress={() =>
-                    this.viewPager.setPage(this.state.currentPosition - 1)
-                  }
-                >
-                  <Icon
-                    name="ios-arrow-back"
-                    color="white"
-                    style={{ color: "white" }}
-                  />
-                </Button>
-              ) : null}
-              {currentPosition == 0 ? (
-                <Button transparent onPress={() => navigation.toggleDrawer()}>
-                  <Icon name="ios-menu" />
-                </Button>
-              ) : null}
-            </Left>
-            <Body>
-              <Title>{serviceCreateDataResult.Name}</Title>
-            </Body>
-            <Right>
-              {/* <Button transparent onPress={() => this.handleCreateService()}>
+        <Modal isVisible={modalIsVisible}>
+          <View style={{ flex: 1 }}>
+            <WebView source={{ html: modalContent }} />
+            <MyButton
+              press={() => this.handlerContactCheckAndCloseModal()}
+              text="Okudum Onaylıyorum"
+            />
+          </View>
+        </Modal>
+        <Header
+          onLayout={event =>
+            this._handleViewHeightSetState(event, "headerHeight")
+          }
+          style={{ backgroundColor: ThemeColor }}
+        >
+          <Left>
+            {activeViewPagerPage > 0 && activeViewPagerPage < PAGES.length ? (
+              <Button
+                transparent
+                onPress={() =>
+                  this.setState({
+                    activeViewPagerPage: activeViewPagerPage - 1
+                  })
+                }
+              >
+                <Icon
+                  name="ios-arrow-back"
+                  color="white"
+                  style={{ color: "white" }}
+                />
+              </Button>
+            ) : null}
+            {activeViewPagerPage == 0 ? (
+              <Button transparent onPress={() => navigation.toggleDrawer()}>
+                <Icon name="ios-menu" />
+              </Button>
+            ) : null}
+          </Left>
+          <Body>
+            <Title>{serviceCreateDataResult.Name}</Title>
+          </Body>
+          <Right>
+            {/* <Button transparent onPress={() => this.handleCreateService()}>
                 <Icon
                   name="ios-arrow-back"
                   color="white"
                   style={{ color: "white" }}
                 />
               </Button> */}
-            </Right>
-          </Header>
-          <View style={styles.container}>
-            <ViewPager
-              PAGES={PAGES}
-              serviceServiceResponse={serviceServiceResponse}
-              serviceParameter={serviceParameter}
-              styles={styles}
-              _handleSetState={this._handleSetState}
-              handleServiceImageList={this.handleServiceImageList}
-              _handleViewHeightSetState={this._handleViewHeightSetState}
-              locationPermission={locationPermission}
-              view1={view1}
-              view2={view2}
-              view3={view3}
-              view4={view4}
-              headerHeight={headerHeight}
-              currentLocation={currentLocation}
-              _handleMapPress={this._handleMapPress}
-              handleCreateService={this.handleCreateService}
-              handleSetStateQuestion={this.handleSetStateQuestion}
-              handleNumericMaxMinRegex={this.handleNumericMaxMinRegex}
-              handleDatePickerMaxMinValue={this.handleDatePickerMaxMinValue}
-              handleSetStateContract={this.handleSetStateContract}
-              handleContractOpen={this.handleContractOpen}
-              serviceCreateDataResult={serviceCreateDataResult}
-              activeViewPagerPage={activeViewPagerPage}
-              _handleSetInitialState={this._handleSetInitialState}
-              _validate={this._validate}
-              isMapReady={isMapReady}
-              onMapLayout={this.onMapLayout}
-            />
-          </View>
-        </React.Fragment>
-      </Root>
+          </Right>
+        </Header>
+        <View style={styles.container}>
+          <ViewPager
+            PAGES={PAGES}
+            serviceServiceResponse={serviceServiceResponse}
+            serviceParameter={serviceParameter}
+            styles={styles}
+            _handleSetState={this._handleSetState}
+            handleServiceImageList={this.handleServiceImageList}
+            _handleViewHeightSetState={this._handleViewHeightSetState}
+            locationPermission={locationPermission}
+            view1={view1}
+            view2={view2}
+            view3={view3}
+            view4={view4}
+            headerHeight={headerHeight}
+            currentLocation={currentLocation}
+            _handleMapPress={this._handleMapPress}
+            handleCreateService={this.handleCreateService}
+            handleSetStateQuestion={this.handleSetStateQuestion}
+            handleNumericMaxMinRegex={this.handleNumericMaxMinRegex}
+            handleDatePickerMaxMinValue={this.handleDatePickerMaxMinValue}
+            handleSetStateContract={this.handleSetStateContract}
+            handleContractOpen={this.handleContractOpen}
+            serviceCreateDataResult={serviceCreateDataResult}
+            activeViewPagerPage={activeViewPagerPage}
+            _handleSetInitialState={this._handleSetInitialState}
+            _validate={this._validate}
+            isMapReady={isMapReady}
+            onMapLayout={this.onMapLayout}
+          />
+        </View>
+      </React.Fragment>
     );
   }
 }

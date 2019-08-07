@@ -116,246 +116,238 @@ class ContactScreen extends Component {
       Description
     } = ContactMessage;
     if (contactSubjectLoading) {
-      return (
-        <Root>
-          <Spinner />
-        </Root>
-      );
+      return <Spinner />;
     }
     return (
-      <Root>
-        <Container>
-          <Header>
-            <Left>
-              <Button transparent onPress={() => navigation.toggleDrawer()}>
-                <Icon name="menu" />
-              </Button>
-            </Left>
-            <Body>
-              <Title>Bize Ulaş</Title>
-            </Body>
-            <Right />
-          </Header>
-          <Content style={{ padding: 10 }}>
-            <View style={styles.pageTopView}>
-              <View>
-                <Text style={styles.QuestionTitle}>
-                  {"Mesaj Konusu (Zorunlu)"}
-                </Text>
-              </View>
-              <View>
-                <Item rounded>
-                  <Picker
-                    mode="dropdown"
-                    iosIcon={<Icon name="ios-arrow-down-outline" />}
-                    placeholder={"Mesaj Konusu"}
-                    placeholderStyle={{ color: "#bfc6ea" }}
-                    placeholderIconColor="#007aff"
-                    style={{ width: undefined }}
-                    selectedValue={MessageSubjectID}
-                    onValueChange={value =>
-                      this.setState({
-                        ContactMessage: {
-                          ...ContactMessage,
-                          MessageSubjectID: value
-                        }
-                      })
+      <Container>
+        <Header>
+          <Left>
+            <Button transparent onPress={() => navigation.toggleDrawer()}>
+              <Icon name="menu" />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Bize Ulaş</Title>
+          </Body>
+          <Right />
+        </Header>
+        <Content style={{ padding: 10 }}>
+          <View style={styles.pageTopView}>
+            <View>
+              <Text style={styles.QuestionTitle}>
+                {"Mesaj Konusu (Zorunlu)"}
+              </Text>
+            </View>
+            <View>
+              <Item rounded>
+                <Picker
+                  mode="dropdown"
+                  iosIcon={<Icon name="ios-arrow-down-outline" />}
+                  placeholder={"Mesaj Konusu"}
+                  placeholderStyle={{ color: "#bfc6ea" }}
+                  placeholderIconColor="#007aff"
+                  style={{ width: undefined }}
+                  selectedValue={MessageSubjectID}
+                  onValueChange={value =>
+                    this.setState({
+                      ContactMessage: {
+                        ...ContactMessage,
+                        MessageSubjectID: value
+                      }
+                    })
+                  }
+                >
+                  <Picker.Item
+                    key={"dropdown" + -1}
+                    label={"Seçiniz"}
+                    value={-1}
+                  />
+                  {contactSubjectResult.map(ans => {
+                    return (
+                      <Picker.Item
+                        key={"dropdown" + ans.MessageSubjectID}
+                        label={ans.Title}
+                        value={ans.MessageSubjectID}
+                      />
+                    );
+                  })}
+                </Picker>
+              </Item>
+            </View>
+            <View>
+              <Text
+                style={
+                  MessageSubjectID == -1
+                    ? styles.help_block_error
+                    : styles.help_block_success
+                }
+              >
+                ** Lütfen bir seçim yapınız
+              </Text>
+            </View>
+          </View>
+          <View style={styles.pageTopView}>
+            <View>
+              <Text style={styles.QuestionTitle}>
+                {"Adınız Soyadınız (Zorunlu)"}
+              </Text>
+            </View>
+            <Item rounded>
+              <Input
+                onChangeText={value =>
+                  this.setState({
+                    ContactMessage: {
+                      ...ContactMessage,
+                      NameSurname: value
                     }
-                  >
-                    <Picker.Item
-                      key={"dropdown" + -1}
-                      label={"Seçiniz"}
-                      value={-1}
-                    />
-                    {contactSubjectResult.map(ans => {
-                      return (
-                        <Picker.Item
-                          key={"dropdown" + ans.MessageSubjectID}
-                          label={ans.Title}
-                          value={ans.MessageSubjectID}
-                        />
-                      );
-                    })}
-                  </Picker>
-                </Item>
-              </View>
-              <View>
-                <Text
-                  style={
-                    MessageSubjectID == -1
-                      ? styles.help_block_error
-                      : styles.help_block_success
-                  }
-                >
-                  ** Lütfen bir seçim yapınız
-                </Text>
-              </View>
-            </View>
-            <View style={styles.pageTopView}>
-              <View>
-                <Text style={styles.QuestionTitle}>
-                  {"Adınız Soyadınız (Zorunlu)"}
-                </Text>
-              </View>
-              <Item rounded>
-                <Input
-                  onChangeText={value =>
-                    this.setState({
-                      ContactMessage: {
-                        ...ContactMessage,
-                        NameSurname: value
-                      }
-                    })
-                  }
-                  value={NameSurname}
-                />
-              </Item>
-              <View>
-                <Text
-                  style={
-                    NameSurname.length > 1 && NameSurname.length < 50
-                      ? styles.help_block_success
-                      : styles.help_block_error
-                  }
-                >
-                  {NameSurname.length} / 50
-                </Text>
-              </View>
-            </View>
-            <View style={styles.pageTopView}>
-              <View>
-                <Text style={styles.QuestionTitle}>
-                  {"Telefon Numaranız (Zorunlu)"}
-                </Text>
-              </View>
-              <Item rounded>
-                <Input
-                  onChangeText={value =>
-                    this.setState({
-                      ContactMessage: {
-                        ...ContactMessage,
-                        PhoneNumber: value
-                      }
-                    })
-                  }
-                  value={PhoneNumber}
-                />
-              </Item>
-              <View>
-                <Text
-                  style={
-                    PhoneNumber.length > 1 && PhoneNumber.length < 20
-                      ? styles.help_block_success
-                      : styles.help_block_error
-                  }
-                >
-                  {PhoneNumber.length} / 20
-                </Text>
-              </View>
-            </View>
-            <View style={styles.pageTopView}>
-              <View>
-                <Text style={styles.QuestionTitle}>
-                  {"Mail Adresiniz (Zorunlu)"}
-                </Text>
-              </View>
-              <Item rounded>
-                <Input
-                  onChangeText={value =>
-                    this.setState({
-                      ContactMessage: {
-                        ...ContactMessage,
-                        Email: value
-                      }
-                    })
-                  }
-                  value={Email}
-                />
-              </Item>
-              <View>
-                <Text
-                  style={
-                    Email.length > 1 && Email.length < 50
-                      ? styles.help_block_success
-                      : styles.help_block_error
-                  }
-                >
-                  {Email.length} / 50
-                </Text>
-              </View>
-            </View>
-            <View style={styles.pageTopView}>
-              <View>
-                <Text style={styles.QuestionTitle}>
-                  {"Mesaj Başlığınız (Zorunlu)"}
-                </Text>
-              </View>
-              <Item rounded>
-                <Input
-                  onChangeText={value =>
-                    this.setState({
-                      ContactMessage: {
-                        ...ContactMessage,
-                        Title: value
-                      }
-                    })
-                  }
-                  value={ContactMessage.Title}
-                />
-              </Item>
-              <View>
-                <Text
-                  style={
-                    ContactMessage.Title.length > 1 &&
-                    ContactMessage.Title.length < 150
-                      ? styles.help_block_success
-                      : styles.help_block_error
-                  }
-                >
-                  {ContactMessage.Title.length} / 150
-                </Text>
-              </View>
-            </View>
-            <View style={styles.pageTopView}>
-              <View>
-                <Text style={styles.QuestionTitle}>
-                  {"Mesajınız (Zorunlu)"}
-                </Text>
-              </View>
-              <Item rounded>
-                <Input
-                  onChangeText={value =>
-                    this.setState({
-                      ContactMessage: {
-                        ...ContactMessage,
-                        Description: value
-                      }
-                    })
-                  }
-                  value={Description}
-                />
-              </Item>
-              <View>
-                <Text
-                  style={
-                    Description.length > 5 && Description.length < 1000
-                      ? styles.help_block_success
-                      : styles.help_block_error
-                  }
-                >
-                  {Description.length} / 1000
-                </Text>
-              </View>
-            </View>
-            <View style={{ paddingBottom: 20 }}>
-              <MyButton
-                press={() => this.handlerContactMessage()}
-                text="Gönder"
+                  })
+                }
+                value={NameSurname}
               />
+            </Item>
+            <View>
+              <Text
+                style={
+                  NameSurname.length > 1 && NameSurname.length < 50
+                    ? styles.help_block_success
+                    : styles.help_block_error
+                }
+              >
+                {NameSurname.length} / 50
+              </Text>
             </View>
-          </Content>
-        </Container>
-      </Root>
+          </View>
+          <View style={styles.pageTopView}>
+            <View>
+              <Text style={styles.QuestionTitle}>
+                {"Telefon Numaranız (Zorunlu)"}
+              </Text>
+            </View>
+            <Item rounded>
+              <Input
+                onChangeText={value =>
+                  this.setState({
+                    ContactMessage: {
+                      ...ContactMessage,
+                      PhoneNumber: value
+                    }
+                  })
+                }
+                value={PhoneNumber}
+              />
+            </Item>
+            <View>
+              <Text
+                style={
+                  PhoneNumber.length > 1 && PhoneNumber.length < 20
+                    ? styles.help_block_success
+                    : styles.help_block_error
+                }
+              >
+                {PhoneNumber.length} / 20
+              </Text>
+            </View>
+          </View>
+          <View style={styles.pageTopView}>
+            <View>
+              <Text style={styles.QuestionTitle}>
+                {"Mail Adresiniz (Zorunlu)"}
+              </Text>
+            </View>
+            <Item rounded>
+              <Input
+                onChangeText={value =>
+                  this.setState({
+                    ContactMessage: {
+                      ...ContactMessage,
+                      Email: value
+                    }
+                  })
+                }
+                value={Email}
+              />
+            </Item>
+            <View>
+              <Text
+                style={
+                  Email.length > 1 && Email.length < 50
+                    ? styles.help_block_success
+                    : styles.help_block_error
+                }
+              >
+                {Email.length} / 50
+              </Text>
+            </View>
+          </View>
+          <View style={styles.pageTopView}>
+            <View>
+              <Text style={styles.QuestionTitle}>
+                {"Mesaj Başlığınız (Zorunlu)"}
+              </Text>
+            </View>
+            <Item rounded>
+              <Input
+                onChangeText={value =>
+                  this.setState({
+                    ContactMessage: {
+                      ...ContactMessage,
+                      Title: value
+                    }
+                  })
+                }
+                value={ContactMessage.Title}
+              />
+            </Item>
+            <View>
+              <Text
+                style={
+                  ContactMessage.Title.length > 1 &&
+                  ContactMessage.Title.length < 150
+                    ? styles.help_block_success
+                    : styles.help_block_error
+                }
+              >
+                {ContactMessage.Title.length} / 150
+              </Text>
+            </View>
+          </View>
+          <View style={styles.pageTopView}>
+            <View>
+              <Text style={styles.QuestionTitle}>{"Mesajınız (Zorunlu)"}</Text>
+            </View>
+            <Item rounded>
+              <Input
+                onChangeText={value =>
+                  this.setState({
+                    ContactMessage: {
+                      ...ContactMessage,
+                      Description: value
+                    }
+                  })
+                }
+                value={Description}
+              />
+            </Item>
+            <View>
+              <Text
+                style={
+                  Description.length > 5 && Description.length < 1000
+                    ? styles.help_block_success
+                    : styles.help_block_error
+                }
+              >
+                {Description.length} / 1000
+              </Text>
+            </View>
+          </View>
+          <View style={{ paddingBottom: 20 }}>
+            <MyButton
+              press={() => this.handlerContactMessage()}
+              text="Gönder"
+            />
+          </View>
+        </Content>
+      </Container>
     );
   }
 }

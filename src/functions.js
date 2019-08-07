@@ -3,6 +3,7 @@ import { Toast, View } from "native-base";
 import Storage from "react-native-storage";
 import { AsyncStorage, Dimensions } from "react-native";
 import AnimatedLoader from "react-native-animated-loader";
+import { HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
 const { width, height } = Dimensions.get("window");
 
@@ -121,3 +122,33 @@ export const Loader = props => {
     </View>
   );
 };
+
+export const hubConnection = new HubConnectionBuilder()
+  .withUrl(ChatConnectionUrl)
+  .configureLogging(LogLevel.Debug)
+  .build();
+
+hubConnection
+  .start()
+  .then()
+  .catch(err => console.log("Error while establishing connection", err));
+
+export default function runFirstTime() {
+  hubConnection.on(
+    "readingChatBlock",
+    (readUserId, readingUserId, displayType) => {
+      console.log(
+        "LOG: ----------------------------------------------------------------------------------"
+      );
+      console.log(
+        "LOG: readUserId, readingUserId, displayType",
+        readUserId,
+        readingUserId,
+        displayType
+      );
+      console.log(
+        "LOG: ----------------------------------------------------------------------------------"
+      );
+    }
+  );
+}

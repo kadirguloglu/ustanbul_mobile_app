@@ -84,7 +84,7 @@ class CustomerDetailScreen extends Component {
       return <Spinner />;
     } else {
       return (
-        <Root>
+        <React.Element>
           <Header>
             <Left>
               <Button
@@ -114,7 +114,7 @@ class CustomerDetailScreen extends Component {
           >
             {this._handleServiceCount()}
           </View>
-        </Root>
+        </React.Element>
       );
     }
   }

@@ -84,6 +84,7 @@ class HomeScreen extends Component {
     return (
       <TouchableOpacity
         activeOpacity={1}
+        key={"item-key-" + index}
         style={{
           width: itemWidth,
           height: slideHeightOpportunity,

@@ -35,6 +35,7 @@ const PopularCategories = props => {
                 activeOpacity={1}
                 style={styles.TouchableOpacity}
                 onPress={() => handlePressCategory(item.ID)}
+                key={"crousel-item-" + index}
               >
                 <View style={styles.view} />
                 <View style={[styles.imageContainer]}>
