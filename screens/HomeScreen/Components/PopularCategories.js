@@ -58,6 +58,7 @@ const PopularCategories = props => {
           contentContainerCustomStyle={styles.sliderContentContainer}
           layout={"default"}
           loop={true}
+          keyExtractor={(item, index) => "crousel-item-" + index.toString()}
         />
       ) : (
         <Spinner />

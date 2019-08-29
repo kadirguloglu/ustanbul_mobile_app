@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, View, AsyncStorage } from "react-native";
 import { connect } from "react-redux";
-import { Spinner } from "native-base";
 
 import {
   loginUser,
@@ -32,7 +31,9 @@ class Main extends React.Component {
   }
   async componentWillMount() {
     const { loginUser, getLanguage, getSite } = this.props;
-    if (isAutoLogin) loginUser("kadirguloglu1@gmail.com", "123", "");
+    if (isAutoLogin) {
+      loginUser("", "", 20159);
+    }
     getLanguage(1);
     getSite(1);
 
@@ -64,10 +65,10 @@ class Main extends React.Component {
       getLanguageError
     } = generalServiceGetResponse;
     if (getSiteLoading || getLanguageLoading) {
-      return <Loader />;
+      return null;
     }
     if (getSiteError || getLanguageError) {
-      return <Loader />;
+      return null;
     }
 
     return (

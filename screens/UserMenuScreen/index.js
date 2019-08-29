@@ -88,6 +88,7 @@ class UserMenuScreen extends Component {
             <List
               dataArray={[0]}
               contentContainerStyle={{ marginTop: 120 }}
+              keyExtractor={(item, index) => "list-" + index.toString()}
               renderRow={data => {
                 return (
                   <ListItem
@@ -145,6 +146,7 @@ class UserMenuScreen extends Component {
             renderRow={(data, index) => {
               return this.checkPermission(data, index);
             }}
+            keyExtractor={(item, index) => "list-" + index.toString()}
           />
         </Content>
       </Container>

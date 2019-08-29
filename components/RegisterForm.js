@@ -129,7 +129,7 @@ class RegisterForm extends Component {
                   navigation={this.props.navigation}
                 />
               </View>
-              <View style={{ marginBottom: 10 }}>
+              {/* <View style={{ marginBottom: 10 }}>
                 <Button
                   style={styles.button}
                   title="Ustayım"
@@ -137,7 +137,7 @@ class RegisterForm extends Component {
                   color="#19c53b"
                   navigation={this.props.navigation}
                 />
-              </View>
+              </View> */}
               {/* <View style={{ marginBottom: 10 }}>
                 <Button
                   style={styles.button}

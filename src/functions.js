@@ -2,7 +2,6 @@ import React from "react";
 import { Toast, View } from "native-base";
 import Storage from "react-native-storage";
 import { AsyncStorage, Dimensions } from "react-native";
-import AnimatedLoader from "react-native-animated-loader";
 import { HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
 const { width, height } = Dimensions.get("window");
@@ -98,57 +97,5 @@ export let siteUrl = "http://demo.ustanbul.net";
 export const isAutoLogin = false;
 
 export const Loader = props => {
-  return (
-    <View
-      style={{
-        width: width,
-        height: height,
-        position: "absolute",
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
-      }}
-    >
-      <AnimatedLoader
-        visible={true}
-        overlayColor="transparent"
-        source={require("../lottie-loader.json")}
-        animationStyle={{
-          width: width * 0.5,
-          height: height
-        }}
-        speed={1}
-      />
-    </View>
-  );
+  return null;
 };
-
-export const hubConnection = new HubConnectionBuilder()
-  .withUrl(ChatConnectionUrl)
-  .configureLogging(LogLevel.Debug)
-  .build();
-
-hubConnection
-  .start()
-  .then()
-  .catch(err => console.log("Error while establishing connection", err));
-
-export default function runFirstTime() {
-  hubConnection.on(
-    "readingChatBlock",
-    (readUserId, readingUserId, displayType) => {
-      console.log(
-        "LOG: ----------------------------------------------------------------------------------"
-      );
-      console.log(
-        "LOG: readUserId, readingUserId, displayType",
-        readUserId,
-        readingUserId,
-        displayType
-      );
-      console.log(
-        "LOG: ----------------------------------------------------------------------------------"
-      );
-    }
-  );
-}

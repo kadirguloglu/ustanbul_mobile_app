@@ -21,6 +21,7 @@ class DrawerLinks extends React.Component {
               : null
             : navigation.navigate(data.to)
         }
+        keyExtractor={(item, index) => "render-routes--1"}
       >
         <Text>{data.name}</Text>
       </ListItem>
@@ -42,6 +43,7 @@ class DrawerLinks extends React.Component {
               </ListItem>
             );
           }}
+          keyExtractor={(item, index) => "render-routes-" + index.toString()}
         />
       );
     }
@@ -56,6 +58,7 @@ class DrawerLinks extends React.Component {
         renderRow={data => {
           return this.checkPermission(data);
         }}
+        keyExtractor={(item, index) => "render-routes-" + index.toString()}
       />
     );
   }

@@ -29,6 +29,7 @@ import {
 } from "../../types/generalServiceGet";
 import { AsyncStorage } from "react-native";
 import Sentry from "sentry-expo";
+import ReloadExpoToken from "../../../helpers/ReloadExpoToken";
 
 const INITIAL_STATE = {
   activeUser: {
@@ -70,6 +71,7 @@ export default (state = INITIAL_STATE, action) => {
         if (action.payload) {
           if (action.payload.data) {
             AsyncStorage.setItem("@activeUserID", action.payload.data.Id + "");
+            ReloadExpoToken(action.payload.data.Id, "");
           }
         }
       }

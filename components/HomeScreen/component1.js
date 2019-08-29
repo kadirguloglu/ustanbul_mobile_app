@@ -23,6 +23,7 @@ export default function Component1(props) {
             activeOpacity={1}
             style={style.TouchableOpacity}
             onPress={() => props.handlePressCategory(item.ID)}
+            key={"component-1-" + index}
           >
             <View style={style.view} />
             <View style={[styles.imageContainer]}>
@@ -39,6 +40,7 @@ export default function Component1(props) {
           </TouchableOpacity>
         );
       }}
+      keyExtractor={(item, index) => "component-1-" + index.toString()}
       sliderWidth={sliderWidth}
       itemWidth={itemWidth}
       containerCustomStyle={styles.slider}

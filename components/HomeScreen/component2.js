@@ -28,6 +28,7 @@ export default function Component2(props) {
       </Text>
       <Carousel
         data={result.SubCategories}
+        keyExtractor={(item, index) => "component-2-" + index.toString()}
         renderItem={({ item, index }) => {
           return (
             <TouchableOpacity
@@ -39,6 +40,7 @@ export default function Component2(props) {
                 paddingBottom: 18
               }}
               onPress={() => props.handlePressCategory(item.ID)}
+              key={"component-2-" + index}
             >
               <View
                 style={{

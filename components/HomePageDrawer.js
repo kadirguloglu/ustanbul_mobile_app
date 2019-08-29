@@ -92,6 +92,7 @@ class HomePageDrawer extends React.Component {
                   return (
                     <TouchableHighlight
                       onPress={() => this.props.navigation.navigate(data.Route)}
+                      key={"menu-item-company-" + data.Text}
                     >
                       <Text>{data.Text}</Text>
                     </TouchableHighlight>
@@ -140,6 +141,7 @@ class HomePageDrawer extends React.Component {
                         onPress={() =>
                           this.props.navigation.navigate(data.Route)
                         }
+                        key={"menu-item-" + data.Text}
                       >
                         <Text>{data.Text}</Text>
                       </TouchableHighlight>

@@ -84,7 +84,7 @@ class HomeScreen extends Component {
     return (
       <TouchableOpacity
         activeOpacity={1}
-        key={"item-key-" + index}
+        key={"item-key-render-item-" + index}
         style={{
           width: itemWidth,
           height: slideHeightOpportunity,
@@ -205,6 +205,9 @@ class HomeScreen extends Component {
                   contentContainerCustomStyle={styles.sliderContentContainer}
                   layout={"default"}
                   loop={true}
+                  keyExtractor={(item, index) =>
+                    "item-key-render-item-" + index.toString()
+                  }
                 />
               </View>
               {serviceCategoriesResult && serviceCategoriesResult.length > 0
@@ -214,6 +217,9 @@ class HomeScreen extends Component {
                         key={"serviceCategories" + result.ID}
                         result={result}
                         handlePressCategory={this.handlePressCategory}
+                        keyExtractor={(item, index) =>
+                          "serviceCategories-" + index.toString()
+                        }
                       />
                     );
                   })

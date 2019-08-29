@@ -38,12 +38,7 @@ import { NavigationEvents } from "react-navigation";
 import { messageUserList } from "../../src/actions/messageServiceGet";
 import { userChatReadMessage } from "../../src/actions/messageServicePost";
 import { userChatMessageOld } from "../../src/actions/serviceService";
-import {
-  SmallPath,
-  ChatConnectionUrl,
-  ThemeColor,
-  hubConnection
-} from "../../src/functions";
+import { SmallPath, ChatConnectionUrl, ThemeColor } from "../../src/functions";
 import UserList from "./Components/UserList";
 import MessageDetail from "./Components/MessageDetail";
 
@@ -68,7 +63,8 @@ class ChatScreen extends Component {
       messageTabPage: 0,
       chatTextBoxHeight: 30,
       chatBoxFullHeight: 697,
-      headerHeight: 33
+      headerHeight: 33,
+      hubConnection: null
     };
   }
 
@@ -81,6 +77,17 @@ class ChatScreen extends Component {
   };
 
   _handleNavigationComponentWillMount = async () => {
+    const hubConnection = new HubConnectionBuilder()
+      .withUrl(ChatConnectionUrl)
+      .configureLogging(LogLevel.Debug)
+      .build();
+
+    hubConnection
+      .start()
+      .then(() => {
+        this.setState({ hubConnection: hubConnection });
+      })
+      .catch(err => console.log("Error while establishing connection", err));
     const {
       messageUserList,
       generalServiceGetResponse,
@@ -110,7 +117,7 @@ class ChatScreen extends Component {
     } = this.props;
     const { activeUser } = generalServiceGetResponse;
 
-    hubConnection.on(
+    this.state.hubConnection.on(
       "readingChatBlock",
       (readUserId, readingUserId, displayType) => {
         if (readingUserId != this.props.generalServiceGetResponse.activeUser.Id)
@@ -135,24 +142,27 @@ class ChatScreen extends Component {
       }
     );
 
-    hubConnection.on("refreshMessageBlock", (sendUserId, sendedUserId) => {
-      if (sendedUserId == activeUser.Id) {
-        messageUserList(
-          activeUser.Id,
-          this.props.navigation.getParam("blockId", 0)
-        );
-        if (sendUserId == this.state.selectedMessageUser.UserID) {
-          this.props.userChatMessageOld(
-            this.props.generalServiceGetResponse.activeUser.Id,
-            this.state.selectedMessageUser.UserID
+    this.state.hubConnection.on(
+      "refreshMessageBlock",
+      (sendUserId, sendedUserId) => {
+        if (sendedUserId == activeUser.Id) {
+          messageUserList(
+            activeUser.Id,
+            this.props.navigation.getParam("blockId", 0)
           );
-          this.props.userChatReadMessage(
-            this.props.generalServiceGetResponse.activeUser.Id,
-            this.state.selectedMessageUser.UserID
-          );
+          if (sendUserId == this.state.selectedMessageUser.UserID) {
+            this.props.userChatMessageOld(
+              this.props.generalServiceGetResponse.activeUser.Id,
+              this.state.selectedMessageUser.UserID
+            );
+            this.props.userChatReadMessage(
+              this.props.generalServiceGetResponse.activeUser.Id,
+              this.state.selectedMessageUser.UserID
+            );
+          }
         }
       }
-    });
+    );
   }
 
   returnButtonPressEvent = () => {
@@ -175,7 +185,7 @@ class ChatScreen extends Component {
     }
     if (this.state.IsSendMessageApproved) {
       this.setState({ IsSendMessageApproved: false });
-      hubConnection
+      this.state.hubConnection
         .invoke("SendChatMessage", Id, UserID, writingMessage)
         .then(directResponse => {
           this.setState({ writingMessage: "" });
@@ -232,7 +242,7 @@ class ChatScreen extends Component {
         displayType = "none";
       }
       setTimeout(() => {
-        hubConnection
+        this.state.hubConnection
           .invoke(
             "ReadingChatHub",
             this.props.generalServiceGetResponse.activeUser.Id,

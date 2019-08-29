@@ -1,11 +1,10 @@
 import React from "react";
 import { AppLoading, Notifications } from "expo";
-import * as Icon from "@expo/vector-icons";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import { Root } from "native-base";
-import { StatusBar, AsyncStorage, Alert } from "react-native";
+import { StatusBar, AsyncStorage } from "react-native";
 
 import Main from "./src/Main";
 
@@ -18,12 +17,7 @@ import axiosMiddleware from "redux-axios-middleware";
 import logger from "redux-logger";
 import Sentry from "sentry-expo";
 
-import * as TaskManager from "expo-task-manager";
-import * as BackgroundFetch from "expo-background-fetch";
 import * as Permissions from "expo-permissions";
-import * as Location from "expo-location";
-
-import runFirstTime from "./src/functions";
 
 Sentry.enableInExpoDevelopment = true;
 
@@ -31,7 +25,7 @@ const _apiUrl = "http://api.ustanbul.net";
 const _getTokenUrl = "/api/Token";
 let token = "";
 
-async function getiOSNotificationPermission() {
+async function notificationPermission() {
   const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
   if (status !== "granted") {
     await Permissions.askAsync(Permissions.NOTIFICATIONS);
@@ -67,67 +61,15 @@ const store = createStore(
   applyMiddleware(thunk, axiosMiddleware(client))
 );
 
-const FETCH_TASKNAME = "test-background-fetch";
-const INTERVAL = 60;
-
-TaskManager.defineTask(FETCH_TASKNAME, ({ data, error }) => {
-  if (error) {
-    // Error occurred - check `error.message` for more details.
-    return;
-  }
-  if (data) {
-    // do something with the locations captured in the background
-  }
-});
-
 export default class App extends React.Component {
   state = {
     isLoadingToken: true,
     isLoadingFontAndAssets: true
   };
 
-  listenForNotifications = () => {
-    Notifications.addListener(notification => {
-      if (notification.origin === "received") {
-        //Alert.alert(notification.title, notification.body);
-      }
-    });
-  };
-
-  setLocalNotification = () => {
-    this.listenForNotifications();
-    const localNotification = {
-      title: "Example Title!",
-      body: "This is the body text of the local notification",
-      android: {
-        sound: true
-      },
-      ios: {
-        sound: true
-      }
-    };
-    Notifications.scheduleLocalNotificationAsync(localNotification);
-  };
-
   async componentWillMount() {
-    runFirstTime();
-    getiOSNotificationPermission();
-    await Location.startLocationUpdatesAsync(FETCH_TASKNAME, {
-      accuracy: Location.Accuracy.Balanced
-    });
-    try {
-      const value = await AsyncStorage.getItem("@bearerToken");
-      if (value !== null) {
-        token = value;
-        this.setState({ isLoadingToken: false });
-      } else {
-        this.getToken();
-      }
-    } catch (error) {
-      this.getToken();
-    }
-
-    await BackgroundFetch.registerTaskAsync(taskName);
+    notificationPermission();
+    this.getToken();
   }
 
   getToken() {
@@ -148,7 +90,8 @@ export default class App extends React.Component {
             this.setState({ isLoadingToken: false });
           }
         }
-      });
+      })
+      .catch(function(ex) {});
   }
 
   render() {
@@ -177,10 +120,6 @@ export default class App extends React.Component {
         Roboto: require("native-base/Fonts/Roboto.ttf"),
         Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
         ...Ionicons.font,
-        // This is the font that we are using for our tab bar
-        ...Icon.Ionicons.font,
-        // We include SpaceMono because we use it in HomeScreen.js. Feel free
-        // to remove this if you are not using it in your app
         Georgia: require("./assets/fonts/Georgia.ttf"),
         Raleway_Black: require("./assets/fonts/Raleway_Black.ttf"),
         Raleway_BlackItalic: require("./assets/fonts/Raleway_BlackItalic.ttf"),
