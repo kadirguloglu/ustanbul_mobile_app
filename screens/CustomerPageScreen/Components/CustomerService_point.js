@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Spinner, Icon } from "native-base";
 import { TouchableHighlight, StyleSheet, ScrollView } from "react-native";
 
+import i18n from "../../../constants/strings";
 import { ThemeColor } from "../../../src/functions";
 
 const Point = props => {
@@ -20,18 +21,11 @@ const Point = props => {
       <ScrollView>
         {customerServiceIsPointData ? (
           <View padder>
-            <Text>
-              Hizmetinizi daha önce puanlamışsınız. Verdiğiniz puanlar hizmet
-              kalitemiz için çok önemlidir.
-            </Text>
+            <Text>{i18n.t("text_126")}</Text>
           </View>
         ) : (
           <View padder>
-            <Text>
-              Firma daha önce puanlanmamış hemen firma hakkındaki görüşlerinizi
-              müşterilerimiz ile paylaşarak hizmet kalitemizi arttırmamıza
-              yardımcı olun.
-            </Text>
+            <Text>{i18n.t("text_127")}</Text>
           </View>
         )}
         {customerServiceIsPointData
@@ -131,7 +125,11 @@ const Point = props => {
       </ScrollView>
       {customerServiceIsPointData ? null : (
         <View>
-          <MyButton press={_handleSendServicePoint} text="Gönder" full={true} />
+          <MyButton
+            press={_handleSendServicePoint}
+            text={i18n.t("text_128")}
+            full={true}
+          />
         </View>
       )}
     </View>

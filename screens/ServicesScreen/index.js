@@ -27,6 +27,7 @@ import Modal from "react-native-modal";
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
 import Geocoder from "react-native-geocoding";
+import i18n from "../../constants/strings";
 
 import { serviceCreateData } from "../../src/actions/serviceService";
 import { createService } from "../../src/actions/servicePost";
@@ -45,7 +46,7 @@ requestCameraPermission = async () => {
   let camera_roll = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
   if (camera_roll.status !== "granted" || camera.status !== "granted") {
-    alert("Servis oluşturmak için camera izni vermelisiniz.");
+    alert(i18n.t("text_4"));
     return false;
   }
   return true;
@@ -54,6 +55,11 @@ requestCameraPermission = async () => {
 let contractIndex = -1;
 
 let postedData = {};
+
+const calcPagesCount = 3;
+const descriptionPageIndex = 1;
+const contractsPageIndex = 0;
+const addressPageIndex = 3;
 
 class ServicesScreen extends Component {
   constructor(props) {
@@ -130,14 +136,14 @@ class ServicesScreen extends Component {
           if (activeUser.IsCompany) {
             Alert.alert(
               "Uyarı",
-              "Şimdilik usta üyeliği ile hizmet talebi alamıyoruz. Lütfen kişisel hesabınız ile kayıt olunuz",
+              i18n.t("text_3"),
               [
                 {
-                  text: "Kayıt ol",
+                  text: i18n.t("text_2"),
                   onPress: () => navigation.navigate("Login")
                 },
                 {
-                  text: "Anasayfa",
+                  text: i18n.t("anasayfa"),
                   onPress: () => navigation.navigate("Home"),
                   style: "cancel"
                 }
@@ -149,14 +155,14 @@ class ServicesScreen extends Component {
         } else if (activeUser.Id == 0) {
           Alert.alert(
             "Uyarı",
-            "Hizmet oluşturmak için lütfen giriş yapınız",
+            i18n.t("text_1"),
             [
               {
-                text: "Giriş yap",
+                text: i18n.t("giris_yap"),
                 onPress: () => navigation.navigate("Login")
               },
               {
-                text: "Anasayfa",
+                text: i18n.t("anasayfa"),
                 onPress: () => navigation.navigate("Home"),
                 style: "cancel"
               }
@@ -168,14 +174,14 @@ class ServicesScreen extends Component {
       } else if (activeUser == undefined || activeUser == null) {
         Alert.alert(
           "Uyarı",
-          "Hizmet oluşturmak için lütfen giriş yapınız",
+          i18n.t("text_1"),
           [
             {
-              text: "Giriş yap",
+              text: i18n.t("giris_yap"),
               onPress: () => navigation.navigate("Login")
             },
             {
-              text: "Anasayfa",
+              text: i18n.t("anasayfa"),
               onPress: () => navigation.navigate("Home"),
               style: "cancel"
             }
@@ -187,14 +193,14 @@ class ServicesScreen extends Component {
     } catch (e) {
       Alert.alert(
         "Uyarı",
-        "Hizmet oluşturmak için lütfen giriş yapınız",
+        i18n.t("text_1"),
         [
           {
-            text: "Giriş yap",
+            text: i18n.t("giris_yap"),
             onPress: () => navigation.navigate("Login")
           },
           {
-            text: "Anasayfa",
+            text: i18n.t("text_2"),
             onPress: () => navigation.navigate("Home"),
             style: "cancel"
           }
@@ -217,24 +223,11 @@ class ServicesScreen extends Component {
     this.props.serviceCreateData(itemId, "1", "1").then(({ payload }) => {
       let data = payload.data;
       let name = data.Name;
-      this.setState({
-        serviceParameter: {
-          ...this.state.serviceParameter,
-          CategoryName: name,
-          CategoryID: itemId
-        }
-      });
 
       let activeUserId = activeUser.Id;
-      this.setState({
-        serviceParameter: {
-          ...this.state.serviceParameter,
-          UserID: activeUserId
-        }
-      });
 
       if (PAGES.length == 0) {
-        let pageCount = 6 + data.Questions.length;
+        let pageCount = calcPagesCount + data.Questions.length;
         for (x = 0; x <= pageCount; x++) {
           PAGES.push(x);
         }
@@ -246,11 +239,8 @@ class ServicesScreen extends Component {
           Answer: "",
           AnswerID: -1,
           Question: item,
-          pageIndex: 7 + i
+          pageIndex: calcPagesCount + 1 + i
         });
-      });
-      this.setState({
-        serviceParameter: { ...this.state.serviceParameter, Questions: quest }
       });
 
       const contract = [];
@@ -260,14 +250,19 @@ class ServicesScreen extends Component {
           Contract: item
         });
       });
+
       this.setState({
+        PAGES: PAGES,
+        dataLoading: false,
         serviceParameter: {
           ...this.state.serviceParameter,
-          Contracts: contract
+          Contracts: contract,
+          Questions: quest,
+          UserID: activeUserId,
+          CategoryName: name,
+          CategoryID: itemId
         }
       });
-      this.setState({ PAGES });
-      this.setState({ dataLoading: false });
     });
     this._handleCheckLocationPermission();
   };
@@ -427,9 +422,8 @@ class ServicesScreen extends Component {
           });
         } else {
           Toast.show({
-            text:
-              "Adres için konumunuza ulaşılamadı. İnternet bağlantınızı kontrol edin veya tekrar deneyiniz.",
-            buttonText: "Tamam",
+            text: i18n.t("text_5"),
+            buttonText: i18n.t("text_6"),
             duration: 2500
           });
         }
@@ -466,8 +460,8 @@ class ServicesScreen extends Component {
           if (item.uri.uri == result.uri) {
             oldControl = true;
             Toast.show({
-              text: "Farklı bir görsel seçiniz",
-              buttonText: "Tamam",
+              text: i18n.t("text_7"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             });
           }
@@ -486,9 +480,8 @@ class ServicesScreen extends Component {
       }
     } catch (error) {
       Toast.show({
-        text:
-          "İşlem sırasında bir hata oluştur. İnternet bağlantınızı kontrol ediniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_8"),
+        buttonText: i18n.t("text_6"),
         duration: 2500
       });
     }
@@ -531,9 +524,8 @@ class ServicesScreen extends Component {
         error => {
           this.setState({ locationPermission: false });
           Toast.show({
-            text:
-              "Adres için konumunuza ulaşılamadı. İnternet bağlantınızı kontrol edin veya tekrar deneyiniz.",
-            buttonText: "Tamam",
+            text: i18n.t("text_9"),
+            buttonText: i18n.t("text_6"),
             duration: 2500
           });
         },
@@ -582,55 +574,55 @@ class ServicesScreen extends Component {
     for (i = 0; i < this.state.serviceParameter.Contracts.length; i++) {
       if (this.state.serviceParameter.Contracts[i].Choose == false) {
         Toast.show({
-          text: "Devam edebilmek için sözleşmeleri onaylamalısınız",
-          buttonText: "Tamam",
+          text: i18n.t("text_10"),
+          buttonText: i18n.t("text_6"),
           duration: 2500
         });
-        this.setState({ activeViewPagerPage: 0 });
+        this.setState({ activeViewPagerPage: contractsPageIndex });
         return false;
       }
     }
-    if (postedData.Title.length < 11) {
-      Toast.show({
-        text: "Hizmet başlığını daha açıklayıcı yazınız",
-        buttonText: "Tamam",
-        duration: 2500
-      });
-      this.setState({ activeViewPagerPage: 1 });
-      return false;
-    }
+    // if (postedData.Title.length < 11) {
+    //   Toast.show({
+    //     text: i18n.t("text_11"),
+    //     buttonText: i18n.t("text_6"),
+    //     duration: 2500
+    //   });
+    //   this.setState({ activeViewPagerPage: 1 });
+    //   return false;
+    // }
     if (postedData.Description.length < 50) {
       Toast.show({
-        text: "Hizmet notunuzu daha açıklayıcı yazınız",
-        buttonText: "Tamam",
+        text: i18n.t("text_12"),
+        buttonText: i18n.t("text_6"),
         duration: 2500
       });
-      this.setState({ activeViewPagerPage: 2 });
+      this.setState({ activeViewPagerPage: descriptionPageIndex });
       return false;
     }
-    if (
-      postedData.SmsNotification == false &&
-      postedData.EmailNotification == false
-    ) {
-      Toast.show({
-        text: "En az bir haberleşme yöntemi seçiniz",
-        buttonText: "Tamam",
-        duration: 2500
-      });
-      this.setState({ activeViewPagerPage: 3 });
-      return false;
-    }
+    // if (
+    //   postedData.SmsNotification == false &&
+    //   postedData.EmailNotification == false
+    // ) {
+    //   Toast.show({
+    //     text: i18n.t("text_13"),
+    //     buttonText: i18n.t("text_6"),
+    //     duration: 2500
+    //   });
+    //   this.setState({ activeViewPagerPage: 3 });
+    //   return false;
+    // }
 
     if (
       postedData.AddressDescription.length > 450 ||
       postedData.AddressDescription.length < 20
     ) {
       Toast.show({
-        text: "Adresiniz çok uzun kontrol ediniz",
-        buttonText: "Tamam",
+        text: i18n.t("text_14"),
+        buttonText: i18n.t("text_6"),
         duration: 2500
       });
-      this.setState({ activeViewPagerPage: 6 });
+      this.setState({ activeViewPagerPage: addressPageIndex });
       return false;
     }
 
@@ -645,8 +637,8 @@ class ServicesScreen extends Component {
         if (item.Question.IsRequired) {
           if (item.Question.QuestionMinValue > item.Answer.length) {
             errorToastMessage = {
-              text: "Cevabınız çok kısa lütfen cevabınızı control ediniz",
-              buttonText: "Tamam",
+              text: i18n.t("text_15"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             };
             setPageNumber = item.pageIndex;
@@ -655,8 +647,8 @@ class ServicesScreen extends Component {
           }
           if (item.Question.QuestionMaxValue < item.Answer.length) {
             errorToastMessage = {
-              text: "Cevabınız çok uzun lütfen cevabınızı control ediniz",
-              buttonText: "Tamam",
+              text: i18n.t("text_16"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             };
             setPageNumber = item.pageIndex;
@@ -674,8 +666,8 @@ class ServicesScreen extends Component {
         if (item.Question.IsRequired) {
           if (item.Question.QuestionMinValue > parseInt(item.Answer)) {
             errorToastMessage = {
-              text: "Cevabınızı istenilen aralıkta giriniz",
-              buttonText: "Tamam",
+              text: i18n.t("text_17"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             };
             setPageNumber = item.pageIndex;
@@ -684,8 +676,8 @@ class ServicesScreen extends Component {
           }
           if (item.Question.QuestionMaxValue < parseInt(item.Answer)) {
             errorToastMessage = {
-              text: "Cevabınızı istenilen aralıkta giriniz",
-              buttonText: "Tamam",
+              text: i18n.t("text_17"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             };
             setPageNumber = item.pageIndex;
@@ -708,8 +700,8 @@ class ServicesScreen extends Component {
           );
           if (!dateResult) {
             errorToastMessage = {
-              text: "Tarih seçimi hatalı. Lütfen kontrol ediniz",
-              buttonText: "Tamam",
+              text: i18n.t("text_18"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             };
             setPageNumber = item.pageIndex;
@@ -727,8 +719,8 @@ class ServicesScreen extends Component {
         if (item.Question.IsRequired) {
           if (item.AnswerID == -1) {
             errorToastMessage = {
-              text: "Zorunlu seçmeli soru cevaplanmamış",
-              buttonText: "Tamam",
+              text: i18n.t("text_19"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             };
             setPageNumber = item.pageIndex;
@@ -755,8 +747,8 @@ class ServicesScreen extends Component {
         if (item.Question.IsRequired) {
           if (checkedCount === 0) {
             errorToastMessage = {
-              text: `${item.Question.Question} sorusu boş geçilemez`,
-              buttonText: "Tamam",
+              text: i18n.t("text_20", { v: item.Question.Question }),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             };
             setPageNumber = item.pageIndex;
@@ -769,10 +761,12 @@ class ServicesScreen extends Component {
           checkedCount > item.Question.QuestionMaxValue
         ) {
           errorToastMessage = {
-            text: `${item.Question.Question} sorusu için en fazla ${
-              item.Question.QuestionMaxValue
-            } en az ${item.Question.QuestionMinValue} seçim yapmalısınız`,
-            buttonText: "Tamam",
+            text: i18n.t("text_21", {
+              v: item.Question.Question,
+              v1: item.Question.QuestionMaxValue,
+              v2: item.Question.QuestionMinValue
+            }),
+            buttonText: i18n.t("text_6"),
             duration: 2500
           };
           setPageNumber = item.pageIndex;
@@ -818,52 +812,46 @@ class ServicesScreen extends Component {
               switch (payload.data) {
                 case 0:
                   Toast.show({
-                    text:
-                      "Hizmet oluşturulamadı. Lütfen tekrar deneyiniz ve internet bağlantınız kontrol ediniz.",
-                    buttonText: "Tamam",
+                    text: i18n.t("text_22"),
+                    buttonText: i18n.t("text_6"),
                     duration: 5500
                   });
                   return;
                 case 1:
                   Toast.show({
-                    text:
-                      "Size ne yakın konumdaki ustalarımıza bildirim gönderildi.",
-                    buttonText: "Tamam",
+                    text: i18n.t("text_23"),
+                    buttonText: i18n.t("text_6"),
                     duration: 10000
                   });
                   this.props.navigation.navigate("Home");
                   return;
                 case 2:
                   Toast.show({
-                    text:
-                      "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
-                    buttonText: "Tamam",
+                    text: i18n.t("text_24"),
+                    buttonText: i18n.t("text_6"),
                     duration: 5500
                   });
                   return;
                 default:
                   Toast.show({
-                    text:
-                      "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
-                    buttonText: "Tamam",
+                    text: i18n.t("text_24"),
+                    buttonText: i18n.t("text_6"),
                     duration: 5500
                   });
                   return;
               }
             } else {
               Toast.show({
-                text:
-                  "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
-                buttonText: "Tamam",
+                text: i18n.t("text_24"),
+                buttonText: i18n.t("text_6"),
                 duration: 5500
               });
               return;
             }
           } else {
             Toast.show({
-              text:
-                "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
-              buttonText: "Tamam",
+              text: i18n.t("text_24"),
+              buttonText: i18n.t("text_6"),
               duration: 5500
             });
             return;
@@ -897,7 +885,6 @@ class ServicesScreen extends Component {
       activeViewPagerPage,
       isMapReady
     } = this.state;
-    if (serviceCreateDataLoading) return <Loader />;
     return (
       <React.Fragment>
         <NavigationEvents
@@ -908,7 +895,7 @@ class ServicesScreen extends Component {
             <WebView source={{ html: modalContent }} />
             <MyButton
               press={() => this.handlerContactCheckAndCloseModal()}
-              text="Okudum Onaylıyorum"
+              text={i18n.t("text_25")}
             />
           </View>
         </Modal>
@@ -954,37 +941,41 @@ class ServicesScreen extends Component {
               </Button> */}
           </Right>
         </Header>
-        <View style={styles.container}>
-          <ViewPager
-            PAGES={PAGES}
-            serviceServiceResponse={serviceServiceResponse}
-            serviceParameter={serviceParameter}
-            styles={styles}
-            _handleSetState={this._handleSetState}
-            handleServiceImageList={this.handleServiceImageList}
-            _handleViewHeightSetState={this._handleViewHeightSetState}
-            locationPermission={locationPermission}
-            view1={view1}
-            view2={view2}
-            view3={view3}
-            view4={view4}
-            headerHeight={headerHeight}
-            currentLocation={currentLocation}
-            _handleMapPress={this._handleMapPress}
-            handleCreateService={this.handleCreateService}
-            handleSetStateQuestion={this.handleSetStateQuestion}
-            handleNumericMaxMinRegex={this.handleNumericMaxMinRegex}
-            handleDatePickerMaxMinValue={this.handleDatePickerMaxMinValue}
-            handleSetStateContract={this.handleSetStateContract}
-            handleContractOpen={this.handleContractOpen}
-            serviceCreateDataResult={serviceCreateDataResult}
-            activeViewPagerPage={activeViewPagerPage}
-            _handleSetInitialState={this._handleSetInitialState}
-            _validate={this._validate}
-            isMapReady={isMapReady}
-            onMapLayout={this.onMapLayout}
-          />
-        </View>
+        {serviceCreateDataLoading ? (
+          <Loader />
+        ) : (
+          <View style={styles.container}>
+            <ViewPager
+              PAGES={PAGES}
+              serviceServiceResponse={serviceServiceResponse}
+              serviceParameter={serviceParameter}
+              styles={styles}
+              _handleSetState={this._handleSetState}
+              handleServiceImageList={this.handleServiceImageList}
+              _handleViewHeightSetState={this._handleViewHeightSetState}
+              locationPermission={locationPermission}
+              view1={view1}
+              view2={view2}
+              view3={view3}
+              view4={view4}
+              headerHeight={headerHeight}
+              currentLocation={currentLocation}
+              _handleMapPress={this._handleMapPress}
+              handleCreateService={this.handleCreateService}
+              handleSetStateQuestion={this.handleSetStateQuestion}
+              handleNumericMaxMinRegex={this.handleNumericMaxMinRegex}
+              handleDatePickerMaxMinValue={this.handleDatePickerMaxMinValue}
+              handleSetStateContract={this.handleSetStateContract}
+              handleContractOpen={this.handleContractOpen}
+              serviceCreateDataResult={serviceCreateDataResult}
+              activeViewPagerPage={activeViewPagerPage}
+              _handleSetInitialState={this._handleSetInitialState}
+              _validate={this._validate}
+              isMapReady={isMapReady}
+              onMapLayout={this.onMapLayout}
+            />
+          </View>
+        )}
       </React.Fragment>
     );
   }

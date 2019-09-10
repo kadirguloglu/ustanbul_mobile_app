@@ -7,8 +7,8 @@ import {
   Image,
   TouchableHighlight
 } from "react-native";
-import { Actions } from "react-native-router-flux";
-//import { Container, Content, Text, List, ListItem, View, Icon, Spinner } from "native-base";
+
+import i18n from "../constants/strings";
 import { Container, Content, Text, View, Icon, Spinner } from "native-base";
 import { connect } from "react-redux";
 import { MidPath } from "../src/functions";
@@ -77,14 +77,14 @@ class HomePageDrawer extends React.Component {
                 <Text
                   style={{ marginTop: 135, textAlign: "center", fontSize: 12 }}
                 >
-                  Kullanıcı Kodu :{" "}
+                  {i18n.t("kullanici_kodu")} :{" "}
                   {activeUser.Code ? activeUser.Code.CodeText : ""}
                   {activeUser.ID}
                 </Text>
                 <Text
                   style={{ marginTop: 0, textAlign: "center", fontSize: 12 }}
                 >
-                  Kasadaki Tutar : 250 ₺{" "}
+                  {i18n.t("kasadaki_tutar")} : 250 ₺{" "}
                   <Icon style={{ fontSize: 12 }} name="ios-help" />
                 </Text>
                 <Text>{activeUser.Company.CompanyName}</Text>
@@ -125,13 +125,13 @@ class HomePageDrawer extends React.Component {
                       fontSize: 12
                     }}
                   >
-                    Kullanıcı Kodu : {activeUser.Code.CodeText}
+                    {i18n.t("kullanici_kodu")} : {activeUser.Code.CodeText}
                     {activeUser.ID}
                   </Text>
                   <Text
                     style={{ marginTop: 0, textAlign: "center", fontSize: 12 }}
                   >
-                    Kasadaki Tutar : 250 ₺{" "}
+                    {i18n.t("kasadaki_tutar")} : 250 ₺{" "}
                     <Icon style={{ fontSize: 12 }} name="ios-help" />
                   </Text>
                   <Text>{activeUser.Company.CompanyName}</Text>

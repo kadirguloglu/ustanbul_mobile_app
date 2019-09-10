@@ -13,6 +13,7 @@ import {
   ListItem
 } from "native-base";
 
+import i18n from "../../constants/strings";
 import { categorySearch } from "../../src/actions/homeService";
 import homeService from "../../src/reducers/homeService";
 
@@ -39,12 +40,12 @@ export class SearchScreen extends Component {
             <Icon name="ios-search" />
             <Input
               onChangeText={value => this._handleSearchCategory(value)}
-              placeholder="Hizmet ara"
+              placeholder={i18n.t("text_40")}
             />
             <Icon name="ios-bookmark" />
           </Item>
           <Button transparent>
-            <Text>Ara</Text>
+            <Text>{i18n.t("text_41")}</Text>
           </Button>
         </Header>
         <Content>

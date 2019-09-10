@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, Thumbnail } from "native-base";
+import i18n from "../../../constants/strings";
 
 import { MidPath } from "../../../src/functions";
 
-export default (Information = props => {
+export default Information = props => {
   const { item, styles } = props;
   return (
     <View style={styles.view2}>
@@ -12,9 +13,13 @@ export default (Information = props => {
       </View>
       <View>
         <Text>{item.CompanyName}</Text>
-        <Text>Teklif : {item.Price}</Text>
-        <Text>Yetkili : {item.AuthorizedPersonName}</Text>
+        <Text>
+          {i18n.t("text_110")} : {item.Price}
+        </Text>
+        <Text>
+          {i18n.t("text_111")} : {item.AuthorizedPersonName}
+        </Text>
       </View>
     </View>
   );
-});
+};

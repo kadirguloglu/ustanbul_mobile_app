@@ -3,6 +3,7 @@ import { ImageBackground, TouchableOpacity } from "react-native";
 import { View, Text } from "native-base";
 import { FontAwesome } from "@expo/vector-icons";
 
+import i18n from "../../../constants/strings";
 import styles from "../styles";
 import HeaderHello from "./Header_hello";
 
@@ -42,20 +43,20 @@ const Header = props => {
                     onPress={() => navigation.navigate("SeeService")}
                   >
                     <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                      Teklif ver{"\n"}Para kazan
+                      {i18n.t("text_42")}
                     </Text>
                   </TouchableOpacity>
                 ) : (
                   <React.Fragment>
                     <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                      Hizmet al
+                      {i18n.t("text_43")}
                     </Text>
                   </React.Fragment>
                 )
               ) : (
                 <React.Fragment>
                   <Text style={[styles.font_ubuntu_r, styles.text_1]}>
-                    Hizmet al
+                    {i18n.t("text_43")}
                   </Text>
                 </React.Fragment>
               )}

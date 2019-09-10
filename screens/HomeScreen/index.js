@@ -10,6 +10,8 @@ import {
 import { Spinner, Container, Content } from "native-base";
 import { FontAwesome } from "@expo/vector-icons";
 import { connect } from "react-redux";
+import i18n from "../../constants/strings";
+
 import { serviceCategoriesAndSubCategories } from "../../src/actions/categoryService";
 import {
   popularCategories,
@@ -124,7 +126,7 @@ class HomeScreen extends Component {
     if (activeUser.Id == 0) {
       Alert.alert(
         "",
-        "Hizmet almak için lütfen giriş yapın veya kayıt olun.",
+        i18n.t("text_1"),
         [
           {
             text: "İptal",
@@ -132,13 +134,13 @@ class HomeScreen extends Component {
             style: "cancel"
           },
           {
-            text: "Giriş yap",
+            text: i18n.t("giris_yap"),
             onPress: () => {
               this.props.navigation.navigate("Login");
             }
           },
           {
-            text: "Kayıt ol",
+            text: i18n.t("text_2"),
             onPress: () => {
               this.props.navigation.navigate("Login", {
                 pageState: "register"
@@ -151,9 +153,7 @@ class HomeScreen extends Component {
       return;
     } else {
       if (activeUser.IsCompany == true) {
-        alert(
-          "Şimdilik usta üyeliği ile hizmet talebi alamıyoruz. Lütfen kişisel hesabınız ile kayıt olunuz."
-        );
+        alert(i18n.t("text_3"));
         return;
       }
     }

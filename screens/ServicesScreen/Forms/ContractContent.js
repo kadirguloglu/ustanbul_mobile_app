@@ -1,6 +1,7 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Text, Body, CheckBox, ListItem } from "native-base";
+import i18n from "../../../constants/strings";
 
 const ContractContent = props => {
   const {

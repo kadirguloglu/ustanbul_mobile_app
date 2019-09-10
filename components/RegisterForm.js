@@ -21,6 +21,8 @@ import FacebookForm from "./RegisterTypeForms/FacebookForm";
 import GooglePlusForm from "./RegisterTypeForms/GooglePlusForm";
 import TwitterForm from "./RegisterTypeForms/TwitterForm";
 
+import i18n from "../constants/strings";
+
 const { width, height } = Dimensions.get("window");
 class RegisterForm extends Component {
   constructor(props) {
@@ -121,7 +123,7 @@ class RegisterForm extends Component {
               <View style={{ marginBottom: 10 }}>
                 <Button
                   style={styles.button}
-                  title="Usta Arıyorum"
+                  title={i18n.t("text_191")}
                   onPress={() =>
                     this.setState({ RegisterFormType: "Customer" })
                   }
@@ -148,7 +150,7 @@ class RegisterForm extends Component {
               </View> */}
               <View style={styles.lineByLine}>
                 <View style={styles.line} />
-                <Text style={styles.lineByText}>sosyal medya ile kayıt ol</Text>
+                <Text style={styles.lineByText}>{i18n.t("text_192")}</Text>
                 <View style={styles.line} />
               </View>
               <View style={styles.socialLoginContainer}>
@@ -181,8 +183,11 @@ class RegisterForm extends Component {
                 style={styles.registerTextContainer}
               >
                 <View style={{ flexDirection: "row" }}>
-                  <Text style={[styles.text_1]}>Hesabım var mı?{"   "}</Text>
-                  <Text style={[styles.text_2]}>Giriş Yap</Text>
+                  <Text style={[styles.text_1]}>
+                    {i18n.t("text_193")}
+                    {"   "}
+                  </Text>
+                  <Text style={[styles.text_2]}>{i18n.t("giris_yap")}</Text>
                 </View>
               </TouchableHighlight>
             </Animatable.View>

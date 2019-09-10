@@ -13,6 +13,7 @@ import {
   ScrollableTab
 } from "native-base";
 import { NavigationEvents } from "react-navigation";
+import i18n from "../../constants/strings";
 
 import {
   customerServicePreviewData,
@@ -88,15 +89,15 @@ class CustomerServiceScreen extends Component {
     const { activeUser } = generalServiceGetResponse;
     if (activeUser.Id == 0) {
       Alert.alert(
-        "Uyarı",
-        "Öncelikle giriş yapmalısınız",
+        i18n.t("text_51"),
+        i18n.t("text_52"),
         [
           {
-            text: "Giriş yap",
+            text: i18n.t("giris_yap"),
             onPress: () => this.props.navigation.navigate("Login")
           },
           {
-            text: "Anasayfa",
+            text: i18n.t("anasayfa"),
             onPress: () => this.props.navigation.navigate("Home"),
             style: "cancel"
           }
@@ -142,9 +143,8 @@ class CustomerServiceScreen extends Component {
   _handleCountDownFinishWithQrCode = () => {
     this.setState({ initialTabActivePage: 0 });
     Toast.show({
-      text:
-        "120 saniye içinde QR kod okutulmalıdır. Yeni bir kod talep ediniz.",
-      buttonText: "Tamam",
+      text: i18n.t("text_53"),
+      buttonText: i18n.t("text_6"),
       duration: 3500
     });
   };
@@ -163,9 +163,8 @@ class CustomerServiceScreen extends Component {
         }
       }
       Toast.show({
-        text:
-          "QR kod oluşturulamadı. Lütfen internet bağlantınızı kontrol ediniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_54"),
+        buttonText: i18n.t("text_6"),
         duration: 3500
       });
     });
@@ -232,16 +231,14 @@ class CustomerServiceScreen extends Component {
       if (payload.data) {
         this.setState({ initialTabActivePage: 0 });
         Toast.show({
-          text:
-            "Verdiğiniz puanlar çok değerli. Size daha iyi hizmet veriyoruz.",
-          buttonText: "Tamam",
+          text: i18n.t("text_55"),
+          buttonText: i18n.t("text_6"),
           duration: 3500
         });
       } else {
         Toast.show({
-          text:
-            "İşlem sırasında hata oluştu. İnternet bağlantınızı kontrol ediniz.",
-          buttonText: "Tamam",
+          text: i18n.t("text_56"),
+          buttonText: i18n.t("text_6"),
           duration: 3500
         });
       }
@@ -251,25 +248,25 @@ class CustomerServiceScreen extends Component {
   _handleApprovedService = data => {
     const { approvedService } = this.props;
     Alert.alert(
-      "Hizmet onayı",
-      "Hizmet onayı verdiğiniz an anlaşma tutarı kasanızdan düşülecek ve ustamıza iletilecektir. Hizmetin başarıyla tamamlandığını onaylıyor musunuz?",
+      i18n.t("text_57"),
+      i18n.t("text_58"),
       [
         {
-          text: "Hizmet sırasında sorun ile karşılaştım",
+          text: i18n.t("text_59"),
           onPress: () => {
             this._handleComplaintService(data);
           },
           style: "cancel"
         },
         {
-          text: "Hizmet başarıyla tamamlandı",
+          text: i18n.t("text_60"),
           onPress: () => {
             approvedService(data.ID).then(({ payload }) => {
               if (payload) {
                 if (payload.data) {
                   Toast.show({
-                    text: "Hizmet onaylama işlemi başarılı.",
-                    buttonText: "Tamam",
+                    text: i18n.t("text_61"),
+                    buttonText: i18n.t("text_6"),
                     duration: 3500
                   });
                   this._handleComponentWillMount();
@@ -277,9 +274,8 @@ class CustomerServiceScreen extends Component {
                 }
               }
               Toast.show({
-                text:
-                  "Hizmet onaylama işlemi başarısız. İnternet bağlantınızı kontrol ediniz.",
-                buttonText: "Tamam",
+                text: i18n.t("text_62"),
+                buttonText: i18n.t("text_6"),
                 duration: 3500
               });
             });
@@ -306,9 +302,8 @@ class CustomerServiceScreen extends Component {
         }
       }
       Toast.show({
-        text:
-          "İşlem sırasında bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_24"),
+        buttonText: i18n.t("text_6"),
         duration: 3500
       });
     });
@@ -318,16 +313,16 @@ class CustomerServiceScreen extends Component {
     const { ComplaintOptionId, Description, data } = this.state;
     if (ComplaintOptionId === 0) {
       Toast.show({
-        text: "Şikayet konusu seçiniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_63"),
+        buttonText: i18n.t("text_6"),
         duration: 3500
       });
       return;
     }
     if (Description.length <= 30 || Description.length >= 1000) {
       Toast.show({
-        text: "Şikayet metniniz 30 ile 1000 karakter arasında olmalıdır.",
-        buttonText: "Tamam",
+        text: i18n.t("text_64"),
+        buttonText: i18n.t("text_6"),
         duration: 3500
       });
       return;
@@ -348,9 +343,8 @@ class CustomerServiceScreen extends Component {
           if (payload.request._response) {
             if (payload.request._response === "success") {
               Toast.show({
-                text:
-                  "Şikayetiniz iletildi. En kısa zamanda sizin ile iletişime geçeceğiz.",
-                buttonText: "Tamam",
+                text: i18n.t("text_65"),
+                buttonText: i18n.t("text_6"),
                 duration: 3500
               });
               this.setState({
@@ -361,9 +355,8 @@ class CustomerServiceScreen extends Component {
               return;
             } else {
               Toast.show({
-                text:
-                  "Şikayet iletilemedi. İnternet bağlantınızı kontrol ediniz.",
-                buttonText: "Tamam",
+                text: i18n.t("text_66"),
+                buttonText: i18n.t("text_6"),
                 duration: 3500
               });
               return;
@@ -372,8 +365,8 @@ class CustomerServiceScreen extends Component {
         }
       }
       Toast.show({
-        text: "Şikayet iletilemedi. İnternet bağlantınızı kontrol ediniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_66"),
+        buttonText: i18n.t("text_6"),
         duration: 3500
       });
     });
@@ -382,23 +375,23 @@ class CustomerServiceScreen extends Component {
   _handleCancelService = data => {
     const { cancelService } = this.props;
     Alert.alert(
-      "Uyarı",
-      "Hizmeti iptal etmek istediğinize emin misiniz?",
+      i18n.t("text_51"),
+      i18n.t("text_67"),
       [
         {
-          text: "Hayır",
+          text: i18n.t("text_68"),
           onPress: () => {},
           style: "cancel"
         },
         {
-          text: "Evet",
+          text: i18n.t("text_69"),
           onPress: () => {
             cancelService(data.ID).then(({ payload }) => {
               if (payload) {
                 if (payload.data) {
                   Toast.show({
-                    text: "İptal işlemi başarılı.",
-                    buttonText: "Tamam",
+                    text: i18n.t("text_70"),
+                    buttonText: i18n.t("text_6"),
                     duration: 3500
                   });
                   this._handleComponentWillMount();
@@ -406,9 +399,8 @@ class CustomerServiceScreen extends Component {
                 }
               }
               Toast.show({
-                text:
-                  "İptal işlemi başarısız. İnternet bağlantınızı kontrol ediniz.",
-                buttonText: "Tamam",
+                text: i18n.t("text_71"),
+                buttonText: i18n.t("text_6"),
                 duration: 3500
               });
             });
@@ -425,49 +417,49 @@ class CustomerServiceScreen extends Component {
         return (
           <TabHeading>
             <Icon name="ios-clipboard" />
-            <Text>Gelen Teklifler</Text>
+            <Text>{i18n.t("text_72")}</Text>
           </TabHeading>
         );
       case "2#Tamamlanmayı Bekleyenler":
         return (
           <TabHeading>
             <Icon name="ios-filing" />
-            <Text>Tamamlanmayı Bekleyenler</Text>
+            <Text>{i18n.t("text_73")}</Text>
           </TabHeading>
         );
       case "3#Onay Bekleyenler":
         return (
           <TabHeading>
             <Icon name="ios-checkmark" />
-            <Text>Onay Bekleyenler</Text>
+            <Text>{i18n.t("text_74")}</Text>
           </TabHeading>
         );
       case "4#Gelen Teklifler":
         return (
           <TabHeading>
             <Icon name="ios-information" />
-            <Text>Gelen Teklifler</Text>
+            <Text>{i18n.t("text_75")}</Text>
           </TabHeading>
         );
       case "5#İptal Edilenler":
         return (
           <TabHeading>
             <Icon name="ios-close" />
-            <Text>İptal Edilenler</Text>
+            <Text>{i18n.t("text_76")}</Text>
           </TabHeading>
         );
       case "6#Bekleyenler":
         return (
           <TabHeading>
             <Icon name="ios-clock" />
-            <Text>Bekleyenler</Text>
+            <Text>{i18n.t("text_77")}</Text>
           </TabHeading>
         );
       default:
         return (
           <TabHeading>
             <Icon name="ios-sync" />
-            <Text>Tamamlananlar</Text>
+            <Text>{i18n.t("text_78")}</Text>
           </TabHeading>
         );
     }
@@ -543,7 +535,7 @@ class CustomerServiceScreen extends Component {
                 page={initialTabActivePage}
               >
                 <Tab
-                  heading="Hizmet Listesi"
+                  heading={i18n.t("text_79")}
                   style={{ backgroundColor: "transparent" }}
                 >
                   <Tabs
@@ -600,7 +592,7 @@ class CustomerServiceScreen extends Component {
                     })}
                   </Tabs>
                 </Tab>
-                <Tab heading="Qr Code">
+                <Tab heading={i18n.t("text_80")}>
                   {getQrCodeLoading ? (
                     <Spinner />
                   ) : (
@@ -610,7 +602,7 @@ class CustomerServiceScreen extends Component {
                     />
                   )}
                 </Tab>
-                <Tab heading="Puan Ver">
+                <Tab heading={i18n.t("text_81")}>
                   {companyServiceRateLoading &&
                   customerServiceIsPointLoading ? (
                     <Spinner />
@@ -644,7 +636,7 @@ class CustomerServiceScreen extends Component {
                     />
                   )}
                 </Tab>
-                <Tab heading="Şikayet Et">
+                <Tab heading={i18n.t("text_82")}>
                   <ComplaintService
                     _handleSetInitialState={this._handleSetInitialState}
                     getComplaintOptionListLoading={
@@ -658,7 +650,7 @@ class CustomerServiceScreen extends Component {
                     }
                   />
                 </Tab>
-                <Tab heading="Hizmet Önizleme">
+                <Tab heading={i18n.t("text_83")}>
                   <CustomerServicePreview
                     styles={styles}
                     servicePreviewDetailLoading={servicePreviewDetailLoading}

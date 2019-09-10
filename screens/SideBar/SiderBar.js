@@ -12,61 +12,63 @@ import {
 } from "native-base";
 import { MidPath } from "../functions";
 import { connect } from "react-redux";
+import i18n from "../../constants/strings";
+
 const routesCustomer = [
   {
     Route: "Home",
-    Text: "Anasayfa"
+    Text: i18n.t("anasayfa")
   },
 
   {
     Route: "CustomerDetail",
-    Text: "Hesap Özeti"
+    Text: i18n.t("hesap_ozeti")
   },
 
   {
     Route: "ContactPage",
-    Text: "Bize Ulaş"
+    Text: i18n.t("bize_ulas")
   },
 
   {
     Route: "Logout",
-    Text: "Çıkış Yap"
+    Text: i18n.t("cikis_yap")
   }
 ];
 const routesCompany = [
   {
     Route: "Home",
-    Text: "Anasayfa"
+    Text: i18n.t("anasayfa")
   },
 
   {
     Route: "CompanyService",
-    Text: "Teklif Ver Para Kazan"
+    Text: i18n.t("teklif_ver_para_kazan")
   },
 
   {
     Route: "CustomerDetail",
-    Text: "Hesap Özeti"
+    Text: i18n.t("hesap_ozeti")
   },
 
   {
     Route: "Chat",
-    Text: "Kartlarım"
+    Text: i18n.t("kartlarim")
   },
 
   {
     Route: "ContactPage",
-    Text: "Bize Ulaş"
+    Text: i18n.t("bize_ulas")
   },
 
   {
     Route: "Chat",
-    Text: "Üyeliği Uzat"
+    Text: i18n.t("uyeligi_uzat")
   },
 
   {
     Route: "Logout",
-    Text: "Çıkış Yap"
+    Text: i18n.t("cikis_yap")
   }
 ];
 class SideBar extends React.Component {
@@ -98,14 +100,14 @@ class SideBar extends React.Component {
                 <Text
                   style={{ marginTop: 135, textAlign: "center", fontSize: 12 }}
                 >
-                  Kullanıcı Kodu :{" "}
+                  {i18n.t("kullanici_kodu")} :{" "}
                   {activeUser.Code ? activeUser.Code.CodeText : ""}
                   {activeUser.ID}
                 </Text>
                 <Text
                   style={{ marginTop: 0, textAlign: "center", fontSize: 12 }}
                 >
-                  Kasadaki Tutar : 250 ₺{" "}
+                  {i18n.t("kasadaki_tutar")} : 250 ₺{" "}
                   <Icon style={{ fontSize: 12 }} name="ios-help" />
                 </Text>
                 <Text>{activeUser.Company.CompanyName}</Text>
@@ -137,13 +139,13 @@ class SideBar extends React.Component {
                       fontSize: 12
                     }}
                   >
-                    Kullanıcı Kodu : {activeUser.Code.CodeText}
+                    {i18n.t("kullanici_kodu")} : {activeUser.Code.CodeText}
                     {activeUser.ID}
                   </Text>
                   <Text
                     style={{ marginTop: 0, textAlign: "center", fontSize: 12 }}
                   >
-                    Kasadaki Tutar : 250 ₺{" "}
+                    {i18n.t("kasadaki_tutar")} : 250 ₺{" "}
                     <Icon style={{ fontSize: 12 }} name="ios-help" />
                   </Text>
                   <Text>{activeUser.Company.CompanyName}</Text>

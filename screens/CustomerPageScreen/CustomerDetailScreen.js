@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { View } from "react-native";
+import React, { useState, useEffect } from "react";
 import {
+  View,
   Icon,
+  Container,
   Button,
-  Root,
   Text,
   Header,
   Left,
@@ -13,126 +13,107 @@ import {
   Spinner,
   Badge
 } from "native-base";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { customerServiceCountData } from "../../src/actions/customerDetailService";
 
-class CustomerDetailScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
+function CustomerDetailScreen({ navigation }) {
+  const { activeUser } = useSelector(state => state.generalServiceGetResponse);
+  const {
+    customerServiceCountLoading,
+    customerServiceCountResult
+  } = useSelector(state => state.customerDetailServiceResponse);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(customerServiceCountData(activeUser.Id));
+  }, []);
+
+  function renderText(item) {
+    switch (item) {
+      case "bekleme":
+        return "Beklemede";
+      case "onaylanan":
+        return "Onaylanan";
+      case "yoruma-acik":
+        return "Yoruma Açık";
+      case "biten":
+        return "Biten";
+      case "iptal-edilen":
+        return "İptal Edilen";
+    }
+    return "";
   }
-  componentWillMount() {
-    this.props.customerServiceCountData(
-      this.props.generalServiceGetResponse.activeUser.Id
-    );
-    this.renderText = function(item) {
-      switch (item) {
-        case "bekleme":
-          return "Beklemede";
-        case "onaylanan":
-          return "Onaylanan";
-        case "yoruma-acik":
-          return "Yoruma Açık";
-        case "biten":
-          return "Biten";
-        case "iptal-edilen":
-          return "İptal Edilen";
-      }
-      return "";
-    };
-  }
+
   _handleServiceCount = () => {
     let data = [];
-    for (
-      let i = 0;
-      i <
-      Object.getOwnPropertyNames(
-        this.props.customerDetailServiceResponse.customerServiceCountResult
-      ).length;
-      i++
-    ) {
-      const item = Object.getOwnPropertyNames(
-        this.props.customerDetailServiceResponse.customerServiceCountResult
-      )[i];
-      data.push(
+    const countResultPropNames = Object.getOwnPropertyNames(
+      customerServiceCountResult
+    );
+    console.log(
+      "LOG: ---------------------------------------------------------------------"
+    );
+    console.log(
+      "LOG: _handleServiceCount -> countResultPropNames",
+      countResultPropNames
+    );
+    console.log(
+      "LOG: ---------------------------------------------------------------------"
+    );
+    return countResultPropNames.map(i => {
+      console.log("LOG: -------------------------------");
+      console.log("LOG: _handleServiceCount -> i", i);
+      console.log("LOG: -------------------------------");
+      const item = countResultPropNames[i];
+      return (
         <View key={"item" + i} style={{ height: 60 }}>
           <View style={{ flex: 1, flexDirection: "row" }}>
             <View style={{ width: 40, height: 50 }}>
               <Badge primary>
-                <Text>
-                  {
-                    this.props.customerDetailServiceResponse
-                      .customerServiceCountResult[item]
-                  }
-                </Text>
+                <Text>{customerServiceCountResult[item]}</Text>
               </Badge>
             </View>
             <View style={{ width: 150, height: 50 }}>
-              <Text>{this.renderText(item)}</Text>
+              <Text>{renderText(item)}</Text>
             </View>
           </View>
         </View>
       );
-    }
-    return data;
+    });
   };
-  render() {
-    const {
-      customerServiceCountLoading
-    } = this.props.customerDetailServiceResponse;
-    if (customerServiceCountLoading) {
-      return <Spinner />;
-    } else {
-      return (
-        <React.Element>
-          <Header>
-            <Left>
-              <Button
-                transparent
-                onPress={() => this.props.navigation.toggleDrawer()}
-              >
-                <Icon name="ios-menu" />
-              </Button>
-            </Left>
-            <Body>
-              <Title>Hesap Özetiniz</Title>
-            </Body>
-            <Right>
-              {/* <Text>{this.state.currentPosition}</Text> */}
-              {/* <Button onPress={() => alert(JSON.stringify(this.state.serviceParameter.Contracts.length))}><Text>Test</Text></Button> */}
-            </Right>
-          </Header>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              padding: 10,
-              alignContent: "flex-start",
-              justifyContent: "flex-start"
-            }}
-          >
-            {this._handleServiceCount()}
-          </View>
-        </React.Element>
-      );
-    }
-  }
+
+  return (
+    <Container>
+      <Header>
+        <Left>
+          <Button transparent onPress={() => navigation.toggleDrawer()}>
+            <Icon name="ios-menu" />
+          </Button>
+        </Left>
+        <Body>
+          <Title>Hesap Özetiniz</Title>
+        </Body>
+        <Right>
+          {/* <Text>{this.state.currentPosition}</Text> */}
+          {/* <Button onPress={() => alert(JSON.stringify(this.state.serviceParameter.Contracts.length))}><Text>Test</Text></Button> */}
+        </Right>
+      </Header>
+      {customerServiceCountLoading ? (
+        <Spinner></Spinner>
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            padding: 10,
+            alignContent: "flex-start",
+            justifyContent: "flex-start"
+          }}
+        >
+          {_handleServiceCount()}
+        </View>
+      )}
+    </Container>
+  );
 }
 
-const mapStateToProps = ({
-  customerDetailServiceResponse,
-  generalServiceGetResponse
-}) => ({
-  customerDetailServiceResponse,
-  generalServiceGetResponse
-});
-
-const mapDispatchToProps = {
-  customerServiceCountData
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CustomerDetailScreen);
+export default CustomerDetailScreen;

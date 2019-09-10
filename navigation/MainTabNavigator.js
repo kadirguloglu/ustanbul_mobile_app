@@ -116,7 +116,7 @@ const tabNavigator = createBottomTabNavigator(
   {
     HomeStack,
     SearchStack,
-    ServiceStack,
+    //ServiceStack,
     UserMenuStack
     // LinksStack,
     // SettingsStack
@@ -130,8 +130,8 @@ const tabNavigator = createBottomTabNavigator(
 
 const drawer = createDrawerNavigator(
   {
-    Home: { screen: tabNavigator },
     Login: { screen: LoginScreen },
+    Home: { screen: tabNavigator },
     Service: { screen: ServicesScreen },
     CustomerDetail: { screen: CustomerDetailScreen },
     CustomerService: { screen: CustomerServiceScreen },

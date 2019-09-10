@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Spinner } from "native-base";
 import { ScrollView } from "react-native";
 
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
 const CustomerServicePreview = props => {
@@ -23,51 +24,67 @@ const CustomerServicePreview = props => {
           ) : servicePreviewDetailResult ? (
             <View>
               <Text style={styles.ServicePreviewItemText}>
-                Adres Açıklaması
+                {i18n.t("text_117")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
                 {servicePreviewDetailResult.AddressDescription}
               </Text>
-              <Text style={styles.ServicePreviewItemText}>Not</Text>
+              <Text style={styles.ServicePreviewItemText}>
+                {i18n.t("text_30")}
+              </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
                 {servicePreviewDetailResult.Note}
               </Text>
-              <Text style={styles.ServicePreviewItemText}>Garantörlü mü?</Text>
-              <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsGuarantor ? "Evet" : "Hayir"}
-              </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Müşteri onaydı mı?
+                {i18n.t("text_118")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsApproved ? "Evet" : "Hayir"}
+                {servicePreviewDetailResult.IsGuarantor
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Usta onayladı mı?
+                {i18n.t("text_119")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsMasterApproved ? "Evet" : "Hayir"}
+                {servicePreviewDetailResult.IsApproved
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Keşif istendi mi?
+                {i18n.t("text_120")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsDiscovery ? "Evet" : "Hayir"}
+                {servicePreviewDetailResult.IsMasterApproved
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Ödeme yapıldı mı?
+                {i18n.t("text_121")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsPayment ? "Evet" : "Hayir"}
+                {servicePreviewDetailResult.IsDiscovery
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                İptal edildi mi?
+                {i18n.t("text_122")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsActive ? "Evet" : "Hayir"}
+                {servicePreviewDetailResult.IsPayment
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Ülke / İl / İlçe / Mahalle
+                {i18n.t("text_123")}
+              </Text>
+              <Text style={styles.ServicePreviewItemTextAnswer}>
+                {servicePreviewDetailResult.IsActive
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
+              </Text>
+              <Text style={styles.ServicePreviewItemText}>
+                {i18n.t("text_124")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
                 {servicePreviewDetailResult.CountryName
@@ -121,7 +138,7 @@ const CustomerServicePreview = props => {
         <MyButton
           full={true}
           press={() => _handleSetInitialState("initialTabActivePage", 0)}
-          text="Kapat"
+          text={i18n.t("text_125")}
         />
       </View>
     </View>

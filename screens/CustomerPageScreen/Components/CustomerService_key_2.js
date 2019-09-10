@@ -1,5 +1,7 @@
 import React from "react";
 import { View } from "native-base";
+
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
 const CustomerServiceKey2 = props => {
@@ -17,7 +19,7 @@ const CustomerServiceKey2 = props => {
         buttonStyle={styles.buttonStyle}
         press={_handleGetQrCodeForMasterApproved}
         parameters={[data]}
-        text="Usta onayı için QR oluştur"
+        text={i18n.t("text_132")}
         textStyle={styles.iconText}
       />
       <MyButton
@@ -26,7 +28,7 @@ const CustomerServiceKey2 = props => {
         press={_handlerPreviewSelectedService}
         parameters={[data]}
         textStyle={styles.iconText}
-        text="İncele"
+        text={i18n.t("text_129")}
       />
       <MyButton
         full
@@ -34,7 +36,7 @@ const CustomerServiceKey2 = props => {
         press={_handleCancelService}
         parameters={[data]}
         textStyle={styles.iconText}
-        text="İptal et"
+        text={i18n.t("text_130")}
       />
     </View>
   );

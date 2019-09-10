@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { View, Item, Picker, Icon, Spinner, Input, Text } from "native-base";
 
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
 const ComplaintService = props => {
@@ -20,12 +21,12 @@ const ComplaintService = props => {
   return (
     <View padder>
       <View style={styles.topView}>
-        <Text style={styles.questionText}>Şikayet Konusu</Text>
+        <Text style={styles.questionText}>{i18n.t("text_135")}</Text>
         <Item>
           <Picker
             mode="dropdown"
             iosIcon={<Icon name="ios-arrow-down" />}
-            placeholder={"Şikayet Konusu"}
+            placeholder={i18n.t("text_135")}
             placeholderStyle={{ color: "#bfc6ea" }}
             placeholderIconColor="#007aff"
             style={{ width: undefined }}
@@ -34,7 +35,11 @@ const ComplaintService = props => {
               _handleSetInitialState("ComplaintOptionId", value)
             }
           >
-            <Picker.Item key={"dropdown-0"} label={"Seçiniz"} value={0} />
+            <Picker.Item
+              key={"dropdown-0"}
+              label={i18n.t("text_136")}
+              value={0}
+            />
             {getComplaintOptionListResult.map(item => {
               return (
                 <Picker.Item
@@ -48,7 +53,7 @@ const ComplaintService = props => {
         </Item>
       </View>
       <View style={styles.topView}>
-        <Text style={styles.questionText}>Şikayetiniz</Text>
+        <Text style={styles.questionText}>{i18n.t("text_137")}</Text>
         <Item>
           <Input
             onChangeText={value => _handleSetInitialState("Description", value)}
@@ -59,7 +64,7 @@ const ComplaintService = props => {
       <View style={styles.topView}>
         <MyButton
           full={true}
-          text="Şikayet Mesajını Gönder"
+          text={i18n.t("text_138")}
           press={_handlePostServiceComplaint}
         />
       </View>

@@ -1,6 +1,8 @@
 import React from "react";
 import { Header, Left, Right, Body, Button, Icon, Title } from "native-base";
 
+import i18n from "../../../constants/strings";
+
 const CustomerServiceHeader = props => {
   const { initialTabActivePage, navigation, _handleSetInitialState } = props;
   return (
@@ -41,7 +43,7 @@ const CustomerServiceHeader = props => {
         ) : null}
       </Left>
       <Body>
-        <Title>Hizmetlerim</Title>
+        <Title>{i18n.t("text_134")}</Title>
       </Body>
       <Right />
     </Header>

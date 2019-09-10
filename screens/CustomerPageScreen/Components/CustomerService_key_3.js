@@ -1,5 +1,7 @@
 import React from "react";
 import { View } from "native-base";
+
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
 const CustomerServiceKey3 = props => {
@@ -17,7 +19,7 @@ const CustomerServiceKey3 = props => {
         buttonStyle={styles.buttonStyle}
         press={_handleApprovedService}
         parameters={[data]}
-        text="Hizmeti onayla"
+        text={i18n.t("text_131")}
         textStyle={styles.iconText}
       />
       <MyButton
@@ -26,14 +28,14 @@ const CustomerServiceKey3 = props => {
         press={_handlerPreviewSelectedService}
         parameters={[data]}
         textStyle={styles.iconText}
-        text="İncele"
+        text={i18n.t("text_129")}
       />
       <MyButton
         full
         buttonStyle={styles.buttonStyle}
         press={_handleComplaintService}
         parameters={[data]}
-        text="Şikayet et"
+        text={i18n.t("text_82")}
         textStyle={styles.iconText}
       />
     </View>

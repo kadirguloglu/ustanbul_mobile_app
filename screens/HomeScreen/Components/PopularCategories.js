@@ -10,6 +10,7 @@ import {
 import { Spinner, Container, Content } from "native-base";
 import { FontAwesome } from "@expo/vector-icons";
 import Carousel from "react-native-snap-carousel";
+import i18n from "../../../constants/strings";
 
 import { SmallPath } from "../../../src/functions";
 import styles, { sliderWidth, itemWidth } from "../styles";
@@ -19,7 +20,8 @@ const PopularCategories = props => {
   return (
     <View>
       <Text style={styles.title_text}>
-        POPÜLER KATEGORİLER{"   "}
+        {i18n.t("text_44")}
+        {"   "}
         <FontAwesome
           style={styles.fontawesome1}
           name="arrow-circle-right"

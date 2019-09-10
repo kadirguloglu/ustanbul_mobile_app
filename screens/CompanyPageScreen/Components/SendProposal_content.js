@@ -16,6 +16,7 @@ import {
   Body
 } from "native-base";
 
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
 const SendProposal = props => {
@@ -40,7 +41,7 @@ const SendProposal = props => {
     >
       <Tab heading={"sendProposalQuestion-0"} style={styles.tabStyle}>
         <View>
-          <Text style={styles.questionStyle}>{"Teklifiniz"}</Text>
+          <Text style={styles.questionStyle}>{i18n.t("text_178")}</Text>
         </View>
         <View>
           <Item rounded>
@@ -57,7 +58,7 @@ const SendProposal = props => {
           </Item>
         </View>
         <View>
-          <Text style={styles.helperTextWithInput}>{"* Zorunlu alan"}</Text>
+          <Text style={styles.helperTextWithInput}>* {i18n.t("text_166")}</Text>
         </View>
         <View style={styles.buttonStyle}>
           <MyButton
@@ -65,8 +66,8 @@ const SendProposal = props => {
             text={
               masterServiceProposalQuestionPageData.length ===
               tabProposalSendActivePage
-                ? "Tamamla"
-                : "İleri"
+                ? i18n.t("text_27")
+                : i18n.t("text_28")
             }
             press={
               masterServiceProposalQuestionPageData.length ===
@@ -130,15 +131,20 @@ const SendProposal = props => {
                 {item.IsRequired ? (
                   <View>
                     <Text style={styles.helperTextWithInput}>
-                      * Zorunlu alan. En fazla {item.QuestionMaxValue} karakter.
-                      En az {item.QuestionMinValue} karakter giriniz.
+                      * {i18n.t("text_166")}.{" "}
+                      {i18n.t("text_179", {
+                        v1: item.QuestionMaxValue,
+                        v2: item.QuestionMinValue
+                      })}
                     </Text>
                   </View>
                 ) : (
                   <View>
                     <Text style={styles.helperTextWithInput}>
-                      En fazla {item.QuestionMaxValue} karakter. En az{" "}
-                      {item.QuestionMinValue} karakter giriniz.
+                      {i18n.t("text_179", {
+                        v1: item.QuestionMaxValue,
+                        v2: item.QuestionMinValue
+                      })}
                     </Text>
                   </View>
                 )}
@@ -148,8 +154,8 @@ const SendProposal = props => {
                     text={
                       masterServiceProposalQuestionPageData.length ===
                       tabProposalSendActivePage
-                        ? "Tamamla"
-                        : "İleri"
+                        ? i18n.t("text_27")
+                        : i18n.t("text_28")
                     }
                     press={
                       masterServiceProposalQuestionPageData.length ===
@@ -213,15 +219,20 @@ const SendProposal = props => {
                 {item.IsRequired ? (
                   <View>
                     <Text style={styles.helperTextWithInput}>
-                      * Zorunlu alan. En fazla {item.QuestionMaxValue}. En az{" "}
-                      {item.QuestionMinValue} giriniz.
+                      * {i18n.t("text_166")}
+                      {i18n.t("text_179", {
+                        v1: item.QuestionMaxValue,
+                        v2: item.QuestionMinValue
+                      })}
                     </Text>
                   </View>
                 ) : (
                   <View>
                     <Text style={styles.helperTextWithInput}>
-                      En fazla {item.QuestionMaxValue}. En az{" "}
-                      {item.QuestionMinValue} giriniz.
+                      {i18n.t("text_179", {
+                        v1: item.QuestionMaxValue,
+                        v2: item.QuestionMinValue
+                      })}
                     </Text>
                   </View>
                 )}
@@ -231,8 +242,8 @@ const SendProposal = props => {
                     text={
                       masterServiceProposalQuestionPageData.length ===
                       tabProposalSendActivePage
-                        ? "Tamamla"
-                        : "İleri"
+                        ? i18n.t("text_27")
+                        : i18n.t("text_28")
                     }
                     press={
                       masterServiceProposalQuestionPageData.length ===
@@ -303,7 +314,7 @@ const SendProposal = props => {
                 {item.IsRequired ? (
                   <View>
                     <Text style={styles.helperTextWithInput}>
-                      * Zorunlu alan.
+                      * {i18n.t("text_166")}.
                     </Text>
                   </View>
                 ) : null}
@@ -313,8 +324,8 @@ const SendProposal = props => {
                     text={
                       masterServiceProposalQuestionPageData.length ===
                       tabProposalSendActivePage
-                        ? "Tamamla"
-                        : "İleri"
+                        ? i18n.t("text_27")
+                        : i18n.t("text_28")
                     }
                     press={
                       masterServiceProposalQuestionPageData.length ===
@@ -376,7 +387,7 @@ const SendProposal = props => {
                     >
                       <Picker.Item
                         key={"dropdown--1"}
-                        label={"Seçiniz"}
+                        label={i18n.t("text_136")}
                         value={-1}
                       />
                       {item.Answers.map(ans => {
@@ -394,7 +405,7 @@ const SendProposal = props => {
                 {item.IsRequired ? (
                   <View>
                     <Text style={styles.helperTextWithInput}>
-                      * Zorunlu alan.
+                      * {i18n.t("text_166")}.
                     </Text>
                   </View>
                 ) : null}
@@ -404,8 +415,8 @@ const SendProposal = props => {
                     text={
                       masterServiceProposalQuestionPageData.length ===
                       tabProposalSendActivePage
-                        ? "Tamamla"
-                        : "İleri"
+                        ? i18n.t("text_27")
+                        : i18n.t("text_28")
                     }
                     press={
                       masterServiceProposalQuestionPageData.length ===
@@ -489,16 +500,20 @@ const SendProposal = props => {
                 {item.IsRequired ? (
                   <View>
                     <Text style={styles.helperTextWithInput}>
-                      * Zorunlu alan. En fazla {item.QuestionMaxValue} seçim. En
-                      az {item.QuestionMinValue} seçin yapabilirsiniz.
+                      * {i18n.t("text_166")}
+                      {i18n.t("text_179", {
+                        v1: item.QuestionMaxValue,
+                        v2: item.QuestionMinValue
+                      })}
                     </Text>
                   </View>
                 ) : (
                   <View>
                     <Text style={styles.helperTextWithInput}>
-                      En fazla {item.QuestionMaxValue}. En fazla{" "}
-                      {item.QuestionMaxValue} seçim. En az{" "}
-                      {item.QuestionMinValue} seçin yapabilirsiniz.
+                      {i18n.t("text_179", {
+                        v1: item.QuestionMaxValue,
+                        v2: item.QuestionMinValue
+                      })}
                     </Text>
                   </View>
                 )}
@@ -508,8 +523,8 @@ const SendProposal = props => {
                     text={
                       masterServiceProposalQuestionPageData.length ===
                       tabProposalSendActivePage
-                        ? "Tamamla"
-                        : "İleri"
+                        ? i18n.t("text_27")
+                        : i18n.t("text_28")
                     }
                     press={
                       masterServiceProposalQuestionPageData.length ===

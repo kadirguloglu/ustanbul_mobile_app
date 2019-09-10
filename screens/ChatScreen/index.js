@@ -1,14 +1,5 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  Animated,
-  RefreshControl,
-  ScrollView,
-  TouchableHighlight,
-  TextInput
-} from "react-native";
+import { StyleSheet, View, Dimensions, Animated } from "react-native";
 import {
   Icon,
   Button,
@@ -19,22 +10,18 @@ import {
   Container,
   Header,
   Content,
-  List,
-  ListItem,
   Left,
   Body,
   Right,
-  Thumbnail,
   Text,
   Tabs,
-  Tab,
-  Input,
-  Item
+  Tab
 } from "native-base";
 import { connect } from "react-redux";
 import moment from "moment";
 import { NavigationEvents } from "react-navigation";
 
+import i18n from "../../constants/strings";
 import { messageUserList } from "../../src/actions/messageServiceGet";
 import { userChatReadMessage } from "../../src/actions/messageServicePost";
 import { userChatMessageOld } from "../../src/actions/serviceService";
@@ -177,8 +164,8 @@ class ChatScreen extends Component {
     const { UserID } = selectedMessageUser;
     if (this.state.writingMessage < 4) {
       Toast.show({
-        text: "En az 4 karakter yazmalısınız.",
-        buttonText: "Tamam",
+        text: i18n.t("text_185", { v: 4 }),
+        buttonText: i18n.t("text_6"),
         duration: 2500
       });
       return;
@@ -195,8 +182,8 @@ class ChatScreen extends Component {
         })
         .catch(() => {
           Toast.show({
-            text: "Mesajınız gönderilemedi. Tekrar deneyiniz.",
-            buttonText: "Tamam",
+            text: i18n.t("text_186"),
+            buttonText: i18n.t("text_6"),
             duration: 2500
           });
         });
@@ -294,7 +281,7 @@ class ChatScreen extends Component {
       }
       return <Spinner key={"message-spin"} />;
     } else {
-      return <Text key={"message-error"}>Mesajlar Yüklenemedi</Text>;
+      return <Text key={"message-error"}>{i18n.t("text_187")}</Text>;
     }
   };
 
@@ -307,7 +294,7 @@ class ChatScreen extends Component {
           if (element.IsWriting) {
             return (
               <Text note style={styles.writingText}>
-                yazıyor...
+                {i18n.t("text_188")}
               </Text>
             );
           } else return null;
@@ -379,7 +366,7 @@ class ChatScreen extends Component {
                 <Title style={{ color: "white" }}>
                   {messageTabPage == 1
                     ? selectedMessageUser.SenderName
-                    : "Sohbetler"}
+                    : i18n.t("text_189")}
                 </Title>
               </Body>
               <Right />

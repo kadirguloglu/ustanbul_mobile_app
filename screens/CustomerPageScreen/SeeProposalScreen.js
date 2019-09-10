@@ -19,6 +19,7 @@ import { ScrollView } from "react-native";
 import { connect } from "react-redux";
 import { NavigationEvents } from "react-navigation";
 
+import i18n from "../../constants/strings";
 import GaveProposals from "./Components/GaveProposals";
 import CanGiveProposals from "./Components/CanGiveProposals";
 import ProposalDetail from "./Components/SeeProposal_proposal_detail";
@@ -63,8 +64,8 @@ class SeeProposalScreen extends Component {
         if (payload.request) {
           if (payload.request._response === "success") {
             Toast.show({
-              text: "Teklif onaylandı ve ustaya bilgi verildi.",
-              buttonText: "Tamam",
+              text: i18n.t("text_45"),
+              buttonText: i18n.t("text_27"),
               duration: 5500
             });
             navigation.navigate("CustomerService", {
@@ -75,9 +76,8 @@ class SeeProposalScreen extends Component {
         }
       }
       Toast.show({
-        text:
-          "Teklif onaylama başarısız. Lütfen internet bağlantınızı kontrol ediniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_46"),
+        buttonText: i18n.t("text_27"),
         duration: 5500
       });
     });
@@ -142,13 +142,13 @@ class SeeProposalScreen extends Component {
             <Right />
           </Header>
           <Tabs>
-            <Tab heading="Gelen Teklifler">
+            <Tab heading={i18n.t("text_47")}>
               <Tabs
                 renderTabBar={() => <View />}
                 page={proposalListPage}
                 locked={true}
               >
-                <Tab heading="Teklif Listesi">
+                <Tab heading={i18n.t("text_48")}>
                   <ScrollView>
                     <GaveProposals
                       serviceCustomerPageData={serviceCustomerPageData}
@@ -161,7 +161,7 @@ class SeeProposalScreen extends Component {
                     />
                   </ScrollView>
                 </Tab>
-                <Tab heading="Teklif Detayı">
+                <Tab heading={i18n.t("text_49")}>
                   {serviceProposalPreviewLoading ? null : (
                     <ProposalDetail
                       serviceProposalPreviewLoading={
@@ -178,7 +178,7 @@ class SeeProposalScreen extends Component {
                 </Tab>
               </Tabs>
             </Tab>
-            <Tab heading="Teklif Verebilecekler">
+            <Tab heading={i18n.t("text_50")}>
               <ScrollView>
                 <CanGiveProposals
                   serviceCustomerPageData={serviceCustomerPageData}

@@ -2,6 +2,7 @@ import React from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { View, Spinner, Text } from "native-base";
 
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
 const ProposalDetail = props => {
@@ -31,19 +32,21 @@ const ProposalDetail = props => {
                   <Text style={styles.questionText}>
                     Soru : {item.Question}
                   </Text>
-                  <Text style={styles.answerText}>Cevap : {item.Answer}</Text>
+                  <Text style={styles.answerText}>
+                    {i18n.t("text_102")} : {item.Answer}
+                  </Text>
                 </View>
               );
             })}
           </View>
         )}
         {activeService.IsDiscovery ? (
-          <Text style={styles.proposalText}>{`Net teklif : ${
+          <Text style={styles.proposalText}>{`${i18n.t("text_103")} : ${
             activeProposal.Price
           } ₺`}</Text>
         ) : null}
         {!activeService.IsDiscovery ? (
-          <Text style={styles.proposalText}>{`Ortalama teklif : ${
+          <Text style={styles.proposalText}>{`${i18n.t("text_104")} : ${
             activeProposal.Price
           } ₺`}</Text>
         ) : null}
@@ -58,7 +61,7 @@ const ProposalDetail = props => {
                     "activeService.IsDiscovery && !activeProposal.IsDiscoveryApproved ?"
                   )
                 }
-                text={`Keşif için onayla`}
+                text={i18n.t("text_105")}
                 full={true}
               />
             ) : null}
@@ -66,7 +69,7 @@ const ProposalDetail = props => {
               <MyButton
                 buttonStyle={styles.button}
                 press={() => console.log("activeService.IsApproved ?")}
-                text={`Teklif daha önce onaylanmış`}
+                text={i18n.t("text_106")}
                 full={true}
               />
             ) : null}
@@ -74,7 +77,7 @@ const ProposalDetail = props => {
               buttonStyle={styles.button}
               press={_handleSendMasterMessage}
               parameters={[activeService, activeProposal]}
-              text={`Ustaya mesaj gönder`}
+              text={i18n.t("text_107")}
               full={true}
             />
             {!activeService.IsDiscovery &&
@@ -84,7 +87,7 @@ const ProposalDetail = props => {
                 buttonStyle={styles.button}
                 press={_handleServicePost}
                 parameters={[activeService, activeProposal]}
-                text={`Teklifi onayla ve ödemeyi yap`}
+                text={i18n.t("text_108")}
                 full={true}
               />
             ) : null}
@@ -99,7 +102,7 @@ const ProposalDetail = props => {
                     "activeService.IsDiscovery && activeProposal.IsDiscoveryApproved && activeService.IsGuarantor && !activeProposal.IsApproved"
                   )
                 }
-                text={`Teklifi onayla ve ödemeyi yap`}
+                text={i18n.t("text_108")}
                 full={true}
               />
             ) : null}
@@ -109,7 +112,7 @@ const ProposalDetail = props => {
       <View>
         <MyButton
           press={() => _handleSetInitialState("proposalListPage", 0)}
-          text="Geri dön"
+          text={i18n.t("text_109")}
           full={true}
         />
       </View>

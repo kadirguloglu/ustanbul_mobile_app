@@ -20,6 +20,8 @@ import {
   Picker
 } from "native-base";
 import { connect } from "react-redux";
+
+import i18n from "../../constants/strings";
 import {
   userUpdateData,
   customerUpdateData,
@@ -68,7 +70,7 @@ class CustomerDetailProfileScreen extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.userUpdateResult == true && this.state.getToast) {
       Toast.show({
-        text: "Güncelleme işlemi başarıyla tamamlandı.",
+        text: i18n.t("text_84"),
         buttonText: "Tamam",
         duration: 2500
       });
@@ -76,7 +78,7 @@ class CustomerDetailProfileScreen extends Component {
       this.setState({ getToast: false });
     } else if (nextProps.userUpdateResult == false && this.state.getToast) {
       Toast.show({
-        text: "Güncelleme işlemi başarısız.",
+        text: i18n.t("text_85"),
         buttonText: "Tamam",
         duration: 2500
       });
@@ -100,7 +102,7 @@ class CustomerDetailProfileScreen extends Component {
               </Button>
             </Left>
             <Body>
-              <Title>Hesap Bilgileriniz</Title>
+              <Title>{i18n.t("text_86")}</Title>
             </Body>
             <Right />
           </Header>
@@ -114,17 +116,17 @@ class CustomerDetailProfileScreen extends Component {
                   fontSize: 24
                 }}
               >
-                Hesap Bilgileriniz
+                {i18n.t("text_86")}
               </Text>
             </View>
             <View>
               <View>
-                <Text>Kullanıcı Adı</Text>
+                <Text>{i18n.t("text_87")}</Text>
               </View>
               <View>
                 <Item rounded>
                   <Input
-                    placeholder="Kullanıcı Adı"
+                    placeholder={i18n.t("text_87")}
                     onChangeText={value =>
                       this.setState({
                         UserParameter: {
@@ -152,12 +154,12 @@ class CustomerDetailProfileScreen extends Component {
             </View>
             <View>
               <View>
-                <Text>E-Posta Adresiniz</Text>
+                <Text>{i18n.t("text_88")}</Text>
               </View>
               <View>
                 <Item rounded>
                   <Input
-                    placeholder="E-Posta Adresiniz"
+                    placeholder={i18n.t("text_88")}
                     onChangeText={value =>
                       this.setState({
                         UserParameter: {
@@ -185,12 +187,12 @@ class CustomerDetailProfileScreen extends Component {
             </View>
             <View>
               <View>
-                <Text>Telefon Numaranız</Text>
+                <Text>{i18n.t("text_89")}</Text>
               </View>
               <View>
                 <Item rounded>
                   <Input
-                    placeholder="Telefon Numaranız"
+                    placeholder={i18n.t("text_89")}
                     onChangeText={value =>
                       this.setState({
                         UserParameter: {
@@ -218,12 +220,12 @@ class CustomerDetailProfileScreen extends Component {
             </View>
             <View>
               <View>
-                <Text>Parolanız</Text>
+                <Text>{i18n.t("text_90")}</Text>
               </View>
               <View>
                 <Item rounded>
                   <Input
-                    placeholder="Parolanız"
+                    placeholder={i18n.t("text_90")}
                     onChangeText={value =>
                       this.setState({
                         UserParameter: {
@@ -246,22 +248,21 @@ class CustomerDetailProfileScreen extends Component {
                       : styles.help_block_error
                   }
                 >
-                  Parolanız şifrelenmiştir. Bu alanı şifre değişikliği
-                  istemiyorsanız güncellemeyin.{" "}
-                  {this.state.UserParameter.Password.length} / 50{" "}
+                  {i18n.t("text_91")} {this.state.UserParameter.Password.length}{" "}
+                  / 50{" "}
                 </Text>
               </View>
             </View>
             <View>
               <View>
-                <Text>Bildirim Yönetiminiz</Text>
+                <Text>{i18n.t("text_92")}</Text>
               </View>
               <View>
                 <Item rounded>
                   <Picker
                     mode="dropdown"
                     iosIcon={<Icon name="ios-arrow-down-outline" />}
-                    placeholder={"Bildirim Yönetiminiz"}
+                    placeholder={i18n.t("text_92")}
                     placeholderStyle={{ color: "#bfc6ea" }}
                     placeholderIconColor="#007aff"
                     style={{ width: undefined }}
@@ -275,12 +276,9 @@ class CustomerDetailProfileScreen extends Component {
                       })
                     }
                   >
-                    <Picker.Item label={"Email ile bildirim"} value={1} />
-                    <Picker.Item label={"Sms ile bildirim"} value={2} />
-                    <Picker.Item
-                      label={"Sms ve email ile bildirim"}
-                      value={3}
-                    />
+                    <Picker.Item label={i18n.t("text_93")} value={1} />
+                    <Picker.Item label={i18n.t("text_94")} value={2} />
+                    <Picker.Item label={i18n.t("text_95")} value={3} />
                   </Picker>
                 </Item>
               </View>
@@ -290,7 +288,7 @@ class CustomerDetailProfileScreen extends Component {
             </View>
             <View>
               <View>
-                <Text>Bülten Aboneliği</Text>
+                <Text>{i18n.t("text_96")}</Text>
               </View>
               <View>
                 <ListItem
@@ -314,7 +312,7 @@ class CustomerDetailProfileScreen extends Component {
                       })
                     }
                   >
-                    <Text>{"Bülten Aboneliği"}</Text>
+                    <Text>{i18n.t("text_96")}</Text>
                   </Body>
                 </ListItem>
               </View>
@@ -325,7 +323,7 @@ class CustomerDetailProfileScreen extends Component {
             <View>
               <MyButton
                 press={() => this.handlerUserUpdate()}
-                text="Hesap Bilgilerimi Kaydet"
+                text={i18n.t("text_97")}
               />
               {/* <TouchableHighlight onPress={() => this.handlerUserUpdate()}>
                                 <Text>Hesap Bilgilerimi Kaydet</Text>
@@ -341,17 +339,17 @@ class CustomerDetailProfileScreen extends Component {
                   fontSize: 24
                 }}
               >
-                Kullanıcı Bilgileriniz
+                {i18n.t("text_98")}
               </Text>
             </View>
             <View>
               <View>
-                <Text>Adınız</Text>
+                <Text>{i18n.t("text_99")}</Text>
               </View>
               <View>
                 <Item rounded>
                   <Input
-                    placeholder="Adınız"
+                    placeholder={i18n.t("text_99")}
                     onChangeText={value =>
                       this.setState({
                         CustomerParameter: {
@@ -379,12 +377,12 @@ class CustomerDetailProfileScreen extends Component {
             </View>
             <View>
               <View>
-                <Text>Soyadınız</Text>
+                <Text>{i18n.t("text_100")}</Text>
               </View>
               <View>
                 <Item rounded>
                   <Input
-                    placeholder="Soyadınız"
+                    placeholder={i18n.t("text_100")}
                     onChangeText={value =>
                       this.setState({
                         CustomerParameter: {
@@ -413,7 +411,7 @@ class CustomerDetailProfileScreen extends Component {
             <View style={{ paddingBottom: 20 }}>
               <MyButton
                 press={() => this.handlerCustomerUpdate()}
-                text="Kullanıcı Bilgilerimi Kaydet"
+                text={i18n.t("text_101")}
               />
             </View>
           </Content>

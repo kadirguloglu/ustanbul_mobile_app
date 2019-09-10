@@ -2,10 +2,11 @@ import React from "react";
 import { Linking } from "react-native";
 import { View } from "native-base";
 
+import i18n from "../../../constants/strings";
 import { siteUrl } from "../../../src/functions";
 import MyButton from "../../../components/MyButton";
 
-export default (Buttons = props => {
+export default Buttons = props => {
   const {
     styles,
     item,
@@ -14,9 +15,7 @@ export default (Buttons = props => {
   } = props;
 
   handleClick = () => {
-    const link = `${siteUrl}/CompanyDetail/CompanyPreview/${
-      item.ServiceProposalID
-    }/${item.CustomerServiceID}`;
+    const link = `${siteUrl}/CompanyDetail/CompanyPreview/${item.ServiceProposalID}/${item.CustomerServiceID}`;
     Linking.canOpenURL(link).then(supported => {
       if (supported) {
         Linking.openURL(link);
@@ -31,16 +30,16 @@ export default (Buttons = props => {
       <MyButton
         spinner={serviceProposalPreviewLoading}
         buttonStyle={styles.button1}
-        text="Profili gör"
+        text={i18n.t("text_112")}
         press={handleClick}
       />
       <MyButton
         spinner={serviceProposalPreviewLoading}
         buttonStyle={styles.button2}
-        text="Teklifi incele"
+        text={i18n.t("text_113")}
         press={serviceProposalPreview}
         parameters={[item]}
       />
     </View>
   );
-});
+};

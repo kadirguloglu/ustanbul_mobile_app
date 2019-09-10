@@ -22,6 +22,8 @@ import {
 import Dialog from "react-native-dialog";
 import { Permissions } from "expo";
 
+import i18n from "../../constants/strings";
+
 import { ThemeColor } from "../../src/functions";
 
 import { servicePreviewDetailQuestionData } from "../../src/actions/customerDetailService";
@@ -145,8 +147,8 @@ class CompanyServiceScreen extends Component {
     } = serviceServiceResponse;
     if (newProposalRegex == false) {
       Toast.show({
-        text: "Teklifinizi kontrol ediniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_152"),
+        buttonText: i18n.t("text_6"),
         duration: 2500
       });
       return;
@@ -157,16 +159,16 @@ class CompanyServiceScreen extends Component {
         switch (payload.status) {
           case 200:
             Toast.show({
-              text: "Teklifiniz güncellendi.",
-              buttonText: "Tamam",
+              text: i18n.t("text_153"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             });
             this._handleComponentWillMount();
             break;
           default:
             Toast.show({
-              text: "Teklifiniz güncellenirken hata oluştu. Tekrar deneyiniz.",
-              buttonText: "Tamam",
+              text: i18n.t("text_154"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             });
             break;
@@ -179,16 +181,16 @@ class CompanyServiceScreen extends Component {
     const { hasCameraPermission } = this.state;
     if (hasCameraPermission === null) {
       Toast.show({
-        text: "Kodu okutmak için kamera erişim izni vermelisiniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_155"),
+        buttonText: i18n.t("text_6"),
         duration: 3500
       });
       return;
     }
     if (hasCameraPermission === false) {
       Toast.show({
-        text: "Kodu okutmak için kamera erişim izni vermelisiniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_155"),
+        buttonText: i18n.t("text_6"),
         duration: 3500
       });
       return;
@@ -209,33 +211,30 @@ class CompanyServiceScreen extends Component {
             switch (payload.data) {
               case "1":
                 Toast.show({
-                  text:
-                    "Kod oluşturulduktan sonra 2 dakika içinde okutulmalıdır. Lütfen müşterinizden yeni bir kod oluşturmasını isteyiniz.",
-                  buttonText: "Tamam",
+                  text: i18n.t("text_156"),
+                  buttonText: i18n.t("text_6"),
                   duration: 3500
                 });
                 return;
               case "2":
                 Toast.show({
-                  text: "Kod bulunamadı. Lütfen Tekrar Deneyiniz.",
-                  buttonText: "Tamam",
+                  text: i18n.t("text_157"),
+                  buttonText: i18n.t("text_6"),
                   duration: 3500
                 });
                 return;
               case "success":
                 Toast.show({
-                  text:
-                    "İşlem başarılı. Size hizmeti onaylayarak ücret transferini gerçekleştirebilirsiniz.",
-                  buttonText: "Tamam",
+                  text: i18n.t("text_158"),
+                  buttonText: i18n.t("text_6"),
                   duration: 3500
                 });
                 this._handleComponentWillMount();
                 return;
               default:
                 Toast.show({
-                  text:
-                    "İşlem sırasında hata oluştu. İnternet bağlantınız kontrol ediniz.",
-                  buttonText: "Tamam",
+                  text: i18n.t("text_8"),
+                  buttonText: i18n.t("text_6"),
                   duration: 3500
                 });
                 return;
@@ -243,9 +242,8 @@ class CompanyServiceScreen extends Component {
           }
         }
         Toast.show({
-          text:
-            "İşlem sırasında hata oluştu. İnternet bağlantınız kontrol ediniz.",
-          buttonText: "Tamam",
+          text: i18n.t("text_8"),
+          buttonText: i18n.t("text_6"),
           duration: 3500
         });
       });
@@ -299,22 +297,22 @@ class CompanyServiceScreen extends Component {
             setInitialState={this.setInitialState}
           />
           <Dialog.Container visible={dialogVisible}>
-            <Dialog.Title>Teklif Güncelleme</Dialog.Title>
+            <Dialog.Title>{i18n.t("text_159")}</Dialog.Title>
             <Dialog.Description>
               {!newProposalRegex
-                ? "Yeni teklifinizi yazınız. Sayısal Değer Giriniz"
-                : "Yeni teklifinizi yazınız."}
+                ? i18n.t("text_160") + " " + i18n.t("text_161")
+                : i18n.t("text_160")}
             </Dialog.Description>
             <Dialog.Input
               onChangeText={value => this.onlyNumberRegex(value)}
               value={this.state.oldProposalPrice}
             />
             <Dialog.Button
-              label="İptal et"
+              label={i18n.t("text_130")}
               onPress={() => this.handleCancel()}
             />
             <Dialog.Button
-              label="Teklifi güncelle"
+              label={i18n.t("text_162")}
               onPress={() => this.handleUpdateProposal()}
             />
           </Dialog.Container>
@@ -325,7 +323,7 @@ class CompanyServiceScreen extends Component {
               </Button>
             </Left>
             <Body>
-              <Title>Hizmetlerim</Title>
+              <Title>{i18n.t("text_134")}</Title>
             </Body>
             <Right />
           </Header>
@@ -337,7 +335,7 @@ class CompanyServiceScreen extends Component {
               page={initialTabPage}
               style={styles.tabs1}
             >
-              <Tab heading="Hizmet listesi" style={styles.tab1}>
+              <Tab heading={i18n.t("text_79")} style={styles.tab1}>
                 <ImageBackground
                   style={styles.imageBackground1}
                   source={require("../../assets/splash-screen-demo.png")}
@@ -398,7 +396,7 @@ class CompanyServiceScreen extends Component {
                   </View>
                 </View>
               </Tab>
-              <Tab heading="QR ile hizmet onaylama">
+              <Tab heading={i18n.t("text_163")}>
                 <ApprovedServiceWithQr
                   hasCameraPermission={hasCameraPermission}
                   _handleBarCodeScanned={this._handleBarCodeScanned}

@@ -13,6 +13,7 @@ import {
 } from "native-base";
 import { Image } from "react-native";
 
+import i18n from "../../constants/strings";
 import { ThemeColor } from "../../src/functions";
 import { routesCustomer, routesCompany } from "../../constants/StaticRoutes";
 import { logoutUser } from "../../src/actions/generalServiceGet";
@@ -106,7 +107,7 @@ class UserMenuScreen extends Component {
                       />
                     </Left>
                     <Body>
-                      <Text>{"Giriş yap"}</Text>
+                      <Text>{i18n.t("giris_yap")}</Text>
                     </Body>
                   </ListItem>
                 );

@@ -3,9 +3,10 @@ import { ScrollView } from "react-native";
 import Modal from "react-native-modal";
 import { View, Spinner, Text } from "native-base";
 
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
-export default (ModalDialog = props => {
+export default ModalDialog = props => {
   const {
     modalIsVisible,
     styles,
@@ -24,51 +25,67 @@ export default (ModalDialog = props => {
           ) : servicePreviewDetailResult ? (
             <View>
               <Text style={styles.ServicePreviewItemText}>
-                Adres Açıklaması
+                {i18n.t("text_117")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
                 {servicePreviewDetailResult.AddressDescription}
               </Text>
-              <Text style={styles.ServicePreviewItemText}>Not</Text>
+              <Text style={styles.ServicePreviewItemText}>
+                {i18n.t("text_130")}
+              </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
                 {servicePreviewDetailResult.Note}
               </Text>
-              <Text style={styles.ServicePreviewItemText}>Garantörlü mü?</Text>
-              <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsGuarantor ? "evet" : "hayir"}
-              </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Müşteri onaydı mı?
+                {i18n.t("text_118")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsApproved ? "evet" : "hayir"}
+                {servicePreviewDetailResult.IsGuarantor
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Usta onayladı mı?
+                {i18n.t("text_119")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsMasterApproved ? "evet" : "hayir"}
+                {servicePreviewDetailResult.IsApproved
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Keşif istendi mi?
+                {i18n.t("text_120")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsDiscovery ? "evet" : "hayir"}
+                {servicePreviewDetailResult.IsMasterApproved
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Ödeme yapıldı mı?
+                {i18n.t("text_121")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsPayment ? "evet" : "hayir"}
+                {servicePreviewDetailResult.IsDiscovery
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                İptal edildi mi?
+                {i18n.t("text_122")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
-                {servicePreviewDetailResult.IsActive ? "evet" : "hayir"}
+                {servicePreviewDetailResult.IsPayment
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Ülke / İl / İlçe / Mahalle
+                {i18n.t("text_123")}
+              </Text>
+              <Text style={styles.ServicePreviewItemTextAnswer}>
+                {servicePreviewDetailResult.IsActive
+                  ? i18n.t("text_69")
+                  : i18n.t("text_68")}
+              </Text>
+              <Text style={styles.ServicePreviewItemText}>
+                {i18n.t("text_124")}
               </Text>
               <Text style={styles.ServicePreviewItemTextAnswer}>
                 {servicePreviewDetailResult.CountryName
@@ -93,7 +110,7 @@ export default (ModalDialog = props => {
                 {servicePreviewDetailResult.CodeText}
               </Text>
               <Text style={styles.ServicePreviewItemText}>
-                Sorulara verilen cevaplar
+                {i18n.t("text_184")}
               </Text>
               {servicePreviewDetailQuestionLoading ? (
                 <Spinner />
@@ -118,11 +135,11 @@ export default (ModalDialog = props => {
           )}
           <MyButton
             press={() => setInitialState("modalIsVisible", false)}
-            text="Kapat"
+            text={i18n.t("text_125")}
             full={true}
           />
         </View>
       </ScrollView>
     </Modal>
   );
-});
+};

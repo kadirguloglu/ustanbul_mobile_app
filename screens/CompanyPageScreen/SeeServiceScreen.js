@@ -18,6 +18,8 @@ import {
 import { NavigationEvents } from "react-navigation";
 import { ScrollView, Keyboard, Alert } from "react-native";
 
+import i18n from "../../constants/strings";
+
 import {
   getServiceCompanyPage,
   getMasterServiceProposalQuestionPage,
@@ -49,15 +51,15 @@ class SeeServiceScreen extends Component {
     const { activeUser } = generalServiceGetResponse;
     if (activeUser.Id == 0) {
       Alert.alert(
-        "Uyarı",
-        "Öncelikle giriş yapmalısınız",
+        i18n.t("text_51"),
+        i18n.t("text_52"),
         [
           {
-            text: "Giriş yap",
+            text: i18n.t("giris_yap"),
             onPress: () => this.props.navigation.navigate("Login")
           },
           {
-            text: "Anasayfa",
+            text: i18n.t("anasayfa"),
             onPress: () => this.props.navigation.navigate("Home"),
             style: "cancel"
           }
@@ -132,8 +134,8 @@ class SeeServiceScreen extends Component {
         if (proposalModel.Price === "") {
           this.setState({ tabProposalSendActivePage: 0 });
           Toast.show({
-            text: "Teklifiniz geçersiz. Lütfen kontrol ediniz.",
-            buttonText: "Tamam",
+            text: i18n.t("text_164"),
+            buttonText: i18n.t("text_6"),
             duration: 2500
           });
           return false;
@@ -141,8 +143,8 @@ class SeeServiceScreen extends Component {
         if (parseInt(proposalModel.Price) < 1) {
           this.setState({ tabProposalSendActivePage: 0 });
           Toast.show({
-            text: "Teklifiniz geçersiz. Lütfen kontrol ediniz.",
-            buttonText: "Tamam",
+            text: i18n.t("text_164"),
+            buttonText: i18n.t("text_6"),
             duration: 2500
           });
           return false;
@@ -150,8 +152,8 @@ class SeeServiceScreen extends Component {
       } else {
         this.setState({ tabProposalSendActivePage: 0 });
         Toast.show({
-          text: "Teklifiniz geçersiz. Lütfen kontrol ediniz.",
-          buttonText: "Tamam",
+          text: i18n.t("text_164"),
+          buttonText: i18n.t("text_6"),
           duration: 2500
         });
         return false;
@@ -167,12 +169,12 @@ class SeeServiceScreen extends Component {
             item.QuestionMaxValue <= quest.Answers[0].Answer.length ||
             item.QuestionMinValue > quest.Answers[0].Answer.length
           ) {
-            errorMessage = "Lütfen cevabı istenilen aralıkta giriniz.";
+            errorMessage = i18n.t("text_165");
             break;
           }
           if (item.IsRequired) {
             if (quest.Answers[0].Answer.length < 1) {
-              errorMessage = "Zorunlu alan.";
+              errorMessage = i18n.t("text_166");
               break;
             }
           }
@@ -188,12 +190,12 @@ class SeeServiceScreen extends Component {
                 quest.Answers[0].Answer === "" ? 0 : quest.Answers[0].Answer
               )
           ) {
-            errorMessage = "Lütfen cevabı istenilen aralıkta giriniz.";
+            errorMessage = i18n.t("text_165");
             break;
           }
           if (item.IsRequired) {
             if (quest.Answers[0].Answer === "") {
-              errorMessage = "Zorunlu alan.";
+              errorMessage = i18n.t("text_166");
               break;
             }
           }
@@ -201,7 +203,7 @@ class SeeServiceScreen extends Component {
         if (item.QuestionType === 3) {
           if (item.IsRequired) {
             if (quest.Answers[0].Answer === "") {
-              errorMessage = "Zorunlu alan.";
+              errorMessage = i18n.t("text_166");
               break;
             }
           }
@@ -209,7 +211,7 @@ class SeeServiceScreen extends Component {
         if (item.QuestionType === 4) {
           if (item.IsRequired) {
             if (!quest.Answers[0].ID) {
-              errorMessage = "Lütfen bir seçim yapınız.";
+              errorMessage = i18n.t("text_39");
               break;
             }
           }
@@ -218,13 +220,13 @@ class SeeServiceScreen extends Component {
           const checkedList = quest.Answers.filter(ans => ans.Checked === true);
           if (item.IsRequired) {
             if (!checkedList) {
-              errorMessage = "Zorunlu alan.";
+              errorMessage = i18n.t("text_166");
               break;
             }
             if (checkedList) {
               if (checkedList.length) {
                 if (checkedList.length < 1) {
-                  errorMessage = "Zorunlu alan.";
+                  errorMessage = i18n.t("text_166");
                   break;
                 }
               }
@@ -235,7 +237,7 @@ class SeeServiceScreen extends Component {
               item.QuestionMaxValue < checkedList.length ||
               item.QuestionMinValue > checkedList.length
             ) {
-              errorMessage = "Lütfen seçimleri kontrol ediniz.";
+              errorMessage = i18n.t("text_167");
               break;
             }
           }
@@ -244,8 +246,8 @@ class SeeServiceScreen extends Component {
     } catch (error) {
       this.setState({ tabProposalSendActivePage: 0 });
       Toast.show({
-        text: "Teklifinizi ve sorulara verdiğiniz cevapları kontrol ediniz.",
-        buttonText: "Tamam",
+        text: i18n.t("text_168"),
+        buttonText: i18n.t("text_6"),
         duration: 2500
       });
       return false;
@@ -255,7 +257,7 @@ class SeeServiceScreen extends Component {
       this.setState({ tabProposalSendActivePage: lastIndex + 1 });
       Toast.show({
         text: errorMessage,
-        buttonText: "Tamam",
+        buttonText: i18n.t("text_6"),
         duration: 2500
       });
       return false;
@@ -273,9 +275,8 @@ class SeeServiceScreen extends Component {
           case 1:
             this.setState({ tabActivePage: 0 });
             Toast.show({
-              text:
-                "Teklifiniz başarıyla kaydedildi ve müşteriye bilgi verildi.",
-              buttonText: "Tamam",
+              text: i18n.t("text_169"),
+              buttonText: i18n.t("text_6"),
               duration: 4500
             });
             const { activeUser } = generalServiceGetResponse;
@@ -285,9 +286,8 @@ class SeeServiceScreen extends Component {
             break;
           default:
             Toast.show({
-              text:
-                "Teklifiniz kaydedilemedi. Lütfen internet bağlantınızı kontrol ediniz.",
-              buttonText: "Tamam",
+              text: i18n.t("text_170"),
+              buttonText: i18n.t("text_6"),
               duration: 2500
             });
             break;
@@ -351,11 +351,11 @@ class SeeServiceScreen extends Component {
             )}
           </Left>
           <Body>
-            <Title>Teklif ver para kazan</Title>
+            <Title>{i18n.t("teklif_ver_para_kazan")}</Title>
           </Body>
         </Header>
         <Tabs locked={true} renderTabBar={() => <View />} page={tabActivePage}>
-          <Tab heading="Hizmetler">
+          <Tab heading={i18n.t("text_171")}>
             {serviceCompanyPageLoading ? (
               <Spinner />
             ) : (
@@ -367,7 +367,7 @@ class SeeServiceScreen extends Component {
               </ScrollView>
             )}
           </Tab>
-          <Tab heading="Hizmet Detay">
+          <Tab heading={i18n.t("text_172")}>
             <ServiceDetail
               service={service}
               _handleSendProposal={this._handleSendProposal}
@@ -376,7 +376,7 @@ class SeeServiceScreen extends Component {
               }
             />
           </Tab>
-          <Tab heading="Teklif Ver">
+          <Tab heading={i18n.t("text_173")}>
             <SendProposal
               masterServiceProposalQuestionPageLoading={
                 masterServiceProposalQuestionPageLoading

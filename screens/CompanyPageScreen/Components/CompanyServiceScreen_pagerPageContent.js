@@ -1,9 +1,11 @@
 import React from "react";
 import { View, Text } from "native-base";
 import moment from "moment";
+
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
-export default (PagerPageContent = props => {
+export default PagerPageContent = props => {
   const {
     page,
     PAGES_DATA_CATEGORY_INDEX,
@@ -33,14 +35,14 @@ export default (PagerPageContent = props => {
             <View>
               <MyButton
                 full
-                text="Teklifi güncelle"
+                text={i18n.t("text_162")}
                 buttonStyle={styles.buttonStyle}
                 textStyle={styles.iconText}
                 press={() => handlerUpdateServiceProposal(item, data)}
               />
               <MyButton
                 full
-                text="İncele"
+                text={i18n.t("text_129")}
                 buttonStyle={styles.buttonStyle}
                 textStyle={styles.iconText}
                 press={() => handlerPreviewSelectedService(item, data)}
@@ -50,7 +52,7 @@ export default (PagerPageContent = props => {
             <View>
               <MyButton
                 full
-                text="Onayla ve tamamla"
+                text={i18n.t("text_183")}
                 buttonStyle={styles.buttonStyle}
                 textStyle={styles.iconText}
                 press={_handleApprovedService}
@@ -58,7 +60,7 @@ export default (PagerPageContent = props => {
               />
               <MyButton
                 full
-                text="İncele"
+                text={i18n.t("text_129")}
                 buttonStyle={styles.buttonStyle}
                 textStyle={styles.iconText}
                 press={() => handlerPreviewSelectedService(item, data)}
@@ -68,7 +70,7 @@ export default (PagerPageContent = props => {
             <View>
               <MyButton
                 full
-                text="İncele"
+                text={i18n.t("text_129")}
                 buttonStyle={styles.buttonStyle}
                 textStyle={styles.iconText}
                 press={() => handlerPreviewSelectedService(item, data)}
@@ -78,7 +80,7 @@ export default (PagerPageContent = props => {
             <View>
               <MyButton
                 full
-                text="İncele"
+                text={i18n.t("text_129")}
                 buttonStyle={styles.buttonStyle}
                 textStyle={styles.iconText}
                 press={() => handlerPreviewSelectedService(item, data)}
@@ -88,7 +90,7 @@ export default (PagerPageContent = props => {
             <View>
               <MyButton
                 full
-                text="İncele"
+                text={i18n.t("text_129")}
                 buttonStyle={styles.buttonStyle}
                 textStyle={styles.iconText}
                 press={() => handlerPreviewSelectedService(item, data)}
@@ -101,4 +103,4 @@ export default (PagerPageContent = props => {
     return element;
   }
   return null;
-});
+};

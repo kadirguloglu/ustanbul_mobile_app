@@ -3,6 +3,7 @@ import { StyleSheet, Dimensions } from "react-native";
 import { View, Text } from "native-base";
 import QRCode from "react-native-qrcode";
 
+import i18n from "../../../constants/strings";
 import MyButton from "../../../components/MyButton";
 
 const { height, width } = Dimensions.get("window");
@@ -13,11 +14,7 @@ const QrCode = props => {
   return (
     <View padder style={styles.container}>
       <View>
-        <Text style={styles.helperText}>
-          Ustamız Hizmeti Onayladığında Sizde Onay Vererek Ücreti Ustamızın
-          Hesabına Aktarabilirsiniz. Ustamız İlgili Hizmeti Onayladığında Hizmet
-          "Onay Bekleyenler" Adımına Geçecektir.
-        </Text>
+        <Text style={styles.helperText}>{i18n.t("text_114")}</Text>
         <View style={styles.qrCodeBlock}>
           <QRCode
             value={qrCodeValue}
@@ -27,11 +24,11 @@ const QrCode = props => {
           />
         </View>
         <Text style={styles.timerText}>
-          {qrTimerValue} saniye içinde okutulmalıdır.
+          {i18n.t("text_115", { v: qrTimerValue })}
         </Text>
       </View>
       <View>
-        <MyButton full text="İşlem tamamlandı" />
+        <MyButton full text={i18n.t("text_116")} />
       </View>
     </View>
   );

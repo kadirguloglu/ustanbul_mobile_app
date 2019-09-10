@@ -20,6 +20,8 @@ import {
   Container,
   Toast
 } from "native-base";
+
+import i18n from "../../constants/strings";
 import {
   contactSubjectData,
   postContactSubject
@@ -64,40 +66,39 @@ class ContactScreen extends Component {
     } = ContactMessage;
     const { postContactSubject } = this.props;
     if (MessageSubjectID == -1) {
-      MyToast("Lütfen bir mesaj konusu seçiniz");
+      MyToast(i18n.t("text_141"));
       return;
     }
     if (NameSurname.length < 1 || NameSurname.length > 50) {
-      MyToast("Alanları kontrol ediniz");
+      MyToast(i18n.t("text_142"));
       return;
     }
     if (PhoneNumber.length < 1 || PhoneNumber.length > 20) {
-      MyToast("Alanları kontrol ediniz");
+      MyToast(i18n.t("text_142"));
       return;
     }
     if (Email.length < 1 || Email.length > 50) {
-      MyToast("Alanları kontrol ediniz");
+      MyToast(i18n.t("text_142"));
       return;
     }
     if (Title.length < 1 || Title.length > 150) {
-      MyToast("Alanları kontrol ediniz");
+      MyToast(i18n.t("text_142"));
       return;
     }
     if (Description.length < 5 || Description.length > 1000) {
-      MyToast("Alanları kontrol ediniz");
+      MyToast(i18n.t("text_142"));
       return;
     }
     postContactSubject(ContactMessage).then(({ payload }) => {
       if (payload.data) {
         Toast.show({
-          text:
-            "Mesajınız iletildi. En yakın zamanda size geri dönüş yapacağız.",
+          text: i18n.t("text_143"),
           duration: 2500
         });
         this.props.navigation.navigate("Home");
       } else {
         Toast.show({
-          text: "Üzgünüz mesajınız gönderilemedi. Lütfen tekrar deneyiniz.",
+          text: i18n.t("text_144"),
           duration: 2500
         });
       }
@@ -127,7 +128,7 @@ class ContactScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Bize Ulaş</Title>
+            <Title>{i18n.t("bize_ulas")}</Title>
           </Body>
           <Right />
         </Header>
@@ -135,7 +136,7 @@ class ContactScreen extends Component {
           <View style={styles.pageTopView}>
             <View>
               <Text style={styles.QuestionTitle}>
-                {"Mesaj Konusu (Zorunlu)"}
+                {i18n.t("text_145")} {i18n.t("text_146")}
               </Text>
             </View>
             <View>
@@ -143,7 +144,7 @@ class ContactScreen extends Component {
                 <Picker
                   mode="dropdown"
                   iosIcon={<Icon name="ios-arrow-down-outline" />}
-                  placeholder={"Mesaj Konusu"}
+                  placeholder={i18n.t("text_146")}
                   placeholderStyle={{ color: "#bfc6ea" }}
                   placeholderIconColor="#007aff"
                   style={{ width: undefined }}
@@ -159,7 +160,7 @@ class ContactScreen extends Component {
                 >
                   <Picker.Item
                     key={"dropdown" + -1}
-                    label={"Seçiniz"}
+                    label={i18n.t("text_136")}
                     value={-1}
                   />
                   {contactSubjectResult.map(ans => {
@@ -182,14 +183,14 @@ class ContactScreen extends Component {
                     : styles.help_block_success
                 }
               >
-                ** Lütfen bir seçim yapınız
+                ** {i18n.t("text_39")}
               </Text>
             </View>
           </View>
           <View style={styles.pageTopView}>
             <View>
               <Text style={styles.QuestionTitle}>
-                {"Adınız Soyadınız (Zorunlu)"}
+                {i18n.t("text_147")} {i18n.t("text_146")}
               </Text>
             </View>
             <Item rounded>
@@ -220,7 +221,7 @@ class ContactScreen extends Component {
           <View style={styles.pageTopView}>
             <View>
               <Text style={styles.QuestionTitle}>
-                {"Telefon Numaranız (Zorunlu)"}
+                {i18n.t("text_148")} {i18n.t("text_146")}
               </Text>
             </View>
             <Item rounded>
@@ -251,7 +252,7 @@ class ContactScreen extends Component {
           <View style={styles.pageTopView}>
             <View>
               <Text style={styles.QuestionTitle}>
-                {"Mail Adresiniz (Zorunlu)"}
+                {i18n.t("text_149")} {i18n.t("text_146")}
               </Text>
             </View>
             <Item rounded>
@@ -282,7 +283,7 @@ class ContactScreen extends Component {
           <View style={styles.pageTopView}>
             <View>
               <Text style={styles.QuestionTitle}>
-                {"Mesaj Başlığınız (Zorunlu)"}
+                {i18n.t("text_150")} {i18n.t("text_146")}
               </Text>
             </View>
             <Item rounded>
@@ -313,7 +314,9 @@ class ContactScreen extends Component {
           </View>
           <View style={styles.pageTopView}>
             <View>
-              <Text style={styles.QuestionTitle}>{"Mesajınız (Zorunlu)"}</Text>
+              <Text style={styles.QuestionTitle}>
+                {i18n.t("text_151")} {i18n.t("text_146")}
+              </Text>
             </View>
             <Item rounded>
               <Input
@@ -343,7 +346,7 @@ class ContactScreen extends Component {
           <View style={{ paddingBottom: 20 }}>
             <MyButton
               press={() => this.handlerContactMessage()}
-              text="Gönder"
+              text={i18n.t("text_128")}
             />
           </View>
         </Content>

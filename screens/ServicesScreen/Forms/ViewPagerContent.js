@@ -12,6 +12,7 @@ import {
   Textarea
 } from "native-base";
 import MapView from "react-native-maps";
+import i18n from "../../../constants/strings";
 import ContractContent from "./ContractContent";
 import ServiceQuestion from "./ServiceQuestion";
 
@@ -52,10 +53,7 @@ const ViewPagerContent = props => {
     case 0:
       return (
         <View key={"renderPage" + 0} style={styles.pageTopView}>
-          <Text style={styles.QuestionTitle}>
-            Sizlere daha iyi ve guvenilir hizmet verebilmek adina sözleşmeleri
-            okuyunuz.
-          </Text>
+          <Text style={styles.QuestionTitle}>{i18n.t("text_26")}</Text>
           <ContractContent
             key={"renderPage-Contract" - 0}
             serviceParameter={serviceParameter}
@@ -72,7 +70,7 @@ const ViewPagerContent = props => {
                   onPress={() => handleCreateService()}
                   style={styles.button}
                 >
-                  <Text style={styles.buttonText}>Tamamla</Text>
+                  <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
                 </TouchableHighlight>
               )}
             </View>
@@ -84,76 +82,76 @@ const ViewPagerContent = props => {
                 }
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>İleri</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
               </TouchableHighlight>
             </View>
           )}
         </View>
       );
+    // case 1:
+    //   return (
+    //     <View key={"renderPage" + 1} style={styles.pageTopView}>
+    //       <View>
+    //         <Text style={styles.QuestionTitle}>{i18n.t("text_29")}</Text>
+    //       </View>
+    //       <View>
+    //         <Item rounded>
+    //           <Input
+    //             placeholder={i18n.t("text_29")}
+    //             onChangeText={value => _handleSetState("Title", value)}
+    //             value={serviceParameter.Title}
+    //           />
+    //         </Item>
+    //       </View>
+    //       <View>
+    //         <Text
+    //           style={
+    //             serviceParameter.Title.length > 10 &&
+    //             serviceParameter.Title.length < 31
+    //               ? styles.help_block_success
+    //               : styles.help_block_error
+    //           }
+    //         >
+    //           ** {serviceParameter.Title.length} / 30{" "}
+    //         </Text>
+    //       </View>
+    //       {page == PAGES.length - 1 ? (
+    //         <View style={styles.buttonContainer}>
+    //           {serviceServiceResponse.serviceCreateLoading ? (
+    //             <Spinner color="blue" />
+    //           ) : (
+    //             <TouchableHighlight
+    //               onPress={() => handleCreateService()}
+    //               style={styles.button}
+    //             >
+    //               <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
+    //             </TouchableHighlight>
+    //           )}
+    //         </View>
+    //       ) : (
+    //         <View style={styles.buttonContainer}>
+    //           <TouchableHighlight
+    //             onPress={() =>
+    //               _handleSetInitialState("activeViewPagerPage", page + 1)
+    //             }
+    //             style={styles.button}
+    //           >
+    //             <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
+    //           </TouchableHighlight>
+    //         </View>
+    //       )}
+    //     </View>
+    //   );
     case 1:
-      return (
-        <View key={"renderPage" + 1} style={styles.pageTopView}>
-          <View>
-            <Text style={styles.QuestionTitle}>Hizmet Başlığı</Text>
-          </View>
-          <View>
-            <Item rounded>
-              <Input
-                placeholder="Hizmet Başlığı"
-                onChangeText={value => _handleSetState("Title", value)}
-                value={serviceParameter.Title}
-              />
-            </Item>
-          </View>
-          <View>
-            <Text
-              style={
-                serviceParameter.Title.length > 10 &&
-                serviceParameter.Title.length < 31
-                  ? styles.help_block_success
-                  : styles.help_block_error
-              }
-            >
-              ** {serviceParameter.Title.length} / 30{" "}
-            </Text>
-          </View>
-          {page == PAGES.length - 1 ? (
-            <View style={styles.buttonContainer}>
-              {serviceServiceResponse.serviceCreateLoading ? (
-                <Spinner color="blue" />
-              ) : (
-                <TouchableHighlight
-                  onPress={() => handleCreateService()}
-                  style={styles.button}
-                >
-                  <Text style={styles.buttonText}>Tamamla</Text>
-                </TouchableHighlight>
-              )}
-            </View>
-          ) : (
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() =>
-                  _handleSetInitialState("activeViewPagerPage", page + 1)
-                }
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          )}
-        </View>
-      );
-    case 2:
       return (
         <View key={"renderPage" + 2} style={styles.pageTopView}>
           <View>
-            <Text style={styles.QuestionTitle}>Hizmet Notu</Text>
+            <Text style={styles.QuestionTitle}>{i18n.t("text_30")}</Text>
           </View>
           <View>
             <Item rounded>
               <Textarea
-                placeholder="Hizmet Notu"
+                placeholder={i18n.t("text_30")}
                 rows={5}
                 onChangeText={value => _handleSetState("Description", value)}
                 value={serviceParameter.Description}
@@ -181,7 +179,7 @@ const ViewPagerContent = props => {
                   onPress={() => handleCreateService()}
                   style={styles.button}
                 >
-                  <Text style={styles.buttonText}>Tamamla</Text>
+                  <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
                 </TouchableHighlight>
               )}
             </View>
@@ -193,93 +191,86 @@ const ViewPagerContent = props => {
                 }
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>İleri</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
               </TouchableHighlight>
             </View>
           )}
         </View>
       );
-    case 3:
-      return (
-        <View key={"renderPage" + 3} style={styles.pageTopView}>
-          <View>
-            <Text style={styles.QuestionTitle}>
-              Hizmetiniz ile ilgili gelismelerden nasil haberdar olmak
-              istersiniz?
-            </Text>
-          </View>
-          <View>
-            <ListItem>
-              <CheckBox
-                onPress={() =>
-                  _handleSetState(
-                    "SmsNotification",
-                    !serviceParameter.SmsNotification
-                  )
-                }
-                checked={serviceParameter.SmsNotification}
-              />
-              <Body>
-                <Text>SMS</Text>
-              </Body>
-            </ListItem>
-            <ListItem>
-              <CheckBox
-                onPress={() =>
-                  _handleSetState(
-                    "EmailNotification",
-                    !serviceParameter.EmailNotification
-                  )
-                }
-                checked={serviceParameter.EmailNotification}
-              />
-              <Body>
-                <Text>Email</Text>
-              </Body>
-            </ListItem>
-          </View>
-          {serviceParameter.EmailNotification ||
-          serviceParameter.SmsNotification ? null : (
-            <View>
-              <Text style={styles.help_block_error}>
-                ** En az bir seçim yapiniz
-              </Text>
-            </View>
-          )}
-          {page == PAGES.length - 1 ? (
-            <View style={styles.buttonContainer}>
-              {serviceServiceResponse.serviceCreateLoading ? (
-                <Spinner color="blue" />
-              ) : (
-                <TouchableHighlight
-                  onPress={() => handleCreateService()}
-                  style={styles.button}
-                >
-                  <Text style={styles.buttonText}>Tamamla</Text>
-                </TouchableHighlight>
-              )}
-            </View>
-          ) : (
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() =>
-                  _handleSetInitialState("activeViewPagerPage", page + 1)
-                }
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          )}
-        </View>
-      );
-    case 4:
+    // case 2:
+    //   return (
+    //     <View key={"renderPage" + 3} style={styles.pageTopView}>
+    //       <View>
+    //         <Text style={styles.QuestionTitle}>{i18n.t("text_31")}</Text>
+    //       </View>
+    //       <View>
+    //         <ListItem>
+    //           <CheckBox
+    //             onPress={() =>
+    //               _handleSetState(
+    //                 "SmsNotification",
+    //                 !serviceParameter.SmsNotification
+    //               )
+    //             }
+    //             checked={serviceParameter.SmsNotification}
+    //           />
+    //           <Body>
+    //             <Text>SMS</Text>
+    //           </Body>
+    //         </ListItem>
+    //         <ListItem>
+    //           <CheckBox
+    //             onPress={() =>
+    //               _handleSetState(
+    //                 "EmailNotification",
+    //                 !serviceParameter.EmailNotification
+    //               )
+    //             }
+    //             checked={serviceParameter.EmailNotification}
+    //           />
+    //           <Body>
+    //             <Text>Email</Text>
+    //           </Body>
+    //         </ListItem>
+    //       </View>
+    //       {serviceParameter.EmailNotification ||
+    //       serviceParameter.SmsNotification ? null : (
+    //         <View>
+    //           <Text style={styles.help_block_error}>{i18n.t("text_32")}</Text>
+    //         </View>
+    //       )}
+    //       {page == PAGES.length - 1 ? (
+    //         <View style={styles.buttonContainer}>
+    //           {serviceServiceResponse.serviceCreateLoading ? (
+    //             <Spinner color="blue" />
+    //           ) : (
+    //             <TouchableHighlight
+    //               onPress={() => handleCreateService()}
+    //               style={styles.button}
+    //             >
+    //               <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
+    //             </TouchableHighlight>
+    //           )}
+    //         </View>
+    //       ) : (
+    //         <View style={styles.buttonContainer}>
+    //           <TouchableHighlight
+    //             onPress={() =>
+    //               _handleSetInitialState("activeViewPagerPage", page + 1)
+    //             }
+    //             style={styles.button}
+    //           >
+    //             <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
+    //           </TouchableHighlight>
+    //         </View>
+    //       )}
+    //     </View>
+    //   );
+    case 2:
       return (
         <View key={"renderPage" + 4} style={styles.pageTopView}>
           <View>
-            <Text style={styles.QuestionTitle}>
-              Hizmetiniz Ile Ilgili Fotograf Ekleyin
-            </Text>
+            <Text style={styles.QuestionTitle}>{i18n.t("text_33")}</Text>
           </View>
           <View>{handleServiceImageList()}</View>
           {page == PAGES.length - 1 ? (
@@ -291,7 +282,7 @@ const ViewPagerContent = props => {
                   onPress={() => handleCreateService()}
                   style={styles.button}
                 >
-                  <Text style={styles.buttonText}>Tamamla</Text>
+                  <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
                 </TouchableHighlight>
               )}
             </View>
@@ -303,80 +294,80 @@ const ViewPagerContent = props => {
                 }
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>İleri</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
               </TouchableHighlight>
             </View>
           )}
         </View>
       );
-    case 5:
-      return (
-        <View key={"renderPage" + 5} style={styles.pageTopView}>
-          <View>
-            <Text style={styles.QuestionTitle}>Hizmetinizi Filtreleyin</Text>
-          </View>
-          <View>
-            <ListItem
-              onPress={() =>
-                _handleSetState("IsDiscovery", serviceParameter.IsDiscovery)
-              }
-            >
-              <CheckBox checked={serviceParameter.IsDiscovery} />
-              <Body>
-                <Text>Kesif Istiyorum</Text>
-              </Body>
-            </ListItem>
-            <ListItem
-              onPress={() =>
-                _handleSetState("IsGuarantor", serviceParameter.IsGuarantor)
-              }
-            >
-              <CheckBox checked={serviceParameter.IsGuarantor} />
-              <Body>
-                <Text>Hizmeti ustalazim garantörlügünde almak istiyorum</Text>
-              </Body>
-            </ListItem>
-          </View>
-          {page == PAGES.length - 1 ? (
-            <View style={styles.buttonContainer}>
-              {serviceServiceResponse.serviceCreateLoading ? (
-                <Spinner color="blue" />
-              ) : (
-                <TouchableHighlight
-                  onPress={() => handleCreateService()}
-                  style={styles.button}
-                >
-                  <Text style={styles.buttonText}>Tamamla</Text>
-                </TouchableHighlight>
-              )}
-            </View>
-          ) : (
-            <View style={styles.buttonContainer}>
-              <TouchableHighlight
-                onPress={() =>
-                  _handleSetInitialState("activeViewPagerPage", page + 1)
-                }
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>İleri</Text>
-              </TouchableHighlight>
-            </View>
-          )}
-        </View>
-      );
-    case 6:
+    // case 3:
+    //   return (
+    //     <View key={"renderPage" + 5} style={styles.pageTopView}>
+    //       <View>
+    //         <Text style={styles.QuestionTitle}>{i18n.t("text_34")}</Text>
+    //       </View>
+    //       <View>
+    //         <ListItem
+    //           onPress={() =>
+    //             _handleSetState("IsDiscovery", serviceParameter.IsDiscovery)
+    //           }
+    //         >
+    //           <CheckBox checked={serviceParameter.IsDiscovery} />
+    //           <Body>
+    //             <Text>{i18n.t("text_35")}</Text>
+    //           </Body>
+    //         </ListItem>
+    //         <ListItem
+    //           onPress={() =>
+    //             _handleSetState("IsGuarantor", serviceParameter.IsGuarantor)
+    //           }
+    //         >
+    //           <CheckBox checked={serviceParameter.IsGuarantor} />
+    //           <Body>
+    //             <Text>{i18n.t("text_36")}</Text>
+    //           </Body>
+    //         </ListItem>
+    //       </View>
+    //       {page == PAGES.length - 1 ? (
+    //         <View style={styles.buttonContainer}>
+    //           {serviceServiceResponse.serviceCreateLoading ? (
+    //             <Spinner color="blue" />
+    //           ) : (
+    //             <TouchableHighlight
+    //               onPress={() => handleCreateService()}
+    //               style={styles.button}
+    //             >
+    //               <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
+    //             </TouchableHighlight>
+    //           )}
+    //         </View>
+    //       ) : (
+    //         <View style={styles.buttonContainer}>
+    //           <TouchableHighlight
+    //             onPress={() =>
+    //               _handleSetInitialState("activeViewPagerPage", page + 1)
+    //             }
+    //             style={styles.button}
+    //           >
+    //             <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
+    //           </TouchableHighlight>
+    //         </View>
+    //       )}
+    //     </View>
+    //   );
+    case 3:
       let calcMapHeight = view1 + view2 + view3 + view4 + headerHeight;
       calcMapHeight = calcMapHeight == 0 ? 100 : calcMapHeight;
 
       return (
         <View key={"renderPage" + 6}>
           <View onLayout={event => _handleViewHeightSetState(event, "view1")}>
-            <Text style={styles.QuestionTitle}>Adresiniz</Text>
+            <Text style={styles.QuestionTitle}>{i18n.t("text_37")}</Text>
           </View>
           <View onLayout={event => _handleViewHeightSetState(event, "view2")}>
             <Item rounded>
               <Input
-                placeholder="Adresiniz"
+                placeholder={i18n.t("text_37")}
                 onChangeText={value =>
                   _handleSetState("AddressDescription", value)
                 }
@@ -439,7 +430,7 @@ const ViewPagerContent = props => {
                   onPress={() => handleCreateService()}
                   style={styles.button}
                 >
-                  <Text style={styles.buttonText}>Tamamla</Text>
+                  <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
                 </TouchableHighlight>
               )}
             </View>
@@ -454,7 +445,7 @@ const ViewPagerContent = props => {
                 }
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>İleri</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
               </TouchableHighlight>
             </View>
           )}

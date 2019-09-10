@@ -14,6 +14,7 @@ import {
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import { ThemeColor } from "../../src/functions";
+import i18n from "../../constants/strings";
 
 const { width, height } = Dimensions.get("window");
 class FacebookForm extends Component {
@@ -34,7 +35,7 @@ class FacebookForm extends Component {
           delay={500}
           style={[styles.logoView, { height: this.state.logoHeight }]}
         >
-          <Text style={[styles.logoText]}>FixMasTR</Text>
+          <Text style={[styles.logoText]}>Ustanbul</Text>
         </Animatable.View>
         <Animatable.View
           animation="zoomIn"
@@ -65,7 +66,7 @@ class FacebookForm extends Component {
                 color: "#fff"
               }}
             >
-              Facebook ile{" "}
+              Facebook {i18n.t("text_194")}{" "}
             </Text>
             <Text
               style={{
@@ -74,7 +75,7 @@ class FacebookForm extends Component {
                 color: "#fff"
               }}
             >
-              Kayıt Ol
+              {i18n.t("text_2")}
             </Text>
           </View>
           <View
@@ -91,7 +92,7 @@ class FacebookForm extends Component {
                 color: "#fff"
               }}
             >
-              ÜYELİK TİPİ SEÇİNİZ
+              {i18n.t("text_195")}
             </Text>
           </View>
           <View style={{ marginBottom: 10, marginTop: 24 }}>
@@ -100,7 +101,7 @@ class FacebookForm extends Component {
               onPress={() => console.log("")}
             >
               <Text style={[styles.buttonText, styles.searchMasterText]}>
-                Usta Arıyorum
+                {i18n.t("text_191")}
               </Text>
             </TouchableHighlight>
           </View>
@@ -125,8 +126,11 @@ class FacebookForm extends Component {
             style={styles.registerTextContainer}
           >
             <View style={{ flexDirection: "row" }}>
-              <Text style={[styles.text_1]}>Hesabım var mı?{"   "}</Text>
-              <Text style={[styles.text_2]}>Giriş Yap</Text>
+              <Text style={[styles.text_1]}>
+                {i18n.t("text_193")}
+                {"   "}
+              </Text>
+              <Text style={[styles.text_2]}>{i18n.t("giris_yap")}</Text>
             </View>
           </TouchableHighlight>
         </Animatable.View>

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, Tabs, Tab } from "native-base";
-//import { ViewPager as Pager } from "rn-viewpager";
+import i18n from "../../../constants/strings";
+
 import ViewPagerContent from "./ViewPagerContent";
 
 const ViewPager = props => {

@@ -11,6 +11,7 @@ import {
   CheckBox,
   ListItem
 } from "native-base";
+import i18n from "../../../constants/strings";
 
 const ServiceQuestion = props => {
   const {
@@ -72,7 +73,7 @@ const ServiceQuestion = props => {
                 onPress={() => handleCreateService()}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>Tamamla</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
               </TouchableHighlight>
             )}
           </View>
@@ -84,7 +85,7 @@ const ServiceQuestion = props => {
               }
               style={styles.button}
             >
-              <Text style={styles.buttonText}>İleri</Text>
+              <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
             </TouchableHighlight>
           </View>
         )}
@@ -116,8 +117,11 @@ const ServiceQuestion = props => {
             <Text />
           ) : (
             <Text style={styles.help_block_error}>
-              {item.IsRequired ? "** " : ""}Lütfen geçerli bir değer giriniz. En
-              fazla : {item.QuestionMaxValue}, En az : {item.QuestionMinValue}
+              {item.IsRequired ? "** " : ""}
+              {i18n.t("text_38", {
+                v1: item.QuestionMaxValue,
+                v2: item.QuestionMinValue
+              })}
             </Text>
           )}
         </View>
@@ -130,7 +134,7 @@ const ServiceQuestion = props => {
                 onPress={() => handleCreateService()}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>Tamamla</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
               </TouchableHighlight>
             )}
           </View>
@@ -142,7 +146,7 @@ const ServiceQuestion = props => {
               }
               style={styles.button}
             >
-              <Text style={styles.buttonText}>İleri</Text>
+              <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
             </TouchableHighlight>
           </View>
         )}
@@ -182,8 +186,11 @@ const ServiceQuestion = props => {
             <Text />
           ) : (
             <Text style={styles.help_block_error}>
-              {item.IsRequired ? "** " : ""}Lütfen geçerli bir değer giriniz. En
-              fazla : {item.QuestionMaxValue}, En az : {item.QuestionMinValue}
+              {item.IsRequired ? "** " : ""}
+              {i18n.t("text_38", {
+                v1: item.QuestionMaxValue,
+                v2: item.QuestionMinValue
+              })}
             </Text>
           )}
         </View>
@@ -196,7 +203,7 @@ const ServiceQuestion = props => {
                 onPress={() => handleCreateService()}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>Tamamla</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
               </TouchableHighlight>
             )}
           </View>
@@ -208,7 +215,7 @@ const ServiceQuestion = props => {
               }
               style={styles.button}
             >
-              <Text style={styles.buttonText}>İleri</Text>
+              <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
             </TouchableHighlight>
           </View>
         )}
@@ -260,7 +267,8 @@ const ServiceQuestion = props => {
             <Text />
           ) : (
             <Text style={styles.help_block_error}>
-              {item.IsRequired ? "** " : ""}Lütfen bir seçim yapınız
+              {item.IsRequired ? "** " : ""}
+              {i18n.t("text_39")}
             </Text>
           )}
         </View>
@@ -273,7 +281,7 @@ const ServiceQuestion = props => {
                 onPress={() => handleCreateService()}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>Tamamla</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
               </TouchableHighlight>
             )}
           </View>
@@ -285,7 +293,7 @@ const ServiceQuestion = props => {
               }
               style={styles.button}
             >
-              <Text style={styles.buttonText}>İleri</Text>
+              <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
             </TouchableHighlight>
           </View>
         )}
@@ -349,9 +357,7 @@ const ServiceQuestion = props => {
         </View>
         {item.IsRequired ? (
           <View>
-            <Text style={styles.help_block_error}>
-              Lütfen bir seçim yapınız
-            </Text>
+            <Text style={styles.help_block_error}>{i18n.t("text_39")}</Text>
           </View>
         ) : null}
         {page == PAGES.length - 1 ? (
@@ -363,7 +369,7 @@ const ServiceQuestion = props => {
                 onPress={() => handleCreateService()}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>Tamamla</Text>
+                <Text style={styles.buttonText}>{i18n.t("text_27")}</Text>
               </TouchableHighlight>
             )}
           </View>
@@ -375,7 +381,7 @@ const ServiceQuestion = props => {
               }
               style={styles.button}
             >
-              <Text style={styles.buttonText}>İleri</Text>
+              <Text style={styles.buttonText}>{i18n.t("text_28")}</Text>
             </TouchableHighlight>
           </View>
         )}
