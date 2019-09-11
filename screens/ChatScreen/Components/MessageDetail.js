@@ -11,7 +11,7 @@ const MessageDetail = props => {
     _handlerWriting,
     writingMessage,
     _handlerSetMessage,
-    setInitialState,
+    setChatTextBoxHeight,
     _handleScrollViewWithChatMessageList
   } = props;
   return (
@@ -31,9 +31,7 @@ const MessageDetail = props => {
         </ScrollView>
       </View>
       <View
-        onLayout={e =>
-          setInitialState({ chatTextBoxHeight: e.nativeEvent.layout.height })
-        }
+        onLayout={e => setChatTextBoxHeight(e.nativeEvent.layout.height)}
         style={{
           height: chatTextBoxHeight,
           paddingLeft: 20,

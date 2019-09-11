@@ -70,6 +70,18 @@ export default class App extends React.Component {
   async componentWillMount() {
     notificationPermission();
     this.getToken();
+    Notifications.addListener(notification => {
+      console.log(
+        "LOG: -----------------------------------------------------------"
+      );
+      console.log(
+        "LOG: App -> componentWillMount -> notification",
+        notification
+      );
+      console.log(
+        "LOG: -----------------------------------------------------------"
+      );
+    });
   }
 
   getToken() {
