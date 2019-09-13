@@ -48,20 +48,7 @@ function CustomerDetailScreen({ navigation }) {
     const countResultPropNames = Object.getOwnPropertyNames(
       customerServiceCountResult
     );
-    console.log(
-      "LOG: ---------------------------------------------------------------------"
-    );
-    console.log(
-      "LOG: _handleServiceCount -> countResultPropNames",
-      countResultPropNames
-    );
-    console.log(
-      "LOG: ---------------------------------------------------------------------"
-    );
     return countResultPropNames.map(i => {
-      console.log("LOG: -------------------------------");
-      console.log("LOG: _handleServiceCount -> i", i);
-      console.log("LOG: -------------------------------");
       const item = countResultPropNames[i];
       return (
         <View key={"item" + i} style={{ height: 60 }}>

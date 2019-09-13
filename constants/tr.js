@@ -36,7 +36,7 @@ export default tr = {
   text_21: "{{v}} sorusu için en fazla {{v1}} en az {{v2}} seçim yapmalısınız",
   text_22:
     "Hizmet oluşturulamadı. Lütfen tekrar deneyiniz ve internet bağlantınız kontrol ediniz.",
-  text_23: "Size ne yakın konumdaki ustalarımıza bildirim gönderildi.",
+  text_23: "Size en yakın konumdaki ustalarımıza bildirim gönderildi.",
   text_24:
     "İşlem sırasında tanımlanamayan bir hata oluştu. İnternet bağlantınızı kontrol ediniz.",
   text_25: "Okudum Onaylıyorum",

@@ -9,15 +9,15 @@ export const routesCustomer = [
     isFunction: false
   },
 
-  {
-    to: "CustomerDetail",
-    name: "Hesap Özeti",
-    permission: [],
-    IOSonly: false,
-    menu: true,
-    icon: "ios-person",
-    isFunction: false
-  },
+  // {
+  //   to: "CustomerDetail",
+  //   name: "Hesap Özeti",
+  //   permission: [],
+  //   IOSonly: false,
+  //   menu: true,
+  //   icon: "ios-person",
+  //   isFunction: false
+  // },
 
   {
     to: "CustomerService",

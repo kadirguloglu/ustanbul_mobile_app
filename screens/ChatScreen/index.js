@@ -107,17 +107,32 @@ function ChatScreen({ navigation }) {
   };
 
   _handleNavigationComponentWillMount = async () => {
-    const hubConnection = new HubConnectionBuilder()
-      .withUrl(ChatConnectionUrl)
-      .configureLogging(LogLevel.Debug)
-      .build();
+    try {
+      const hubConnection = new HubConnectionBuilder()
+        .withUrl(ChatConnectionUrl)
+        .configureLogging(LogLevel.Debug)
+        .build();
 
-    hubConnection
-      .start()
-      .then(() => {
-        setHubConnection(hubConnection);
-      })
-      .catch(err => console.log("Error while establishing connection", err));
+      hubConnection
+        .start()
+        .then(() => {
+          setHubConnection(hubConnection);
+        })
+        .catch(err => {
+          console.log(
+            "LOG: ---------------------------------------------------"
+          );
+          console.log("LOG: _handleNavigationComponentWillMount -> err", err);
+          console.log(
+            "LOG: ---------------------------------------------------"
+          );
+        })
+        .onclose(e => {
+          console.log("LOG: -----------------------------------------------");
+          console.log("LOG: _handleNavigationComponentWillMount -> e", e);
+          console.log("LOG: -----------------------------------------------");
+        });
+    } catch (error) {}
     const blockId = navigation.getParam("blockId", 0);
     dispatch(messageUserList(activeUser.Id, blockId)).then(({ payload }) => {
       if (payload) {

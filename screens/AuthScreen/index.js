@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Carousel, { Pagination } from "react-native-snap-carousel";
+import { NavigationEvents } from "react-navigation";
 import {
   Image,
   View,
@@ -73,6 +74,12 @@ function LoginScreen({ navigation }) {
     }
   }, [activeUser.Id]);
 
+  function _handleNavigationComponentWillMount() {
+    if (activeUser.Id !== 0) {
+      navigation.navigate("Home");
+    }
+  }
+
   function getRegisterPage() {
     setPageState("register");
   }
@@ -82,6 +89,9 @@ function LoginScreen({ navigation }) {
 
   return (
     <React.Fragment>
+      <NavigationEvents
+        onDidFocus={() => _handleNavigationComponentWillMount()}
+      />
       {pageState === "previewPage" ? (
         <Carousel
           data={carouselData}

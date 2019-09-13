@@ -814,14 +814,16 @@ class ServicesScreen extends Component {
                   Toast.show({
                     text: i18n.t("text_22"),
                     buttonText: i18n.t("text_6"),
-                    duration: 5500
+                    duration: 5500,
+                    type: "danger"
                   });
                   return;
                 case 1:
                   Toast.show({
                     text: i18n.t("text_23"),
                     buttonText: i18n.t("text_6"),
-                    duration: 10000
+                    duration: 10000,
+                    type: "success"
                   });
                   this.props.navigation.navigate("Home");
                   return;
@@ -829,14 +831,16 @@ class ServicesScreen extends Component {
                   Toast.show({
                     text: i18n.t("text_24"),
                     buttonText: i18n.t("text_6"),
-                    duration: 5500
+                    duration: 5500,
+                    type: "danger"
                   });
                   return;
                 default:
                   Toast.show({
                     text: i18n.t("text_24"),
                     buttonText: i18n.t("text_6"),
-                    duration: 5500
+                    duration: 5500,
+                    type: "danger"
                   });
                   return;
               }
@@ -844,7 +848,8 @@ class ServicesScreen extends Component {
               Toast.show({
                 text: i18n.t("text_24"),
                 buttonText: i18n.t("text_6"),
-                duration: 5500
+                duration: 5500,
+                type: "danger"
               });
               return;
             }
@@ -852,7 +857,8 @@ class ServicesScreen extends Component {
             Toast.show({
               text: i18n.t("text_24"),
               buttonText: i18n.t("text_6"),
-              duration: 5500
+              duration: 5500,
+              type: "danger"
             });
             return;
           }
@@ -942,7 +948,7 @@ class ServicesScreen extends Component {
           </Right>
         </Header>
         {serviceCreateDataLoading ? (
-          <Loader />
+          <Spinner />
         ) : (
           <View style={styles.container}>
             <ViewPager
