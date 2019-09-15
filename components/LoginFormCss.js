@@ -1,4 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { ThemeColor } from "../src/functions";
+import colors from "../constants/Colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -45,7 +47,11 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    height: 44
+    height: 44,
+    backgroundColor: ThemeColor
+  },
+  buttonText: {
+    color: colors.WHITE
   },
   lineByLine: {
     flexDirection: "row",

@@ -9,7 +9,8 @@ import {
   StyleSheet,
   Button,
   TouchableHighlight,
-  Dimensions
+  Dimensions,
+  TouchableOpacity
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
@@ -22,6 +23,7 @@ import GooglePlusForm from "./RegisterTypeForms/GooglePlusForm";
 import TwitterForm from "./RegisterTypeForms/TwitterForm";
 
 import i18n from "../constants/strings";
+import colors from "../constants/Colors";
 
 const { width, height } = Dimensions.get("window");
 class RegisterForm extends Component {
@@ -121,15 +123,14 @@ class RegisterForm extends Component {
               style={styles.loginFormView}
             >
               <View style={{ marginBottom: 10 }}>
-                <Button
-                  style={styles.button}
-                  title={i18n.t("text_191")}
+                <TouchableOpacity
+                  style={[styles.button]}
                   onPress={() =>
                     this.setState({ RegisterFormType: "Customer" })
                   }
-                  color="#d6471a"
-                  navigation={this.props.navigation}
-                />
+                >
+                  <Text style={styles.buttonText}>{i18n.t("text_191")}</Text>
+                </TouchableOpacity>
               </View>
               {/* <View style={{ marginBottom: 10 }}>
                 <Button
@@ -216,7 +217,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    height: 44
+    height: 44,
+    backgroundColor: "#d6471a"
+  },
+  buttonText: {
+    color: colors.WHITE
   },
   lineByLine: {
     flexDirection: "row",

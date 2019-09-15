@@ -224,5 +224,12 @@ export default en = {
   text_192: "sosyal medya ile kayıt ol",
   text_193: "Hesabın var mı?",
   text_194: "ile",
-  text_195: "ÜYELİK TİPİ SEÇİNİZ"
+  text_195: "ÜYELİK TİPİ SEÇİNİZ",
+  text_196: "Mail adresi kullanımda. Giriş sayfasına yönlendiriliyorsunuz",
+  text_197:
+    "Kayıt işleminiz tamamlandı. {{v}} ile kayıt olduğunuz için öyeliğiniz otomatik onaylandı.",
+  text_198: "Üyelik bulunamadı. Lütfen ilk önce üye olunuz.",
+  text_199: "Üyelik aktivasyonu geçersiz. Lütfen üyeliğiniz aktif ediniz.",
+  text_200:
+    "Bu üyelik sosyal medya hesabı ile kayıt olmamıştır. Lütfen şifreniz ile giriş yapınız."
 };

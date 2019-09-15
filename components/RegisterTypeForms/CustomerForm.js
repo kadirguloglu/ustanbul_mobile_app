@@ -10,12 +10,14 @@ import {
   Button,
   TouchableHighlight,
   Dimensions,
-  Platform
+  Platform,
+  TouchableOpacity
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import { Toast } from "native-base";
 
+import colors from "../../constants/Colors";
 import { ThemeColor } from "../../src/functions";
 import {
   customerRegisterPost,
@@ -293,12 +295,12 @@ class CustomerForm extends Component {
             {customerRegisterPostLoading || emailValidatePostLoading ? (
               <ActivityIndicator style={styles.button} color={ThemeColor} />
             ) : (
-              <Button
-                style={styles.button}
-                title="Kayıt Ol"
+              <TouchableOpacity
+                style={[styles.button]}
                 onPress={() => this._handleSubmitRegisterCustomer()}
-                color={ThemeColor}
-              />
+              >
+                <Text style={styles.buttonText}>Kayıt Ol</Text>
+              </TouchableOpacity>
             )}
             <TouchableHighlight
               onPress={() => this.props.login_form()}
@@ -370,7 +372,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    height: 44
+    height: 44,
+    backgroundColor: ThemeColor
+  },
+  buttonText: {
+    color: colors.WHITE
   },
   lineByLine: {
     flexDirection: "row",

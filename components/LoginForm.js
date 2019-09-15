@@ -8,7 +8,8 @@ import {
   Button,
   TouchableHighlight,
   Dimensions,
-  AsyncStorage
+  AsyncStorage,
+  TouchableOpacity
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
@@ -176,12 +177,12 @@ function LoginForm({ form_change, navigation }) {
           {loginAuthenticationUserLoading ? (
             <ActivityIndicator style={styles.button} color={ThemeColor} />
           ) : (
-            <Button
+            <TouchableOpacity
               style={styles.button}
-              title="Giriş yap"
               onPress={() => this.handlePressLogin()}
-              color={ThemeColor}
-            />
+            >
+              <Text style={styles.buttonText}>Giriş yap</Text>
+            </TouchableOpacity>
           )}
           <View style={styles.lineByLine}>
             <View style={styles.line} />

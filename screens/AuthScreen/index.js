@@ -7,7 +7,8 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  BackHandler
 } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -73,6 +74,21 @@ function LoginScreen({ navigation }) {
       navigation.navigate("Home");
     }
   }, [activeUser.Id]);
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", this._onBackIconPress);
+    return () => {
+      BackHandler.removeEventListener(
+        "hardwareBackPress",
+        this._onBackIconPress
+      );
+    };
+  }, []);
+
+  _onBackIconPress = () => {
+    navigation.navigate("Home");
+    return true;
+  };
 
   function _handleNavigationComponentWillMount() {
     if (activeUser.Id !== 0) {
