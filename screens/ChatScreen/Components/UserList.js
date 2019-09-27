@@ -31,30 +31,36 @@ function UserList(props) {
     >
       {messageUserListResult
         ? messageUserListResult.map((item, index) => {
-            return (
-              <ListItem
-                onPress={() => handlerMessageList(item)}
-                key={"UserList" + index}
-                avatar
-              >
-                <Left>
-                  <Thumbnail source={SmallPath(item.PicturePath)} />
-                </Left>
-                <Body>
-                  <Text>{item.SenderName}</Text>
-                  <Text note>{item.Message}</Text>
-                </Body>
-                <Right>
-                  <Text note>
-                    {moment(item.CreateDate).format("DD-MM-YYYY") ===
-                    moment().format("DD-MM-YYYY")
-                      ? moment(item.CreateDate).format("hh:mm")
-                      : moment(item.CreateDate).format("DD.MM.YYYY hh:mm")}
-                  </Text>
-                  {_handleGetWritingText(item.UserID)}
-                </Right>
-              </ListItem>
-            );
+            if (item) {
+              return (
+                <ListItem
+                  onPress={() => handlerMessageList(item)}
+                  key={"UserList" + index}
+                  avatar
+                >
+                  {item.PicturePath ? (
+                    <Left>
+                      <Thumbnail source={SmallPath(item.PicturePath)} />
+                    </Left>
+                  ) : null}
+                  <Body>
+                    <Text>{item.SenderName}</Text>
+                    <Text note>{item.Message}</Text>
+                  </Body>
+                  <Right>
+                    <Text note>
+                      {moment(item.CreateDate).format("DD-MM-YYYY") ===
+                      moment().format("DD-MM-YYYY")
+                        ? moment(item.CreateDate).format("hh:mm")
+                        : moment(item.CreateDate).format("DD.MM.YYYY hh:mm")}
+                    </Text>
+                    {_handleGetWritingText(item.UserID)}
+                  </Right>
+                </ListItem>
+              );
+            } else {
+              return null;
+            }
           })
         : null}
     </List>

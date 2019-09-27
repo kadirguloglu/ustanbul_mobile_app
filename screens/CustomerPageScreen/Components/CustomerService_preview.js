@@ -12,7 +12,7 @@ const CustomerServicePreview = props => {
     servicePreviewDetailResult,
     servicePreviewDetailQuestionLoading,
     servicePreviewDetailQuestionResult,
-    _handleSetInitialState
+    setInitialTabActivePage
   } = props;
 
   return (
@@ -137,7 +137,7 @@ const CustomerServicePreview = props => {
       <View>
         <MyButton
           full={true}
-          press={() => _handleSetInitialState("initialTabActivePage", 0)}
+          press={() => setInitialTabActivePage(0)}
           text={i18n.t("text_125")}
         />
       </View>

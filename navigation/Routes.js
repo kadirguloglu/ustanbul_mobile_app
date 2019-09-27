@@ -35,12 +35,20 @@ class DrawerLinks extends React.Component {
           contentContainerStyle={{ marginTop: 120 }}
           renderRow={data => {
             return (
-              <ListItem
-                button
-                onPress={() => this.props.navigation.navigate("Login")}
-              >
-                <Text>{"Giriş yap"}</Text>
-              </ListItem>
+              <React.Fragment>
+                <ListItem
+                  button
+                  onPress={() => this.props.navigation.navigate("Home")}
+                >
+                  <Text>{"Anasayfa"}</Text>
+                </ListItem>
+                <ListItem
+                  button
+                  onPress={() => this.props.navigation.navigate("Login")}
+                >
+                  <Text>{"Giriş yap"}</Text>
+                </ListItem>
+              </React.Fragment>
             );
           }}
           keyExtractor={(item, index) => "render-routes-" + index.toString()}

@@ -119,18 +119,10 @@ function ChatScreen({ navigation }) {
           setHubConnection(hubConnection);
         })
         .catch(err => {
-          console.log(
-            "LOG: ---------------------------------------------------"
-          );
-          console.log("LOG: _handleNavigationComponentWillMount -> err", err);
-          console.log(
-            "LOG: ---------------------------------------------------"
-          );
+          console.log("hubConnectionError =", err);
         })
         .onclose(e => {
-          console.log("LOG: -----------------------------------------------");
-          console.log("LOG: _handleNavigationComponentWillMount -> e", e);
-          console.log("LOG: -----------------------------------------------");
+          console.log("hubConnection onclose =", e);
         });
     } catch (error) {}
     const blockId = navigation.getParam("blockId", 0);

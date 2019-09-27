@@ -7,7 +7,8 @@ import MyButton from "../../../components/MyButton";
 
 const ComplaintService = props => {
   const {
-    _handleSetInitialState,
+    setComplaintOptionId,
+    setDescription,
     getComplaintOptionListLoading,
     getComplaintOptionListResult,
     ComplaintOptionId,
@@ -31,9 +32,7 @@ const ComplaintService = props => {
             placeholderIconColor="#007aff"
             style={{ width: undefined }}
             selectedValue={ComplaintOptionId}
-            onValueChange={value =>
-              _handleSetInitialState("ComplaintOptionId", value)
-            }
+            onValueChange={value => setComplaintOptionId(value)}
           >
             <Picker.Item
               key={"dropdown-0"}
@@ -56,7 +55,7 @@ const ComplaintService = props => {
         <Text style={styles.questionText}>{i18n.t("text_137")}</Text>
         <Item>
           <Input
-            onChangeText={value => _handleSetInitialState("Description", value)}
+            onChangeText={value => setDescription(value)}
             value={Description}
           />
         </Item>

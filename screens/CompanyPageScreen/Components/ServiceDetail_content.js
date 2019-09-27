@@ -68,14 +68,14 @@ const ServiceDetail = props => {
           ))}
         </View>
       </ScrollView>
-      <View>
+      {/* <View>
         <MyButton
           full={true}
           press={() => _handleSendProposal()}
           text={i18n.t("text_173")}
           spinner={masterServiceProposalQuestionPageLoading}
         />
-      </View>
+      </View> */}
     </View>
   );
 };

@@ -47,7 +47,8 @@ const ViewPagerContent = props => {
     serviceCreateDataResult,
     _handleSetInitialState,
     isMapReady,
-    onMapLayout
+    onMapLayout,
+    serviceCreateLoading
   } = props;
   switch (page) {
     case 0:
@@ -65,6 +66,8 @@ const ViewPagerContent = props => {
             <View style={styles.buttonContainer}>
               {serviceServiceResponse.serviceCreateLoading ? (
                 <Spinner color="blue" />
+              ) : serviceCreateLoading ? (
+                <Spinner color="blue"></Spinner>
               ) : (
                 <TouchableHighlight
                   onPress={() => handleCreateService()}
@@ -119,7 +122,9 @@ const ViewPagerContent = props => {
     //         <View style={styles.buttonContainer}>
     //           {serviceServiceResponse.serviceCreateLoading ? (
     //             <Spinner color="blue" />
-    //           ) : (
+    //           )  : serviceCreateLoading ? (
+    //            <Spinner color="blue"></Spinner>
+    //            ): (
     //             <TouchableHighlight
     //               onPress={() => handleCreateService()}
     //               style={styles.button}
@@ -174,6 +179,8 @@ const ViewPagerContent = props => {
             <View style={styles.buttonContainer}>
               {serviceServiceResponse.serviceCreateLoading ? (
                 <Spinner color="blue" />
+              ) : serviceCreateLoading ? (
+                <Spinner color="blue"></Spinner>
               ) : (
                 <TouchableHighlight
                   onPress={() => handleCreateService()}
@@ -243,7 +250,9 @@ const ViewPagerContent = props => {
     //         <View style={styles.buttonContainer}>
     //           {serviceServiceResponse.serviceCreateLoading ? (
     //             <Spinner color="blue" />
-    //           ) : (
+    //           ) : serviceCreateLoading ? (
+    //            <Spinner color="blue"></Spinner>
+    //            ) : (
     //             <TouchableHighlight
     //               onPress={() => handleCreateService()}
     //               style={styles.button}
@@ -277,6 +286,8 @@ const ViewPagerContent = props => {
             <View style={styles.buttonContainer}>
               {serviceServiceResponse.serviceCreateLoading ? (
                 <Spinner color="blue" />
+              ) : serviceCreateLoading ? (
+                <Spinner color="blue"></Spinner>
               ) : (
                 <TouchableHighlight
                   onPress={() => handleCreateService()}
@@ -332,7 +343,9 @@ const ViewPagerContent = props => {
     //         <View style={styles.buttonContainer}>
     //           {serviceServiceResponse.serviceCreateLoading ? (
     //             <Spinner color="blue" />
-    //           ) : (
+    //           ) : serviceCreateLoading ? (
+    //            <Spinner color="blue"></Spinner>
+    //            ) : (
     //             <TouchableHighlight
     //               onPress={() => handleCreateService()}
     //               style={styles.button}
@@ -425,6 +438,8 @@ const ViewPagerContent = props => {
             >
               {serviceServiceResponse.serviceCreateLoading ? (
                 <Spinner color="blue" />
+              ) : serviceCreateLoading ? (
+                <Spinner color="blue"></Spinner>
               ) : (
                 <TouchableHighlight
                   onPress={() => handleCreateService()}

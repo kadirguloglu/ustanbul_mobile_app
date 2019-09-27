@@ -1,10 +1,8 @@
 import React from "react";
 import { Platform } from "react-native";
-import {
-  createStackNavigator,
-  createBottomTabNavigator,
-  createDrawerNavigator
-} from "react-navigation";
+import { createDrawerNavigator } from "react-navigation-drawer";
+import { createStackNavigator } from "react-navigation-stack";
+import { createBottomTabNavigator } from "react-navigation-tabs";
 
 import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
@@ -14,6 +12,7 @@ import ServicesScreen from "../screens/ServicesScreen";
 import CustomerDetailScreen from "../screens/CustomerPageScreen/CustomerDetailScreen";
 import CustomerServiceScreen from "../screens/CustomerPageScreen/CustomerServiceScreen";
 import SeeProposalScreen from "../screens/CustomerPageScreen/SeeProposalScreen";
+import CustomerDetailProfileScreen from "../screens/CustomerPageScreen/CustomerDetailProfileScreen";
 import ChatScreen from "../screens/ChatScreen";
 import ContactScreen from "../screens/ContactScreen";
 import CompanyServiceScreen from "../screens/CompanyPageScreen";
@@ -139,7 +138,8 @@ const drawer = createDrawerNavigator(
     Contact: { screen: ContactScreen },
     Chat: { screen: ChatScreen },
     CompanyService: { screen: CompanyServiceScreen },
-    SeeService: { screen: SeeServiceScreen }
+    SeeService: { screen: SeeServiceScreen },
+    CustomerDetailProfile: { screen: CustomerDetailProfileScreen }
   },
   {
     contentComponent: SideMenu

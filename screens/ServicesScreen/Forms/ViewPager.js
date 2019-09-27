@@ -32,7 +32,8 @@ const ViewPager = props => {
     _handleSetInitialState,
     _validate,
     isMapReady,
-    onMapLayout
+    onMapLayout,
+    serviceCreateLoading
   } = props;
   return (
     <View style={styles.container}>
@@ -67,6 +68,7 @@ const ViewPager = props => {
               _validate={_validate}
               isMapReady={isMapReady}
               onMapLayout={onMapLayout}
+              serviceCreateLoading={serviceCreateLoading}
             />
           </Tab>
         ))}

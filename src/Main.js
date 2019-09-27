@@ -9,7 +9,7 @@ import {
 } from "../src/actions/generalServiceGet";
 import AppNavigator from "../navigation/AppNavigator";
 
-import { isAutoLogin, Loader } from "../src/functions";
+import { isAutoLogin } from "../src/functions";
 
 const styles = StyleSheet.create({
   container: {

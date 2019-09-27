@@ -11,7 +11,7 @@ const Point = props => {
     customerServiceIsPointData,
     customerServiceOldPointData,
     servicePointListData,
-    _handleSetInitialState,
+    setSelectRateCount,
     selectRateCount,
     _handleSendServicePoint
   } = props;
@@ -94,10 +94,7 @@ const Point = props => {
                                 selectRateCount.find(
                                   item => item.ID === elem.ID
                                 ).Rate = item;
-                                _handleSetInitialState(
-                                  "selectRateCount",
-                                  selectRateCount
-                                );
+                                setSelectRateCount(selectRateCount);
                               }}
                             >
                               <Icon

@@ -871,7 +871,12 @@ class ServicesScreen extends Component {
   };
 
   render() {
-    const { serviceServiceResponse, navigation } = this.props;
+    const {
+      serviceServiceResponse,
+      servicePostResponse,
+      navigation
+    } = this.props;
+    const { serviceCreateLoading } = servicePostResponse;
     const {
       serviceCreateDataLoading,
       serviceCreateDataResult
@@ -930,12 +935,18 @@ class ServicesScreen extends Component {
             ) : null}
             {activeViewPagerPage == 0 ? (
               <Button transparent onPress={() => navigation.toggleDrawer()}>
-                <Icon name="ios-menu" />
+                <Icon
+                  name="ios-menu"
+                  color="white"
+                  style={{ color: "white" }}
+                />
               </Button>
             ) : null}
           </Left>
           <Body>
-            <Title>{serviceCreateDataResult.Name}</Title>
+            <Title style={{ color: "white" }}>
+              {serviceCreateDataResult.Name}
+            </Title>
           </Body>
           <Right>
             {/* <Button transparent onPress={() => this.handleCreateService()}>
@@ -979,6 +990,7 @@ class ServicesScreen extends Component {
               _validate={this._validate}
               isMapReady={isMapReady}
               onMapLayout={this.onMapLayout}
+              serviceCreateLoading={serviceCreateLoading}
             />
           </View>
         )}
@@ -989,10 +1001,12 @@ class ServicesScreen extends Component {
 
 const mapStateToProps = ({
   generalServiceGetResponse,
-  serviceServiceResponse
+  serviceServiceResponse,
+  servicePostResponse
 }) => ({
   generalServiceGetResponse,
-  serviceServiceResponse
+  serviceServiceResponse,
+  servicePostResponse
 });
 
 const mapDispatchToProps = {

@@ -32,23 +32,36 @@ import { MyToast } from "../../src/functions";
 class ContactScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      ContactMessage: {
+        MessageSubjectID: -1,
+        NameSurname: "",
+        PhoneNumber: "",
+        Email: "",
+        Title: "",
+        Description: "",
+        UserID: -1,
+        SiteID: -1
+      }
+    };
   }
   componentWillMount() {
     const { generalServiceGetResponse, contactSubjectData } = this.props;
-    const { activeUser } = generalServiceGetResponse;
+    const { activeUser, getSiteData } = generalServiceGetResponse;
     this.setState({
       ContactMessage: {
         MessageSubjectID: -1,
         NameSurname: activeUser.IsCompany
           ? activeUser.Companys.AuthorizedPersonName
+            ? activeUser.Companys.AuthorizedPersonName
+            : ""
           : activeUser.Customers.Name + " " + activeUser.Customers.Surname,
-        PhoneNumber: activeUser.PhoneNumber,
+        PhoneNumber: activeUser.PhoneNumber ? activeUser.PhoneNumber : "",
         Email: activeUser.Email,
         Title: "",
         Description: "",
         UserID: activeUser.Id,
-        SiteID: 1
+        SiteID: getSiteData.Id
       }
     });
     contactSubjectData(1, 1);

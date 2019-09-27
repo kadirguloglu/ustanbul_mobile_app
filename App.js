@@ -15,11 +15,9 @@ import { Provider } from "react-redux";
 import axios from "axios";
 import axiosMiddleware from "redux-axios-middleware";
 import logger from "redux-logger";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 
 import * as Permissions from "expo-permissions";
-
-Sentry.enableInExpoDevelopment = true;
 
 const _apiUrl = "http://api.ustanbul.net";
 const _getTokenUrl = "/api/Token";
@@ -32,9 +30,10 @@ async function notificationPermission() {
   }
 }
 
-Sentry.config(
-  "https://49f724a6070f44efb4f9fcc909980b8a@sentry.io/1462198"
-).install();
+Sentry.init({
+  dns: "https://49f724a6070f44efb4f9fcc909980b8a@sentry.io/1462198",
+  enableInExpoDevelopment: __DEV__
+});
 
 const client = axios.create({
   baseURL: _apiUrl,
@@ -70,18 +69,7 @@ export default class App extends React.Component {
   async componentWillMount() {
     notificationPermission();
     this.getToken();
-    Notifications.addListener(notification => {
-      console.log(
-        "LOG: -----------------------------------------------------------"
-      );
-      console.log(
-        "LOG: App -> componentWillMount -> notification",
-        notification
-      );
-      console.log(
-        "LOG: -----------------------------------------------------------"
-      );
-    });
+    Notifications.addListener(notification => {});
   }
 
   getToken() {

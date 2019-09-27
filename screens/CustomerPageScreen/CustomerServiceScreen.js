@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { ImageBackground, View, Alert } from "react-native";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Root,
   Spinner,
@@ -13,6 +13,7 @@ import {
   ScrollableTab
 } from "native-base";
 import { NavigationEvents } from "react-navigation";
+
 import i18n from "../../constants/strings";
 
 import {
@@ -30,16 +31,12 @@ import {
   servicePointListData
 } from "../../src/actions/companyDetailService";
 import {
-  proposalDetailData,
-  updateServiceProposal
-} from "../../src/actions/serviceService";
-import {
   getQrCode,
   getComplaintOptionList
 } from "../../src/actions/generalServiceGet";
 import { postServiceComplaint } from "../../src/actions/servicePost";
 
-import { Loader } from "../../src/functions";
+import { ThemeColor } from "../../src/functions";
 
 import Content from "./Components/CustomerService_content";
 import Point from "./Components/CustomerService_point";
@@ -50,43 +47,72 @@ import QRCode from "./Components/CustomerService_qrcode";
 
 import styles from "./CustomerService.styles";
 
-class CustomerServiceScreen extends Component {
-  static navigationOptions = {
-    header: null
-  };
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeTab: 0,
-      newProposalRegex: true,
-      oldProposalPrice: "0",
-      selectedProposalId: 0,
-      PAGES: [],
-      PAGES_DATA_CATEGORY_INDEX: [],
-      activeServicePage: 0,
-      initialTabActivePage: 0,
-      qrCodeValue: "",
-      qrTimerValue: 120,
-      selectRateCount: [],
-      selectedService: {},
-      data: null,
-      servicePreviewListResultKeys: [],
+function CustomerServiceScreen({ navigation }) {
+  const [newProposalRegex, setNewProposalRegex] = useState(true);
+  const [oldProposalPrice, setOldProposalPrice] = useState("0");
+  const [PAGES, setPAGES] = useState([]);
+  const [PAGES_DATA_CATEGORY_INDEX, setPAGES_DATA_CATEGORY_INDEX] = useState(
+    []
+  );
+  const [activeServicePage, setActiveServicePage] = useState(0);
+  const [initialTabActivePage, setInitialTabActivePage] = useState(0);
+  const [qrCodeValue, setQrCodeValue] = useState("");
+  const [qrTimerValue, setQrTimerValue] = useState(120);
+  const [selectRateCount, setSelectRateCount] = useState([]);
+  const [selectedService, setSelectedService] = useState({});
+  const [data, setData] = useState(null);
+  const [
+    servicePreviewListResultKeys,
+    setServicePreviewListResultKeys
+  ] = useState([]);
+  const [ComplaintOptionId, setComplaintOptionId] = useState(0);
+  const [Description, setDescription] = useState("");
 
-      ComplaintOptionId: 0,
-      Description: ""
-    };
-  }
+  const dispatch = useDispatch();
+  const {
+    servicePreviewDetailQuestionLoading,
+    servicePreviewDetailQuestionResult,
+    customerServicePreviewLoading,
+    servicePreviewListResult
+  } = useSelector(x => x.customerDetailServiceResponse);
+  const {
+    servicePreviewDetailLoading,
+    servicePreviewDetailResult,
+    companyServiceRateData,
+    companyServiceRateLoading,
 
-  _handleSetInitialState = (p, v) => {
-    this.setState({ [p]: v });
-  };
+    customerServiceIsPointLoading,
+    customerServiceIsPointData,
+
+    customerServiceOldPointLoading,
+    customerServiceOldPointData,
+
+    servicePointListLoading,
+    servicePointListData
+  } = useSelector(x => x.companyDetailServiceResponse);
+
+  const {
+    activeUser,
+    getLanguageData,
+    getSiteData,
+    getQrCodeLoading,
+    getComplaintOptionListResult,
+    getComplaintOptionListLoading
+  } = useSelector(x => x.generalServiceGetResponse);
+
+  useEffect(() => {
+    this._handleComponentWillMount();
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    if (activeUser.Id !== 0) {
+      navigation.navigate("Home");
+    }
+    return () => {};
+  }, [activeUser.Id]);
 
   _handleComponentWillMount = () => {
-    const {
-      customerServicePreviewData,
-      generalServiceGetResponse
-    } = this.props;
-    const { activeUser } = generalServiceGetResponse;
     if (activeUser.Id == 0) {
       Alert.alert(
         i18n.t("text_51"),
@@ -94,54 +120,50 @@ class CustomerServiceScreen extends Component {
         [
           {
             text: i18n.t("giris_yap"),
-            onPress: () => this.props.navigation.navigate("Login")
+            onPress: () => navigation.navigate("Login")
           },
           {
             text: i18n.t("anasayfa"),
-            onPress: () => this.props.navigation.navigate("Home"),
+            onPress: () => navigation.navigate("Home"),
             style: "cancel"
           }
         ],
         { cancelable: false }
       );
     }
-    customerServicePreviewData(activeUser.Id, 1).then(({ payload }) => {
-      if (payload) {
-        if (payload.data) {
-          const keys = Object.keys(payload.data);
-          this.setState({
-            servicePreviewListResultKeys: keys
-          });
+    dispatch(customerServicePreviewData(activeUser.Id, 1)).then(
+      ({ payload }) => {
+        if (payload) {
+          if (payload.data) {
+            const keys = Object.keys(payload.data);
+            setServicePreviewListResultKeys(keys);
+          }
         }
       }
-    });
+    );
   };
-
-  componentWillMount() {
-    this._handleComponentWillMount();
-  }
 
   navigationComponentWillMount = () => {
     this._handleComponentWillMount();
   };
 
   _handleQrStartTimer = () => {
-    this.setState({ qrTimerValue: 120 });
+    setQrTimerValue(120);
     this.qrStartTimer = setInterval(() => {
       this._handleDecrementQrTimer();
     }, 1000);
   };
 
   _handleDecrementQrTimer = () => {
-    if (this.state.qrTimerValue === 0) {
+    if (qrTimerValue === 0) {
       clearInterval(this.qrStartTimer);
       this._handleCountDownFinishWithQrCode();
     }
-    this.setState(prevState => ({ qrTimerValue: prevState.qrTimerValue - 1 }));
+    setQrTimerValue(qrTimerValue - 1);
   };
 
   _handleCountDownFinishWithQrCode = () => {
-    this.setState({ initialTabActivePage: 0 });
+    setInitialTabActivePage(0);
     Toast.show({
       text: i18n.t("text_53"),
       buttonText: i18n.t("text_6"),
@@ -150,13 +172,12 @@ class CustomerServiceScreen extends Component {
   };
 
   _handleGetQrCodeForMasterApproved = data => {
-    const { getQrCode } = this.props;
-    getQrCode(data.ID).then(({ payload }) => {
+    dispatch(getQrCode(data.ID)).then(({ payload }) => {
       if (payload) {
         if (payload.request) {
           if (payload.request._response) {
-            this.setState({ initialTabActivePage: 1 });
-            this.setState({ qrCodeValue: payload.request._response });
+            setInitialTabActivePage(1);
+            setQrCodeValue(payload.request._response);
             this._handleQrStartTimer();
             return;
           }
@@ -171,42 +192,35 @@ class CustomerServiceScreen extends Component {
   };
 
   _handlerPreviewSelectedService = data => {
-    this.props.servicePreviewDetailData(data.ID);
-    this.props.servicePreviewDetailQuestionData(data.ID);
-    this.setState({ initialTabActivePage: 4 });
+    dispatch(servicePreviewDetailData(data.ID));
+    dispatch(servicePreviewDetailQuestionData(data.ID));
+    setInitialTabActivePage(4);
   };
 
   onlyNumberRegex = value => {
-    this.setState({ oldProposalPrice: value + "" });
-    if (value.length == 0) this.setState({ newProposalRegex: true });
+    setOldProposalPrice(value + "");
+    if (value.length == 0) setNewProposalRegex(true);
     else if (/^(\d*\.)?\d+$/.test(value)) {
-      this.setState({ newProposalRegex: true });
-    } else this.setState({ newProposalRegex: false });
+      setNewProposalRegex(true);
+    } else {
+      setNewProposalRegex(false);
+    }
   };
 
   _handleSetPoint = data => {
-    const {
-      companyServiceRateData,
-      generalServiceGetResponse,
-      customerServiceIsPointData,
-      customerServiceOldPointData,
-      servicePointListData
-    } = this.props;
-    const { getLanguageData } = generalServiceGetResponse;
+    setSelectedService(data);
 
-    this.setState({ selectedService: data });
-
-    companyServiceRateData(data.MasterID, getLanguageData.Id).then(
+    dispatch(companyServiceRateData(data.MasterID, getLanguageData.Id)).then(
       ({ payload }) => {
-        this.setState({ initialTabActivePage: 2 });
+        setInitialTabActivePage(2);
       }
     );
-    customerServiceIsPointData(data.ID, getLanguageData.Id).then(
+    dispatch(customerServiceIsPointData(data.ID, getLanguageData.Id)).then(
       ({ payload }) => {
         if (payload.data) {
-          customerServiceOldPointData(data.ID, getLanguageData.Id);
+          dispatch(customerServiceOldPointData(data.ID, getLanguageData.Id));
         } else {
-          servicePointListData(getLanguageData.Id);
+          dispatch(servicePointListData(getLanguageData.Id));
         }
       }
     );
@@ -215,8 +229,6 @@ class CustomerServiceScreen extends Component {
 
   _handleSendServicePoint = () => {
     let countList = [];
-    const { selectedService, selectRateCount } = this.state;
-    const { sendServicePoint } = this.props;
     for (let i = 0; i < selectRateCount.length; i++) {
       const item = selectRateCount[i];
       countList.push({
@@ -227,9 +239,9 @@ class CustomerServiceScreen extends Component {
       });
     }
 
-    sendServicePoint(countList).then(({ payload }) => {
+    dispatch(sendServicePoint(countList)).then(({ payload }) => {
       if (payload.data) {
-        this.setState({ initialTabActivePage: 0 });
+        setInitialTabActivePage(0);
         Toast.show({
           text: i18n.t("text_55"),
           buttonText: i18n.t("text_6"),
@@ -246,7 +258,6 @@ class CustomerServiceScreen extends Component {
   };
 
   _handleApprovedService = data => {
-    const { approvedService } = this.props;
     Alert.alert(
       i18n.t("text_57"),
       i18n.t("text_58"),
@@ -261,7 +272,7 @@ class CustomerServiceScreen extends Component {
         {
           text: i18n.t("text_60"),
           onPress: () => {
-            approvedService(data.ID).then(({ payload }) => {
+            dispatch(approvedService(data.ID)).then(({ payload }) => {
               if (payload) {
                 if (payload.data) {
                   Toast.show({
@@ -287,17 +298,13 @@ class CustomerServiceScreen extends Component {
   };
 
   _handleComplaintService = data => {
-    const { getComplaintOptionList, generalServiceGetResponse } = this.props;
-    const { getLanguageData } = generalServiceGetResponse;
-    this.setState({ data: data });
-    getComplaintOptionList(getLanguageData.Id).then(({ payload }) => {
+    setData(data);
+    dispatch(getComplaintOptionList(getLanguageData.Id)).then(({ payload }) => {
       if (payload) {
         if (payload.data) {
-          this.setState({
-            initialTabActivePage: 3,
-            ComplaintOptionId: 0,
-            Description: ""
-          });
+          setInitialTabActivePage(3);
+          setComplaintOptionId(0);
+          setDescription("");
           return;
         }
       }
@@ -310,7 +317,6 @@ class CustomerServiceScreen extends Component {
   };
 
   _handlePostServiceComplaint = () => {
-    const { ComplaintOptionId, Description, data } = this.state;
     if (ComplaintOptionId === 0) {
       Toast.show({
         text: i18n.t("text_63"),
@@ -327,8 +333,6 @@ class CustomerServiceScreen extends Component {
       });
       return;
     }
-    const { postServiceComplaint, generalServiceGetResponse } = this.props;
-    const { activeUser, getSiteData } = generalServiceGetResponse;
     const complaintModel = {
       ComplaintOptionId: ComplaintOptionId,
       Description: Description,
@@ -337,7 +341,7 @@ class CustomerServiceScreen extends Component {
       UserID: activeUser.Id,
       SiteID: getSiteData.Id
     };
-    postServiceComplaint(complaintModel).then(({ payload }) => {
+    dispatch(postServiceComplaint(complaintModel)).then(({ payload }) => {
       if (payload) {
         if (payload.request) {
           if (payload.request._response) {
@@ -347,11 +351,9 @@ class CustomerServiceScreen extends Component {
                 buttonText: i18n.t("text_6"),
                 duration: 3500
               });
-              this.setState({
-                initialTabActivePage: 0,
-                ComplaintOptionId: 0,
-                Description: ""
-              });
+              setInitialTabActivePage(0);
+              setComplaintOptionId(0);
+              setDescription("");
               return;
             } else {
               Toast.show({
@@ -373,7 +375,6 @@ class CustomerServiceScreen extends Component {
   };
 
   _handleCancelService = data => {
-    const { cancelService } = this.props;
     Alert.alert(
       i18n.t("text_51"),
       i18n.t("text_67"),
@@ -386,7 +387,7 @@ class CustomerServiceScreen extends Component {
         {
           text: i18n.t("text_69"),
           onPress: () => {
-            cancelService(data.ID).then(({ payload }) => {
+            dispatch(cancelService(data.ID)).then(({ payload }) => {
               if (payload) {
                 if (payload.data) {
                   Toast.show({
@@ -415,112 +416,102 @@ class CustomerServiceScreen extends Component {
     switch (item) {
       case "1#Gelen Teklifler":
         return (
-          <TabHeading>
-            <Icon name="ios-clipboard" />
-            <Text>{i18n.t("text_72")}</Text>
+          <TabHeading
+            tabStyle={{ backgroundColor: ThemeColor }}
+            activeTabStyle={{ backgroundColor: ThemeColor }}
+          >
+            <Icon
+              name="ios-clipboard"
+              color="white"
+              style={{ color: "white" }}
+            />
+            <Text style={{ color: "white" }}>{i18n.t("text_72")}</Text>
           </TabHeading>
         );
       case "2#Tamamlanmayı Bekleyenler":
         return (
-          <TabHeading>
-            <Icon name="ios-filing" />
-            <Text>{i18n.t("text_73")}</Text>
+          <TabHeading
+            tabStyle={{ backgroundColor: ThemeColor }}
+            activeTabStyle={{ backgroundColor: ThemeColor }}
+          >
+            <Icon name="ios-filing" color="white" style={{ color: "white" }} />
+            <Text style={{ color: "white" }}>{i18n.t("text_73")}</Text>
           </TabHeading>
         );
       case "3#Onay Bekleyenler":
         return (
-          <TabHeading>
-            <Icon name="ios-checkmark" />
-            <Text>{i18n.t("text_74")}</Text>
+          <TabHeading
+            tabStyle={{ backgroundColor: ThemeColor }}
+            activeTabStyle={{ backgroundColor: ThemeColor }}
+          >
+            <Icon
+              name="ios-checkmark"
+              color="white"
+              style={{ color: "white" }}
+            />
+            <Text style={{ color: "white" }}>{i18n.t("text_74")}</Text>
           </TabHeading>
         );
       case "4#Gelen Teklifler":
         return (
-          <TabHeading>
-            <Icon name="ios-information" />
-            <Text>{i18n.t("text_75")}</Text>
+          <TabHeading
+            tabStyle={{ backgroundColor: ThemeColor }}
+            activeTabStyle={{ backgroundColor: ThemeColor }}
+          >
+            <Icon
+              name="ios-information"
+              color="white"
+              style={{ color: "white" }}
+            />
+            <Text style={{ color: "white" }}>{i18n.t("text_75")}</Text>
           </TabHeading>
         );
       case "5#İptal Edilenler":
         return (
-          <TabHeading>
-            <Icon name="ios-close" />
-            <Text>{i18n.t("text_76")}</Text>
+          <TabHeading
+            tabStyle={{ backgroundColor: ThemeColor }}
+            activeTabStyle={{ backgroundColor: ThemeColor }}
+          >
+            <Icon name="ios-close" color="white" style={{ color: "white" }} />
+            <Text style={{ color: "white" }}>{i18n.t("text_76")}</Text>
           </TabHeading>
         );
       case "6#Bekleyenler":
         return (
-          <TabHeading>
-            <Icon name="ios-clock" />
-            <Text>{i18n.t("text_77")}</Text>
+          <TabHeading
+            tabStyle={{ backgroundColor: ThemeColor }}
+            activeTabStyle={{ backgroundColor: ThemeColor }}
+          >
+            <Icon name="ios-clock" color="white" style={{ color: "white" }} />
+            <Text style={{ color: "white" }}>{i18n.t("text_77")}</Text>
           </TabHeading>
         );
       default:
         return (
-          <TabHeading>
-            <Icon name="ios-sync" />
-            <Text>{i18n.t("text_78")}</Text>
+          <TabHeading
+            tabStyle={{ backgroundColor: ThemeColor }}
+            activeTabStyle={{ backgroundColor: ThemeColor }}
+          >
+            <Icon name="ios-sync" color="white" style={{ color: "white" }} />
+            <Text style={{ color: "white" }}>{i18n.t("text_78")}</Text>
           </TabHeading>
         );
     }
   };
 
-  render() {
-    const {
-      customerDetailServiceResponse,
-      companyDetailServiceResponse,
-      navigation,
-      generalServiceGetResponse
-    } = this.props;
-    const {
-      servicePreviewDetailQuestionLoading,
-      servicePreviewDetailQuestionResult,
-      customerServicePreviewLoading,
-      servicePreviewListResult
-    } = customerDetailServiceResponse;
-    const {
-      servicePreviewDetailLoading,
-      servicePreviewDetailResult,
-      companyServiceRateData,
-      companyServiceRateLoading,
-
-      customerServiceIsPointLoading,
-      customerServiceIsPointData,
-
-      customerServiceOldPointLoading,
-      customerServiceOldPointData,
-
-      servicePointListLoading,
-      servicePointListData
-    } = companyDetailServiceResponse;
-    const {
-      getQrCodeLoading,
-      getComplaintOptionListResult,
-      getComplaintOptionListLoading
-    } = generalServiceGetResponse;
-
-    const {
-      initialTabActivePage,
-      qrCodeValue,
-      qrTimerValue,
-      selectRateCount,
-
-      ComplaintOptionId,
-      Description,
-      servicePreviewListResultKeys
-    } = this.state;
-
-    return (
-      <Root>
-        {customerServicePreviewLoading ? <Loader /> : null}
-        <NavigationEvents
-          onDidFocus={() => this.navigationComponentWillMount()}
-        />
-        <CustomerServiceHeader
-          initialTabActivePage={initialTabActivePage}
-          navigation={navigation}
-          _handleSetInitialState={this._handleSetInitialState}
-        />
+  return (
+    <Root>
+      <NavigationEvents
+        onDidFocus={() => this.navigationComponentWillMount()}
+      />
+      <CustomerServiceHeader
+        initialTabActivePage={initialTabActivePage}
+        navigation={navigation}
+        setInitialTabActivePage={setInitialTabActivePage}
+      />
+      {customerServicePreviewLoading ? (
+        <Spinner />
+      ) : (
         <ImageBackground
           style={styles.backgroundImage}
           source={require("../../assets/splash-screen-demo.png")}
@@ -537,6 +528,8 @@ class CustomerServiceScreen extends Component {
                 <Tab
                   heading={i18n.t("text_79")}
                   style={{ backgroundColor: "transparent" }}
+                  tabStyle={{ backgroundColor: ThemeColor }}
+                  activeTabStyle={{ backgroundColor: ThemeColor }}
                 >
                   <Tabs
                     style={{ backgroundColor: "transparent" }}
@@ -549,6 +542,8 @@ class CustomerServiceScreen extends Component {
                           style={{ backgroundColor: "transparent" }}
                           key={"1heading-" + index}
                           heading={this.renderTabHeading(item)}
+                          tabStyle={{ backgroundColor: ThemeColor }}
+                          activeTabStyle={{ backgroundColor: ThemeColor }}
                         >
                           <Tabs
                             renderTabBar={() => <View />}
@@ -560,6 +555,10 @@ class CustomerServiceScreen extends Component {
                                   key={"ViewPagerContent-" + ix}
                                   heading={"heading" + ix}
                                   style={{ backgroundColor: "transparent" }}
+                                  tabStyle={{ backgroundColor: ThemeColor }}
+                                  activeTabStyle={{
+                                    backgroundColor: ThemeColor
+                                  }}
                                 >
                                   <Content
                                     dataKey={item}
@@ -592,7 +591,11 @@ class CustomerServiceScreen extends Component {
                     })}
                   </Tabs>
                 </Tab>
-                <Tab heading={i18n.t("text_80")}>
+                <Tab
+                  heading={i18n.t("text_80")}
+                  tabStyle={{ backgroundColor: ThemeColor }}
+                  activeTabStyle={{ backgroundColor: ThemeColor }}
+                >
                   {getQrCodeLoading ? (
                     <Spinner />
                   ) : (
@@ -602,7 +605,11 @@ class CustomerServiceScreen extends Component {
                     />
                   )}
                 </Tab>
-                <Tab heading={i18n.t("text_81")}>
+                <Tab
+                  heading={i18n.t("text_81")}
+                  tabStyle={{ backgroundColor: ThemeColor }}
+                  activeTabStyle={{ backgroundColor: ThemeColor }}
+                >
                   {companyServiceRateLoading &&
                   customerServiceIsPointLoading ? (
                     <Spinner />
@@ -617,9 +624,9 @@ class CustomerServiceScreen extends Component {
                           customerServiceOldPointData
                         }
                         servicePointListData={servicePointListData}
-                        _handleSetInitialState={this._handleSetInitialState}
                         selectRateCount={selectRateCount}
                         _handleSendServicePoint={this._handleSendServicePoint}
+                        setSelectRateCount={setSelectRateCount}
                       />
                     )
                   ) : servicePointListLoading ? (
@@ -630,15 +637,20 @@ class CustomerServiceScreen extends Component {
                       customerServiceIsPointData={customerServiceIsPointData}
                       customerServiceOldPointData={customerServiceOldPointData}
                       servicePointListData={servicePointListData}
-                      _handleSetInitialState={this._handleSetInitialState}
                       selectRateCount={selectRateCount}
                       _handleSendServicePoint={this._handleSendServicePoint}
+                      setSelectRateCount={setSelectRateCount}
                     />
                   )}
                 </Tab>
-                <Tab heading={i18n.t("text_82")}>
+                <Tab
+                  heading={i18n.t("text_82")}
+                  tabStyle={{ backgroundColor: ThemeColor }}
+                  activeTabStyle={{ backgroundColor: ThemeColor }}
+                >
                   <ComplaintService
-                    _handleSetInitialState={this._handleSetInitialState}
+                    setComplaintOptionId={setComplaintOptionId}
+                    setDescription={setDescription}
                     getComplaintOptionListLoading={
                       getComplaintOptionListLoading
                     }
@@ -650,7 +662,11 @@ class CustomerServiceScreen extends Component {
                     }
                   />
                 </Tab>
-                <Tab heading={i18n.t("text_83")}>
+                <Tab
+                  heading={i18n.t("text_83")}
+                  tabStyle={{ backgroundColor: ThemeColor }}
+                  activeTabStyle={{ backgroundColor: ThemeColor }}
+                >
                   <CustomerServicePreview
                     styles={styles}
                     servicePreviewDetailLoading={servicePreviewDetailLoading}
@@ -661,51 +677,20 @@ class CustomerServiceScreen extends Component {
                     servicePreviewDetailQuestionResult={
                       servicePreviewDetailQuestionResult
                     }
-                    _handleSetInitialState={this._handleSetInitialState}
+                    setInitialTabActivePage={setInitialTabActivePage}
                   />
                 </Tab>
               </Tabs>
             ) : null}
           </View>
         </ImageBackground>
-      </Root>
-    );
-  }
+      )}
+    </Root>
+  );
 }
 
-const mapStateToProps = ({
-  generalServiceGetResponse,
-  customerDetailServiceResponse,
-  companyDetailServiceResponse,
-  serviceServiceResponse,
-  servicePostResponse
-}) => ({
-  generalServiceGetResponse,
-  customerDetailServiceResponse,
-  companyDetailServiceResponse,
-  serviceServiceResponse,
-  servicePostResponse
-});
-
-const mapDispatchToProps = {
-  customerServicePreviewData,
-  servicePreviewDetailData,
-  servicePreviewDetailQuestionData,
-  proposalDetailData,
-  updateServiceProposal,
-  getQrCode,
-  companyServiceRateData,
-  customerServiceIsPointData,
-  customerServiceOldPointData,
-  servicePointListData,
-  sendServicePoint,
-  approvedService,
-  getComplaintOptionList,
-  postServiceComplaint,
-  cancelService
+CustomerServiceScreen.navigationOptions = {
+  header: null
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CustomerServiceScreen);
+export default CustomerServiceScreen;

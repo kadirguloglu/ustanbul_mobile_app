@@ -20,7 +20,7 @@ import {
   View
 } from "native-base";
 import Dialog from "react-native-dialog";
-import { Permissions } from "expo";
+import * as Permissions from "expo-permissions";
 
 import i18n from "../../constants/strings";
 

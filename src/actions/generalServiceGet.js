@@ -34,14 +34,12 @@ export function loginUser(email, password, id) {
   };
 }
 
-export function refreshAuthenticatedUser() {
+export function refreshAuthenticatedUser(Id) {
   return {
     type: REFRESH_AUTHENTICATION_USER,
     payload: {
       request: {
-        url:
-          REFRESH_AUTHENTICATION_USER_URL +
-          `?Email=&Password=&ID=${states.activeUser.ID}`
+        url: REFRESH_AUTHENTICATION_USER_URL + `?Email=&Password=&ID=${Id}`
       }
     }
   };
