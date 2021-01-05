@@ -13,7 +13,7 @@
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
     "@expo/vector-icons": "^10.0.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "expo": "^35.0.0",
     "expo-app-auth": "~7.0.0",
     "expo-background-fetch": "~7.0.0",
